@@ -1,0 +1,23 @@
+import type { ButtonHTMLAttributes } from 'react'
+import { cn } from '../../lib/utils'
+
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: 'primary' | 'secondary'
+}
+
+function Button({ variant = 'primary', className, ...props }: ButtonProps) {
+  return (
+    <button
+      className={cn(
+        'w-full rounded-xl py-3 text-sm font-semibold active:opacity-80',
+        variant === 'primary' && 'bg-white text-brand-600',
+        variant === 'secondary' &&
+          'bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-white',
+        className,
+      )}
+      {...props}
+    />
+  )
+}
+
+export default Button
