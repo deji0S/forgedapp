@@ -2,20 +2,20 @@
 
 @theme {
   --font-sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --color-brand-50: #fff1f0;
-  --color-brand-100: #ffe0de;
-  --color-brand-200: #ffc6c2;
-  --color-brand-300: #ff9d95;
-  --color-brand-400: #ff6857;
-  --color-brand-500: #f8402a;
-  --color-brand-600: #e5261a;
-  --color-brand-700: #c01a12;
-  --color-brand-800: #9e1913;
-  --color-brand-900: #831a16;
+  --color-brand-50: #f0fdf4;
+  --color-brand-100: #dcfce7;
+  --color-brand-200: #bbf7d0;
+  --color-brand-300: #86efac;
+  --color-brand-400: #4ade80;
+  --color-brand-500: #22c55e;
+  --color-brand-600: #16a34a;
+  --color-brand-700: #15803d;
+  --color-brand-800: #166534;
+  --color-brand-900: #14532d;
 }
 
 :root {
-  color-scheme: light dark;
+  color-scheme: dark;
 }
 
 html,
@@ -28,4 +28,6 @@ body {
   margin: 0;
   overscroll-behavior-y: none;
   -webkit-tap-highlight-color: transparent;
+  background-color: #0a0a0a;
+  color: #fff;
 }

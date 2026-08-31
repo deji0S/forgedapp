@@ -11,8 +11,7 @@ function Button({ variant = 'primary', className, ...props }: ButtonProps) {
       className={cn(
         'w-full rounded-xl py-3 text-sm font-semibold active:opacity-80',
         variant === 'primary' && 'bg-white text-brand-600',
-        variant === 'secondary' &&
-          'bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-white',
+        variant === 'secondary' && 'bg-neutral-800 text-white',
         className,
       )}
       {...props}
