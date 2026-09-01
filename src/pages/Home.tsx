@@ -1,10 +1,28 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/auth-context'
+import { usePremium } from '../lib/premium-context'
 import { PremiumGate } from '../components/PremiumGate'
 import { checkInToday, getStreak, getTodayCheckin, listWorkoutPlans } from '../lib/tracking'
 import { recoverStreak, recoveryEligibility } from '../lib/streak'
 import type { Streak, WorkoutPlan } from '../types/tracking'
+
+function UpgradeBanner() {
+  return (
+    <Link
+      to="/premium"
+      className="flex items-center justify-between rounded-2xl border border-brand-500/40 bg-brand-500/10 p-4 active:opacity-80"
+    >
+      <span>
+        <span className="block text-sm font-semibold text-white">Upgrade to Premium</span>
+        <span className="block text-xs text-neutral-400">
+          AI coach, advanced analytics, and streak recovery — £4.99/mo
+        </span>
+      </span>
+      <span className="text-neutral-500">→</span>
+    </Link>
+  )
+}
 
 function StreakRecoveryCard({
   streak,
@@ -60,6 +78,7 @@ function StreakRecoveryCard({
 
 function Home() {
   const { user } = useAuth()
+  const { isPremium, loading: premiumLoading } = usePremium()
   const [streak, setStreak] = useState<Streak | null>(null)
   const [plan, setPlan] = useState<WorkoutPlan | null>(null)
   const [checkedIn, setCheckedIn] = useState(false)
@@ -131,6 +150,8 @@ function Home() {
           </>
         )}
       </section>
+
+      {!premiumLoading && !isPremium && <UpgradeBanner />}
 
       {streak && <StreakRecoveryCard streak={streak} onRecovered={setStreak} />}
 
