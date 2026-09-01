@@ -2,6 +2,10 @@
 
 A React + Vite + TypeScript + Tailwind PWA for workout tracking, backed by Supabase.
 
+Premium (£4.99/mo via Stripe Checkout) unlocks the AI coach, advanced analytics,
+and streak recovery — see [`docs/stripe-premium.md`](docs/stripe-premium.md) for
+setup and deployment.
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.

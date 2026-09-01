@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/auth-context'
+import { usePremium } from '../lib/premium-context'
 import { requestPushPermission } from '../lib/onesignal'
 import { getNotificationPreferences, saveNotificationPreferences } from '../lib/notifications'
 import type { NotificationPreferences } from '../types/notifications'
 
 function ProfilePage() {
   const { user, profile, signOut } = useAuth()
+  const { isPremium, subscription, loading: premiumLoading } = usePremium()
   const [prefs, setPrefs] = useState<NotificationPreferences | null>(null)
   const [reminderTime, setReminderTime] = useState('18:00')
   const [enabling, setEnabling] = useState(false)
@@ -78,6 +81,23 @@ function ProfilePage() {
           </p>
         </div>
       )}
+
+      <Link
+        to="/premium"
+        className="flex items-center justify-between rounded-2xl border border-neutral-800 p-4 active:opacity-80"
+      >
+        <span>
+          <span className="block text-sm font-medium text-white">Membership</span>
+          <span className="block text-xs text-neutral-400">
+            {premiumLoading
+              ? 'Checking…'
+              : isPremium
+                ? `Premium${subscription?.cancel_at_period_end ? ' (cancels at period end)' : ''}`
+                : 'Free — upgrade for £4.99/mo'}
+          </span>
+        </span>
+        <span className="text-neutral-500">→</span>
+      </Link>
 
       <div className="space-y-3 rounded-2xl border border-neutral-800 p-4">
         <div className="flex items-center justify-between">

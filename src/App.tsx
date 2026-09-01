@@ -6,6 +6,8 @@ import Onboarding from './pages/Onboarding'
 import Home from './pages/Home'
 import Progress from './pages/Progress'
 import ProfilePage from './pages/ProfilePage'
+import Premium from './pages/Premium'
+import Coach from './pages/Coach'
 import Workouts from './pages/Workouts'
 import WorkoutDetail from './pages/WorkoutDetail'
 
@@ -17,6 +19,8 @@ function AppShell() {
         <Route path="/workouts" element={<Workouts />} />
         <Route path="/workouts/:id" element={<WorkoutDetail />} />
         <Route path="/progress" element={<Progress />} />
+        <Route path="/coach" element={<Coach />} />
+        <Route path="/premium" element={<Premium />} />
         <Route path="/profile" element={<ProfilePage />} />
       </Routes>
       <BottomNav />

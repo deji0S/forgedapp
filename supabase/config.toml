@@ -1,0 +1,30 @@
+# Supabase project config. Source of truth for per-function settings.
+#
+# NOTE: there is no Supabase CLI installed for this project (functions are
+# deployed via the dashboard's "Via Editor" flow — see the project memory).
+# The dashboard deploy does NOT read this file, so the verify_jwt values here
+# must be kept in sync with each function's "Verify JWT" toggle in the
+# dashboard. This file is authoritative once the CLI / `supabase functions
+# deploy` is ever used.
+
+project_id = "bozzojpwswuvbmqazvle"
+
+# Stripe Checkout session creation — called by the signed-in client, so it
+# needs a valid Supabase JWT.
+[functions.stripe-checkout]
+verify_jwt = true
+
+# Stripe Billing Portal session creation — called by the signed-in client.
+[functions.stripe-portal]
+verify_jwt = true
+
+# Stripe webhook receiver — called by Stripe with a Stripe-Signature header,
+# NOT a Supabase JWT. Authenticity is enforced by verifying that signature
+# against STRIPE_WEBHOOK_SECRET inside the function. Must NOT require a JWT.
+[functions.stripe-webhook]
+verify_jwt = false
+
+# Streak reminder — invoked by pg_cron with the publishable (anon) key as the
+# bearer token, which is itself a valid JWT, so JWT verification stays on.
+[functions.streak-reminder]
+verify_jwt = true
