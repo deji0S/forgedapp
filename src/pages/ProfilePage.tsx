@@ -1,10 +1,122 @@
 import { useEffect, useState } from 'react'
+import type { FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/auth-context'
 import { usePremium } from '../lib/premium-context'
 import { requestPushPermission } from '../lib/onesignal'
 import { getNotificationPreferences, saveNotificationPreferences } from '../lib/notifications'
 import type { NotificationPreferences } from '../types/notifications'
+
+function HandleCard() {
+  const { profile, updateProfileHandle } = useAuth()
+  const [editing, setEditing] = useState(false)
+  const [username, setUsername] = useState(profile?.username ?? '')
+  const [displayName, setDisplayName] = useState(profile?.display_name ?? '')
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  function startEditing() {
+    setUsername(profile?.username ?? '')
+    setDisplayName(profile?.display_name ?? '')
+    setError(null)
+    setEditing(true)
+  }
+
+  async function handleSubmit(event: FormEvent) {
+    event.preventDefault()
+    setError(null)
+    setSaving(true)
+    const message = await updateProfileHandle({
+      username: username.trim().toLowerCase(),
+      display_name: displayName.trim(),
+    })
+    setSaving(false)
+    if (message) {
+      setError(message)
+      return
+    }
+    setEditing(false)
+  }
+
+  if (editing) {
+    return (
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-3 rounded-2xl border border-neutral-800 p-4 text-sm"
+      >
+        <div className="space-y-1">
+          <label htmlFor="display_name" className="text-xs text-neutral-400">
+            Display name
+          </label>
+          <input
+            id="display_name"
+            type="text"
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            maxLength={60}
+            required
+            className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-brand-500 focus:outline-none"
+          />
+        </div>
+
+        <div className="space-y-1">
+          <label htmlFor="username" className="text-xs text-neutral-400">
+            Username
+          </label>
+          <input
+            id="username"
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value.toLowerCase())}
+            pattern="[a-z0-9_]{3,20}"
+            title="3-20 characters: lowercase letters, numbers, underscores"
+            required
+            className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-brand-500 focus:outline-none"
+          />
+          <p className="text-xs text-neutral-500">
+            3-20 characters: lowercase letters, numbers, underscores.
+          </p>
+        </div>
+
+        {error && <p className="text-sm text-red-400">{error}</p>}
+
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => setEditing(false)}
+            disabled={saving}
+            className="flex-1 rounded-xl bg-neutral-800 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={saving}
+            className="flex-1 rounded-xl bg-brand-500 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+          >
+            {saving ? 'Saving…' : 'Save'}
+          </button>
+        </div>
+      </form>
+    )
+  }
+
+  return (
+    <div className="flex items-center justify-between rounded-2xl border border-neutral-800 p-4 text-sm">
+      <div>
+        <p className="font-medium text-white">{profile?.display_name || 'Add a display name'}</p>
+        <p className="text-neutral-400">{profile?.username ? `@${profile.username}` : 'No username yet'}</p>
+      </div>
+      <button
+        type="button"
+        onClick={startEditing}
+        className="text-sm font-medium text-brand-400 active:opacity-80"
+      >
+        Edit
+      </button>
+    </div>
+  )
+}
 
 function ProfilePage() {
   const { user, profile, signOut } = useAuth()
@@ -58,8 +170,10 @@ function ProfilePage() {
 
   return (
     <div className="space-y-4 p-4">
-      <h1 className="text-2xl font-semibold text-white">Profile</h1>
+      <h1 className="text-2xl font-semibold text-white">Fitness Profile</h1>
       <p className="text-sm text-neutral-400">{user?.email}</p>
+
+      <HandleCard />
 
       {profile && (
         <div className="space-y-2 rounded-2xl border border-neutral-800 p-4 text-sm">

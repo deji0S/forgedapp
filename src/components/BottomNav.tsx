@@ -4,7 +4,7 @@ const TABS = [
   { to: '/', label: 'Home' },
   { to: '/workouts', label: 'Workouts' },
   { to: '/progress', label: 'Progress' },
-  { to: '/profile', label: 'Profile' },
+  { to: '/profile', label: 'Fitness Profile' },
 ]
 
 function BottomNav() {
@@ -17,7 +17,7 @@ function BottomNav() {
               to={tab.to}
               end={tab.to === '/'}
               className={({ isActive }) =>
-                `flex flex-col items-center gap-1 py-3 text-xs font-medium ${
+                `flex flex-col items-center gap-1 py-3 text-center text-xs font-medium leading-tight ${
                   isActive ? 'text-brand-500' : 'text-neutral-400'
                 }`
               }

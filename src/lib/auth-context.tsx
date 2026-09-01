@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import type { Session, User } from '@supabase/supabase-js'
 import { supabase } from './supabase'
 import { linkOneSignalUser, unlinkOneSignalUser } from './onesignal'
-import type { OnboardingInput, Profile } from '../types/profile'
+import type { OnboardingInput, Profile, ProfileHandleInput } from '../types/profile'
 
 interface AuthContextValue {
   session: Session | null
@@ -14,6 +14,7 @@ interface AuthContextValue {
   signIn: (email: string, password: string) => Promise<string | null>
   signOut: () => Promise<void>
   completeOnboarding: (input: OnboardingInput) => Promise<string | null>
+  updateProfileHandle: (input: ProfileHandleInput) => Promise<string | null>
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -84,6 +85,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return null
   }
 
+  async function updateProfileHandle(input: ProfileHandleInput) {
+    if (!session) return 'You must be signed in.'
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({ username: input.username, display_name: input.display_name })
+      .eq('id', session.user.id)
+      .select()
+      .single()
+    if (error) {
+      if (error.code === '23505') return 'That username is already taken.'
+      return error.message
+    }
+    setProfile(data)
+    return null
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -95,6 +112,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signIn,
         signOut,
         completeOnboarding,
+        updateProfileHandle,
       }}
     >
       {children}
