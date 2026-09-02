@@ -172,11 +172,15 @@ function Workouts() {
                   className="block flex-1 rounded-2xl border border-neutral-800 p-4 active:opacity-80"
                 >
                   <p className="font-medium text-white">{p.name}</p>
-                  <p className="mt-1 text-xs text-neutral-400 line-clamp-2">
-                    {p.exercises.length > 0
-                      ? p.exercises.map((ex) => ex.name).join(' · ')
-                      : 'No exercises'}
-                  </p>
+                  {p.exercises.length > 0 ? (
+                    <ul className="mt-1 list-disc space-y-0.5 pl-4 text-xs text-neutral-400">
+                      {p.exercises.map((ex, i) => (
+                        <li key={i}>{ex.name}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="mt-1 text-xs text-neutral-400">No exercises</p>
+                  )}
                 </Link>
                 <button
                   type="button"
