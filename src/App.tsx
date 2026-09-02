@@ -6,6 +6,7 @@ import Onboarding from './pages/Onboarding'
 import Home from './pages/Home'
 import Progress from './pages/Progress'
 import ProfilePage from './pages/ProfilePage'
+import Settings from './pages/Settings'
 import Premium from './pages/Premium'
 import Coach from './pages/Coach'
 import Workouts from './pages/Workouts'
@@ -22,6 +23,7 @@ function AppShell() {
         <Route path="/coach" element={<Coach />} />
         <Route path="/premium" element={<Premium />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
       <BottomNav />
     </div>

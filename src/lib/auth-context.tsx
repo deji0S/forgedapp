@@ -13,6 +13,8 @@ interface AuthContextValue {
   signUp: (email: string, password: string) => Promise<string | null>
   signIn: (email: string, password: string) => Promise<string | null>
   signOut: () => Promise<void>
+  changePassword: (currentPassword: string, newPassword: string) => Promise<string | null>
+  changeEmail: (newEmail: string) => Promise<string | null>
   completeOnboarding: (input: OnboardingInput) => Promise<string | null>
   updateProfilePreferences: (input: OnboardingInput) => Promise<string | null>
   updateProfileHandle: (input: ProfileHandleInput) => Promise<string | null>
@@ -73,6 +75,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signOut() {
     await supabase.auth.signOut()
+  }
+
+  async function changePassword(currentPassword: string, newPassword: string) {
+    const email = session?.user.email
+    if (!email) return 'You must be signed in.'
+
+    // Supabase does not verify the current password on updateUser, so
+    // re-authenticate first to prove the user knows it.
+    const { error: reauthError } = await supabase.auth.signInWithPassword({
+      email,
+      password: currentPassword,
+    })
+    if (reauthError) return 'Current password is incorrect.'
+
+    const { error } = await supabase.auth.updateUser({ password: newPassword })
+    return error?.message ?? null
+  }
+
+  async function changeEmail(newEmail: string) {
+    if (!session) return 'You must be signed in.'
+    const { error } = await supabase.auth.updateUser({ email: newEmail })
+    return error?.message ?? null
   }
 
   async function completeOnboarding(input: OnboardingInput) {
@@ -144,6 +168,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signUp,
         signIn,
         signOut,
+        changePassword,
+        changeEmail,
         completeOnboarding,
         updateProfilePreferences,
         updateProfileHandle,
