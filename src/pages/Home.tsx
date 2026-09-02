@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/auth-context'
 import { usePremium } from '../lib/premium-context'
 import { PremiumGate } from '../components/PremiumGate'
+import DailyReminderCard from '../components/DailyReminderCard'
 import { checkInToday, getStreak, getTodayCheckin, listWorkoutPlans } from '../lib/tracking'
 import { recoverStreak, recoveryEligibility } from '../lib/streak'
 import type { Streak, WorkoutPlan } from '../types/tracking'
@@ -169,6 +170,8 @@ function Home() {
           </p>
         </div>
       </section>
+
+      <DailyReminderCard />
 
       <button
         type="button"
