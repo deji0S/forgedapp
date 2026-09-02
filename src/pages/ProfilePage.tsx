@@ -298,6 +298,13 @@ function ProfilePage() {
 
       <HandleCard />
 
+      <div className="flex items-center justify-between rounded-2xl border border-neutral-800 p-4 text-sm">
+        <span className="text-neutral-400">Current streak</span>
+        <span className="font-medium text-white">
+          {streak?.current_streak ?? 0} {(streak?.current_streak ?? 0) === 1 ? 'day' : 'days'}
+        </span>
+      </div>
+
       {profile && (
         <div className="space-y-3 rounded-2xl border border-neutral-800 p-4 text-sm">
           {profileDetails(profile).map((detail) => (
@@ -306,12 +313,6 @@ function ProfilePage() {
               <span className="font-medium text-white">{detail.value}</span>
             </p>
           ))}
-          <p className="flex justify-between border-t border-neutral-800 pt-3">
-            <span className="text-neutral-400">Current streak</span>
-            <span className="font-medium text-white">
-              {streak?.current_streak ?? 0} {(streak?.current_streak ?? 0) === 1 ? 'day' : 'days'}
-            </span>
-          </p>
         </div>
       )}
 
