@@ -12,29 +12,31 @@ import type { NotificationPreferences } from '../types/notifications'
 import type { Profile } from '../types/profile'
 import type { Streak } from '../types/tracking'
 
-const GOAL_PHRASES: Record<Profile['goal'], string> = {
-  lose_weight: 'lose weight',
-  build_muscle: 'build muscle',
-  improve_endurance: 'improve endurance',
-  general_fitness: 'general fitness',
+const GOAL_LABELS: Record<Profile['goal'], string> = {
+  lose_weight: 'Lose weight',
+  build_muscle: 'Build muscle',
+  improve_endurance: 'Improve endurance',
+  general_fitness: 'General fitness',
 }
 
-const WORKOUT_TYPE_PHRASES: Record<Profile['workout_type'], string> = {
-  home: 'at home',
-  gym: 'at the gym',
-  both: 'both home and gym',
+const WORKOUT_TYPE_LABELS: Record<Profile['workout_type'], string> = {
+  home: 'Home',
+  gym: 'Gym',
+  both: 'Home and gym',
 }
 
 function capitalize(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1)
 }
 
-function describeProfile(profile: Profile): string {
-  const level = capitalize(profile.fitness_level)
-  const goal = GOAL_PHRASES[profile.goal]
-  const workoutType = WORKOUT_TYPE_PHRASES[profile.workout_type]
+function profileDetails(profile: Profile): { label: string; value: string }[] {
   const days = profile.days_per_week
-  return `${level}, training to ${goal}, ${workoutType}, ${days} ${days === 1 ? 'day' : 'days'} a week`
+  return [
+    { label: 'Fitness level', value: capitalize(profile.fitness_level) },
+    { label: 'Goal', value: GOAL_LABELS[profile.goal] },
+    { label: 'Workout location', value: WORKOUT_TYPE_LABELS[profile.workout_type] },
+    { label: 'Training days', value: `${days} ${days === 1 ? 'day' : 'days'} a week` },
+  ]
 }
 
 function AvatarUpload() {
@@ -298,7 +300,12 @@ function ProfilePage() {
 
       {profile && (
         <div className="space-y-3 rounded-2xl border border-neutral-800 p-4 text-sm">
-          <p className="font-medium text-white">{describeProfile(profile)}</p>
+          {profileDetails(profile).map((detail) => (
+            <p key={detail.label} className="flex justify-between">
+              <span className="text-neutral-400">{detail.label}</span>
+              <span className="font-medium text-white">{detail.value}</span>
+            </p>
+          ))}
           <p className="flex justify-between border-t border-neutral-800 pt-3">
             <span className="text-neutral-400">Current streak</span>
             <span className="font-medium text-white">
