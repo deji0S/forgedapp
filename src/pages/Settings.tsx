@@ -159,6 +159,90 @@ function ChangeEmailCard() {
   )
 }
 
+function DeleteAccountCard() {
+  const { deleteAccount } = useAuth()
+  const [expanded, setExpanded] = useState(false)
+  const [confirmation, setConfirmation] = useState('')
+  const [deleting, setDeleting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  function cancel() {
+    setExpanded(false)
+    setConfirmation('')
+    setError(null)
+  }
+
+  async function handleSubmit(event: FormEvent) {
+    event.preventDefault()
+    setError(null)
+    setDeleting(true)
+    const message = await deleteAccount(confirmation)
+    // On success the edge function deletes the user and we sign out, which
+    // unmounts this route — no need to reset state.
+    if (message) {
+      setDeleting(false)
+      setError(message)
+    }
+  }
+
+  return (
+    <div className="space-y-3 rounded-2xl border border-red-500/40 p-4">
+      <div>
+        <p className="text-sm font-medium text-white">Delete account</p>
+        <p className="text-xs text-neutral-400">
+          Permanently removes your account and all your data — workouts, streaks, and subscription
+          records. This cannot be undone.
+        </p>
+      </div>
+
+      {expanded ? (
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <p className="text-xs text-neutral-400">
+            Type your email or password to confirm.
+          </p>
+          <input
+            type="password"
+            required
+            autoComplete="off"
+            placeholder="Email or password"
+            value={confirmation}
+            onChange={(event) => setConfirmation(event.target.value)}
+            className={inputClass}
+          />
+
+          {error && <p className="text-sm text-red-400">{error}</p>}
+
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={cancel}
+              disabled={deleting}
+              className="flex-1 rounded-xl bg-neutral-800 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={deleting || !confirmation.trim()}
+              className="flex-1 rounded-xl bg-red-600 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-50"
+            >
+              {deleting ? 'Deleting…' : 'Delete forever'}
+            </button>
+          </div>
+        </form>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setExpanded(true)}
+          className="w-full rounded-xl border border-red-500/50 py-3 text-sm font-semibold text-red-400 active:opacity-80"
+        >
+          Delete my account
+        </button>
+      )}
+    </div>
+  )
+}
+
 function Settings() {
   return (
     <div className="space-y-4 p-4">
@@ -170,6 +254,7 @@ function Settings() {
 
       <ChangePasswordCard />
       <ChangeEmailCard />
+      <DeleteAccountCard />
     </div>
   )
 }

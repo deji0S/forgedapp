@@ -15,6 +15,7 @@ interface AuthContextValue {
   signOut: () => Promise<void>
   changePassword: (currentPassword: string, newPassword: string) => Promise<string | null>
   changeEmail: (newEmail: string) => Promise<string | null>
+  deleteAccount: (confirmation: string) => Promise<string | null>
   completeOnboarding: (input: OnboardingInput) => Promise<string | null>
   updateProfilePreferences: (input: OnboardingInput) => Promise<string | null>
   updateProfileHandle: (input: ProfileHandleInput) => Promise<string | null>
@@ -99,6 +100,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return error?.message ?? null
   }
 
+  // Permanently deletes the account. `confirmation` is the user's own email
+  // or current password; the delete-account edge function re-verifies it
+  // with the service role key, then removes the auth user and, by FK
+  // cascade, every row they own. Irreversible.
+  async function deleteAccount(confirmation: string) {
+    if (!session) return 'You must be signed in.'
+    const { data, error } = await supabase.functions.invoke<{ ok?: boolean; error?: string }>(
+      'delete-account',
+      { body: { confirmation } },
+    )
+    if (error) return error.message
+    if (data?.error) return data.error
+    if (!data?.ok) return 'Could not delete your account. Please try again.'
+    await supabase.auth.signOut()
+    return null
+  }
+
   async function completeOnboarding(input: OnboardingInput) {
     if (!session) return 'You must be signed in.'
     const { data, error } = await supabase
@@ -170,6 +188,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signOut,
         changePassword,
         changeEmail,
+        deleteAccount,
         completeOnboarding,
         updateProfilePreferences,
         updateProfileHandle,
