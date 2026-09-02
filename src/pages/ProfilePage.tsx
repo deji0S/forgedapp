@@ -7,7 +7,35 @@ import { requestPushPermission } from '../lib/onesignal'
 import { getNotificationPreferences, saveNotificationPreferences } from '../lib/notifications'
 import { uploadAvatar } from '../lib/avatar'
 import ImageCropper from '../components/ImageCropper'
+import { getStreak } from '../lib/tracking'
 import type { NotificationPreferences } from '../types/notifications'
+import type { Profile } from '../types/profile'
+import type { Streak } from '../types/tracking'
+
+const GOAL_PHRASES: Record<Profile['goal'], string> = {
+  lose_weight: 'lose weight',
+  build_muscle: 'build muscle',
+  improve_endurance: 'improve endurance',
+  general_fitness: 'general fitness',
+}
+
+const WORKOUT_TYPE_PHRASES: Record<Profile['workout_type'], string> = {
+  home: 'at home',
+  gym: 'at the gym',
+  both: 'both home and gym',
+}
+
+function capitalize(value: string) {
+  return value.charAt(0).toUpperCase() + value.slice(1)
+}
+
+function describeProfile(profile: Profile): string {
+  const level = capitalize(profile.fitness_level)
+  const goal = GOAL_PHRASES[profile.goal]
+  const workoutType = WORKOUT_TYPE_PHRASES[profile.workout_type]
+  const days = profile.days_per_week
+  return `${level}, training to ${goal}, ${workoutType}, ${days} ${days === 1 ? 'day' : 'days'} a week`
+}
 
 function AvatarUpload() {
   const { user, profile, updateProfileAvatar } = useAuth()
@@ -214,6 +242,7 @@ function ProfilePage() {
   const [reminderTime, setReminderTime] = useState('18:00')
   const [enabling, setEnabling] = useState(false)
   const [notifError, setNotifError] = useState<string | null>(null)
+  const [streak, setStreak] = useState<Streak | null>(null)
 
   useEffect(() => {
     if (!user) return
@@ -223,6 +252,7 @@ function ProfilePage() {
         setReminderTime(data.reminder_time.slice(0, 5))
       }
     })
+    getStreak(user.id).then(({ data }) => setStreak(data))
   }, [user])
 
   async function persist(enabled: boolean, time: string) {
@@ -267,22 +297,13 @@ function ProfilePage() {
       <HandleCard />
 
       {profile && (
-        <div className="space-y-2 rounded-2xl border border-neutral-800 p-4 text-sm">
-          <p className="flex justify-between">
-            <span className="text-neutral-400">Fitness level</span>
-            <span className="font-medium text-white">{profile.fitness_level}</span>
-          </p>
-          <p className="flex justify-between">
-            <span className="text-neutral-400">Goal</span>
-            <span className="font-medium text-white">{profile.goal}</span>
-          </p>
-          <p className="flex justify-between">
-            <span className="text-neutral-400">Workout type</span>
-            <span className="font-medium text-white">{profile.workout_type}</span>
-          </p>
-          <p className="flex justify-between">
-            <span className="text-neutral-400">Days per week</span>
-            <span className="font-medium text-white">{profile.days_per_week}</span>
+        <div className="space-y-3 rounded-2xl border border-neutral-800 p-4 text-sm">
+          <p className="font-medium text-white">{describeProfile(profile)}</p>
+          <p className="flex justify-between border-t border-neutral-800 pt-3">
+            <span className="text-neutral-400">Current streak</span>
+            <span className="font-medium text-white">
+              {streak?.current_streak ?? 0} {(streak?.current_streak ?? 0) === 1 ? 'day' : 'days'}
+            </span>
           </p>
         </div>
       )}
