@@ -14,13 +14,19 @@ export async function listWorkoutPlans(userId: string) {
     .from('workout_plans')
     .select('*')
     .eq('user_id', userId)
+    .order('position', { ascending: true })
     .order('created_at', { ascending: false })
     .returns<WorkoutPlan[]>()
 }
 
 export async function createWorkoutPlan(
   userId: string,
-  input: { name: string; workout_type?: WorkoutTypePreference; exercises: PlanExercise[] },
+  input: {
+    name: string
+    workout_type?: WorkoutTypePreference
+    exercises: PlanExercise[]
+    position?: number
+  },
 ) {
   return supabase
     .from('workout_plans')
@@ -29,8 +35,29 @@ export async function createWorkoutPlan(
     .single<WorkoutPlan>()
 }
 
+export async function setWorkoutPlanPosition(planId: string, position: number) {
+  return supabase
+    .from('workout_plans')
+    .update({ position })
+    .eq('id', planId)
+    .select()
+    .single<WorkoutPlan>()
+}
+
 export async function getWorkoutPlan(planId: string) {
   return supabase.from('workout_plans').select('*').eq('id', planId).maybeSingle<WorkoutPlan>()
+}
+
+export async function updateWorkoutPlan(
+  planId: string,
+  input: { name: string; exercises: PlanExercise[] },
+) {
+  return supabase
+    .from('workout_plans')
+    .update(input)
+    .eq('id', planId)
+    .select()
+    .single<WorkoutPlan>()
 }
 
 export async function deleteWorkoutPlan(planId: string) {
