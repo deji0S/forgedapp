@@ -13,6 +13,7 @@ export interface WorkoutPlan {
   name: string
   workout_type: WorkoutTypePreference | null
   exercises: PlanExercise[]
+  position: number
   created_at: string
   updated_at: string
 }
