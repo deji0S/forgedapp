@@ -172,7 +172,11 @@ function Workouts() {
                   className="block flex-1 rounded-2xl border border-neutral-800 p-4 active:opacity-80"
                 >
                   <p className="font-medium text-white">{p.name}</p>
-                  <p className="mt-1 text-xs text-neutral-400">{p.exercises.length} exercises</p>
+                  <p className="mt-1 text-xs text-neutral-400 line-clamp-2">
+                    {p.exercises.length > 0
+                      ? p.exercises.map((ex) => ex.name).join(' · ')
+                      : 'No exercises'}
+                  </p>
                 </Link>
                 <button
                   type="button"
