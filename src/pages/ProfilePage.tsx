@@ -352,6 +352,7 @@ function ProfilePage() {
   const { user, profile, signOut } = useAuth()
   const { isPremium, subscription, loading: premiumLoading } = usePremium()
   const [streak, setStreak] = useState<Streak | null>(null)
+  const [confirmingSignOut, setConfirmingSignOut] = useState(false)
 
   useEffect(() => {
     if (!user) return
@@ -406,11 +407,46 @@ function ProfilePage() {
 
       <button
         type="button"
-        onClick={() => signOut()}
+        onClick={() => setConfirmingSignOut(true)}
         className="w-full rounded-xl bg-neutral-800 py-3 text-sm font-semibold text-white active:opacity-80"
       >
         Sign out
       </button>
+
+      {confirmingSignOut && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="signout-title"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-6"
+          onClick={() => setConfirmingSignOut(false)}
+        >
+          <div
+            className="w-full max-w-sm space-y-4 rounded-2xl border border-neutral-800 bg-neutral-950 p-5"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p id="signout-title" className="text-sm font-medium text-white">
+              Are you sure you want to sign out?
+            </p>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setConfirmingSignOut(false)}
+                className="flex-1 rounded-xl bg-neutral-800 py-3 text-sm font-semibold text-white active:opacity-80"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => signOut()}
+                className="flex-1 rounded-xl bg-red-600 py-3 text-sm font-semibold text-white active:opacity-80"
+              >
+                Sign out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
