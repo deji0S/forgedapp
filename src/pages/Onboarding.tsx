@@ -1,60 +1,10 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Navigate } from 'react-router-dom'
-import { cn } from '../lib/utils'
 import { useAuth } from '../lib/auth-context'
+import OptionGroup from '../components/OptionGroup'
+import { DAYS_PER_WEEK, FITNESS_LEVELS, GOALS, WORKOUT_TYPES } from '../lib/profile-options'
 import type { FitnessLevel, Goal, WorkoutTypePreference } from '../types/profile'
-
-const FITNESS_LEVELS: { value: FitnessLevel; label: string }[] = [
-  { value: 'beginner', label: 'Beginner' },
-  { value: 'intermediate', label: 'Intermediate' },
-  { value: 'advanced', label: 'Advanced' },
-]
-
-const GOALS: { value: Goal; label: string }[] = [
-  { value: 'lose_weight', label: 'Lose weight' },
-  { value: 'build_muscle', label: 'Build muscle' },
-  { value: 'improve_endurance', label: 'Improve endurance' },
-  { value: 'general_fitness', label: 'General fitness' },
-]
-
-const WORKOUT_TYPES: { value: WorkoutTypePreference; label: string }[] = [
-  { value: 'home', label: 'Home' },
-  { value: 'gym', label: 'Gym' },
-  { value: 'both', label: 'Both' },
-]
-
-const DAYS_PER_WEEK = [1, 2, 3, 4, 5, 6, 7]
-
-function OptionGroup<T extends string>({
-  options,
-  value,
-  onChange,
-}: {
-  options: { value: T; label: string }[]
-  value: T | null
-  onChange: (value: T) => void
-}) {
-  return (
-    <div className="flex flex-wrap gap-2">
-      {options.map((option) => (
-        <button
-          key={option.value}
-          type="button"
-          onClick={() => onChange(option.value)}
-          className={cn(
-            'rounded-xl border px-4 py-2 text-sm font-medium',
-            value === option.value
-              ? 'border-brand-500 bg-brand-500 text-white'
-              : 'border-neutral-800 text-neutral-300',
-          )}
-        >
-          {option.label}
-        </button>
-      ))}
-    </div>
-  )
-}
 
 function Onboarding() {
   const { session, profile, loading, completeOnboarding } = useAuth()

@@ -7,9 +7,11 @@ import { requestPushPermission } from '../lib/onesignal'
 import { getNotificationPreferences, saveNotificationPreferences } from '../lib/notifications'
 import { uploadAvatar } from '../lib/avatar'
 import ImageCropper from '../components/ImageCropper'
+import OptionGroup from '../components/OptionGroup'
+import { DAYS_PER_WEEK, FITNESS_LEVELS, GOALS, WORKOUT_TYPES } from '../lib/profile-options'
 import { getStreak } from '../lib/tracking'
 import type { NotificationPreferences } from '../types/notifications'
-import type { Profile } from '../types/profile'
+import type { FitnessLevel, Goal, Profile, WorkoutTypePreference } from '../types/profile'
 import type { Streak } from '../types/tracking'
 
 const GOAL_LABELS: Record<Profile['goal'], string> = {
@@ -237,6 +239,118 @@ function HandleCard() {
   )
 }
 
+function TrainingPrefsCard({ profile }: { profile: Profile }) {
+  const { updateProfilePreferences } = useAuth()
+  const [editing, setEditing] = useState(false)
+  const [fitnessLevel, setFitnessLevel] = useState<FitnessLevel>(profile.fitness_level)
+  const [goal, setGoal] = useState<Goal>(profile.goal)
+  const [workoutType, setWorkoutType] = useState<WorkoutTypePreference>(profile.workout_type)
+  const [daysPerWeek, setDaysPerWeek] = useState<number>(profile.days_per_week)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  function startEditing() {
+    setFitnessLevel(profile.fitness_level)
+    setGoal(profile.goal)
+    setWorkoutType(profile.workout_type)
+    setDaysPerWeek(profile.days_per_week)
+    setError(null)
+    setEditing(true)
+  }
+
+  async function handleSubmit(event: FormEvent) {
+    event.preventDefault()
+    setError(null)
+    setSaving(true)
+    const message = await updateProfilePreferences({
+      fitness_level: fitnessLevel,
+      goal,
+      workout_type: workoutType,
+      days_per_week: daysPerWeek,
+    })
+    setSaving(false)
+    if (message) {
+      setError(message)
+      return
+    }
+    setEditing(false)
+  }
+
+  if (editing) {
+    return (
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-4 rounded-2xl border border-neutral-800 p-4 text-sm"
+      >
+        <div className="space-y-2">
+          <p className="text-xs text-neutral-400">Fitness level</p>
+          <OptionGroup options={FITNESS_LEVELS} value={fitnessLevel} onChange={setFitnessLevel} />
+        </div>
+
+        <div className="space-y-2">
+          <p className="text-xs text-neutral-400">Goal</p>
+          <OptionGroup options={GOALS} value={goal} onChange={setGoal} />
+        </div>
+
+        <div className="space-y-2">
+          <p className="text-xs text-neutral-400">Workout type</p>
+          <OptionGroup options={WORKOUT_TYPES} value={workoutType} onChange={setWorkoutType} />
+        </div>
+
+        <div className="space-y-2">
+          <p className="text-xs text-neutral-400">Days per week</p>
+          <OptionGroup
+            options={DAYS_PER_WEEK.map((day) => ({ value: String(day), label: String(day) }))}
+            value={String(daysPerWeek)}
+            onChange={(value) => setDaysPerWeek(Number(value))}
+          />
+        </div>
+
+        {error && <p className="text-sm text-red-400">{error}</p>}
+
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => setEditing(false)}
+            disabled={saving}
+            className="flex-1 rounded-xl bg-neutral-800 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={saving}
+            className="flex-1 rounded-xl bg-brand-500 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+          >
+            {saving ? 'Saving…' : 'Save'}
+          </button>
+        </div>
+      </form>
+    )
+  }
+
+  return (
+    <div className="space-y-3 rounded-2xl border border-neutral-800 p-4 text-sm">
+      <div className="flex items-center justify-between">
+        <p className="font-medium text-white">Training preferences</p>
+        <button
+          type="button"
+          onClick={startEditing}
+          className="text-sm font-medium text-brand-400 active:opacity-80"
+        >
+          Edit
+        </button>
+      </div>
+      {profileDetails(profile).map((detail) => (
+        <p key={detail.label} className="flex justify-between">
+          <span className="text-neutral-400">{detail.label}</span>
+          <span className="font-medium text-white">{detail.value}</span>
+        </p>
+      ))}
+    </div>
+  )
+}
+
 function ProfilePage() {
   const { user, profile, signOut } = useAuth()
   const { isPremium, subscription, loading: premiumLoading } = usePremium()
@@ -305,16 +419,7 @@ function ProfilePage() {
         </span>
       </div>
 
-      {profile && (
-        <div className="space-y-3 rounded-2xl border border-neutral-800 p-4 text-sm">
-          {profileDetails(profile).map((detail) => (
-            <p key={detail.label} className="flex justify-between">
-              <span className="text-neutral-400">{detail.label}</span>
-              <span className="font-medium text-white">{detail.value}</span>
-            </p>
-          ))}
-        </div>
-      )}
+      {profile && <TrainingPrefsCard profile={profile} />}
 
       <Link
         to="/premium"
