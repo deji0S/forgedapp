@@ -6,6 +6,7 @@ export interface Profile {
   id: string
   username: string | null
   display_name: string | null
+  avatar_url: string | null
   fitness_level: FitnessLevel
   goal: Goal
   workout_type: WorkoutTypePreference

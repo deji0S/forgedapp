@@ -1,11 +1,100 @@
-import { useEffect, useState } from 'react'
-import type { FormEvent } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import type { ChangeEvent, FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/auth-context'
 import { usePremium } from '../lib/premium-context'
 import { requestPushPermission } from '../lib/onesignal'
 import { getNotificationPreferences, saveNotificationPreferences } from '../lib/notifications'
+import { uploadAvatar } from '../lib/avatar'
+import ImageCropper from '../components/ImageCropper'
 import type { NotificationPreferences } from '../types/notifications'
+
+function AvatarUpload() {
+  const { user, profile, updateProfileAvatar } = useAuth()
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [cropSrc, setCropSrc] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (!file) return
+    if (!file.type.startsWith('image/')) {
+      setError('Please choose an image file.')
+      return
+    }
+    setError(null)
+    setCropSrc(URL.createObjectURL(file))
+  }
+
+  function closeCropper() {
+    if (cropSrc) URL.revokeObjectURL(cropSrc)
+    setCropSrc(null)
+  }
+
+  async function handleCropConfirm(blob: Blob) {
+    if (!user) return
+    setUploading(true)
+    setError(null)
+    const { url, error: uploadError } = await uploadAvatar(user.id, blob)
+    if (uploadError || !url) {
+      setUploading(false)
+      setError(uploadError?.message ?? 'Could not upload image.')
+      closeCropper()
+      return
+    }
+    const message = await updateProfileAvatar(url)
+    setUploading(false)
+    closeCropper()
+    if (message) setError(message)
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <div className="relative">
+        {profile?.avatar_url ? (
+          <img
+            src={profile.avatar_url}
+            alt="Profile picture"
+            className="h-24 w-24 rounded-full border border-neutral-800 object-cover"
+          />
+        ) : (
+          <div className="flex h-24 w-24 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-neutral-500">
+            <svg viewBox="0 0 24 24" fill="currentColor" className="h-12 w-12">
+              <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2c0-2.76-3.58-5-8-5Z" />
+            </svg>
+          </div>
+        )}
+        {uploading && (
+          <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/60 text-xs text-white">
+            Saving…
+          </div>
+        )}
+      </div>
+
+      <button
+        type="button"
+        onClick={() => fileInputRef.current?.click()}
+        disabled={uploading}
+        className="text-sm font-medium text-brand-400 active:opacity-80 disabled:opacity-60"
+      >
+        Change photo
+      </button>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+        className="hidden"
+      />
+
+      {error && <p className="text-sm text-red-400">{error}</p>}
+
+      {cropSrc && <ImageCropper src={cropSrc} onCancel={closeCropper} onConfirm={handleCropConfirm} />}
+    </div>
+  )
+}
 
 function HandleCard() {
   const { profile, updateProfileHandle } = useAuth()
@@ -172,6 +261,8 @@ function ProfilePage() {
     <div className="space-y-4 p-4">
       <h1 className="text-2xl font-semibold text-white">Fitness Profile</h1>
       <p className="text-sm text-neutral-400">{user?.email}</p>
+
+      <AvatarUpload />
 
       <HandleCard />
 
