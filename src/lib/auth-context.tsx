@@ -14,6 +14,7 @@ interface AuthContextValue {
   signIn: (email: string, password: string) => Promise<string | null>
   signOut: () => Promise<void>
   completeOnboarding: (input: OnboardingInput) => Promise<string | null>
+  updateProfilePreferences: (input: OnboardingInput) => Promise<string | null>
   updateProfileHandle: (input: ProfileHandleInput) => Promise<string | null>
   updateProfileAvatar: (avatarUrl: string) => Promise<string | null>
 }
@@ -86,6 +87,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return null
   }
 
+  async function updateProfilePreferences(input: OnboardingInput) {
+    if (!session) return 'You must be signed in.'
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({
+        fitness_level: input.fitness_level,
+        goal: input.goal,
+        workout_type: input.workout_type,
+        days_per_week: input.days_per_week,
+      })
+      .eq('id', session.user.id)
+      .select()
+      .single()
+    if (error) return error.message
+    setProfile(data)
+    return null
+  }
+
   async function updateProfileHandle(input: ProfileHandleInput) {
     if (!session) return 'You must be signed in.'
     const { data, error } = await supabase
@@ -126,6 +145,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signIn,
         signOut,
         completeOnboarding,
+        updateProfilePreferences,
         updateProfileHandle,
         updateProfileAvatar,
       }}
