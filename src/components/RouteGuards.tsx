@@ -24,7 +24,7 @@ export function RequireOnboarding({ children }: { children: ReactNode }) {
 
   if (loading) return <FullScreenLoader />
   if (!session) return <Navigate to="/auth" replace />
-  if (!profile) return <Navigate to="/onboarding" replace />
+  if (!profile?.onboarded) return <Navigate to="/onboarding" replace />
 
   return children
 }

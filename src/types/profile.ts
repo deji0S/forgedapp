@@ -11,6 +11,7 @@ export interface Profile {
   goal: Goal
   workout_type: WorkoutTypePreference
   days_per_week: number
+  onboarded: boolean
   created_at: string
   updated_at: string
 }

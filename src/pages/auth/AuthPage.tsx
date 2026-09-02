@@ -6,19 +6,23 @@ import { useAuth } from '../../lib/auth-context'
 function AuthPage() {
   const { session, profile, signIn, signUp } = useAuth()
   const [mode, setMode] = useState<'sign-in' | 'sign-up'>('sign-in')
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
+  const [identifier, setIdentifier] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [checkEmail, setCheckEmail] = useState(false)
 
-  if (session) return <Navigate to={profile ? '/' : '/onboarding'} replace />
+  if (session) return <Navigate to={profile?.onboarded ? '/' : '/onboarding'} replace />
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     setError(null)
     setSubmitting(true)
-    const message = mode === 'sign-in' ? await signIn(email, password) : await signUp(email, password)
+    const message =
+      mode === 'sign-in'
+        ? await signIn(identifier, password)
+        : await signUp(identifier, password, username)
     setSubmitting(false)
 
     if (message) {
@@ -43,19 +47,55 @@ function AuthPage() {
 
       {checkEmail ? (
         <p className="text-sm text-neutral-300">
-          Check your inbox at <span className="font-medium">{email}</span> to confirm your account.
+          Check your inbox at <span className="font-medium">{identifier}</span> to confirm your
+          account.
         </p>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-3">
-          <input
-            type="email"
-            required
-            autoComplete="email"
-            placeholder="Email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-brand-500 focus:outline-none"
-          />
+          {mode === 'sign-up' && (
+            <div className="space-y-1 rounded-xl border border-neutral-800 bg-neutral-900 p-3">
+              <label htmlFor="username" className="block text-xs font-medium text-neutral-400">
+                Username
+              </label>
+              <input
+                id="username"
+                type="text"
+                required
+                autoComplete="username"
+                pattern="[a-z0-9_]{3,20}"
+                title="3–20 characters: lowercase letters, numbers, underscores"
+                placeholder="your_handle"
+                value={username}
+                onChange={(event) => setUsername(event.target.value.toLowerCase())}
+                className="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-white focus:border-brand-500 focus:outline-none"
+              />
+              <p className="text-xs text-neutral-500">
+                3–20 characters: lowercase letters, numbers, underscores. This is how others find you.
+              </p>
+            </div>
+          )}
+          {mode === 'sign-in' ? (
+            <input
+              type="text"
+              required
+              autoComplete="username"
+              autoCapitalize="none"
+              placeholder="Email or Username"
+              value={identifier}
+              onChange={(event) => setIdentifier(event.target.value)}
+              className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-brand-500 focus:outline-none"
+            />
+          ) : (
+            <input
+              type="email"
+              required
+              autoComplete="email"
+              placeholder="Email"
+              value={identifier}
+              onChange={(event) => setIdentifier(event.target.value)}
+              className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-brand-500 focus:outline-none"
+            />
+          )}
           <input
             type="password"
             required

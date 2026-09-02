@@ -10,8 +10,8 @@ interface AuthContextValue {
   user: User | null
   profile: Profile | null
   loading: boolean
-  signUp: (email: string, password: string) => Promise<string | null>
-  signIn: (email: string, password: string) => Promise<string | null>
+  signUp: (email: string, password: string, username: string) => Promise<string | null>
+  signIn: (identifier: string, password: string) => Promise<string | null>
   signOut: () => Promise<void>
   changePassword: (currentPassword: string, newPassword: string) => Promise<string | null>
   changeEmail: (newEmail: string) => Promise<string | null>
@@ -64,12 +64,75 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  async function signUp(email: string, password: string) {
-    const { error } = await supabase.auth.signUp({ email, password })
-    return error?.message ?? null
+  async function signUp(email: string, password: string, username: string) {
+    const handle = username.trim().toLowerCase()
+    if (!/^[a-z0-9_]{3,20}$/.test(handle)) {
+      return 'Username must be 3–20 characters: lowercase letters, numbers, or underscores.'
+    }
+
+    // With "Confirm email" on, signUp() won't error for an existing address
+    // (Supabase anti-enumeration), so ask the DB up front. email_registered
+    // and username_available are SECURITY DEFINER functions — see migrations
+    // 0010 and 0011.
+    const { data: alreadyRegistered, error: emailCheckError } = await supabase.rpc(
+      'email_registered',
+      { email_input: email },
+    )
+    if (!emailCheckError && alreadyRegistered === true) {
+      return 'An account with this email already exists — try logging in instead.'
+    }
+
+    const { data: usernameFree, error: usernameCheckError } = await supabase.rpc(
+      'username_available',
+      { username_input: handle },
+    )
+    if (!usernameCheckError && usernameFree === false) {
+      return 'That username is taken — please choose another.'
+    }
+
+    // Username is persisted to the profiles row by the on_auth_user_created
+    // trigger, which reads it from user metadata.
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { username: handle } },
+    })
+    if (error) {
+      // Belt and braces: signUp does surface this when "Confirm email" is off.
+      if (
+        error.code === 'user_already_exists' ||
+        /already registered|already exists/i.test(error.message)
+      ) {
+        return 'An account with this email already exists — try logging in instead.'
+      }
+      // The trigger's insert hit the unique username index between our check
+      // and now; Supabase reports this as a generic "database error".
+      if (/database error saving new user/i.test(error.message)) {
+        return 'That username was just taken — please choose another.'
+      }
+      return error.message
+    }
+    return null
   }
 
-  async function signIn(email: string, password: string) {
+  // `identifier` is an email (contains '@') or a username. Usernames are
+  // resolved to an email by the resolve-username edge function (service role);
+  // accounts that predate usernames just sign in with their email.
+  async function signIn(identifier: string, password: string) {
+    const trimmed = identifier.trim()
+    let email = trimmed
+
+    if (!trimmed.includes('@')) {
+      const { data, error } = await supabase.functions.invoke<{ email?: string; error?: string }>(
+        'resolve-username',
+        { body: { username: trimmed } },
+      )
+      if (error) return 'Could not sign you in. Please try again.'
+      if (data?.error) return data.error
+      if (!data?.email) return "We couldn't find an account with that username."
+      email = data.email
+    }
+
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     return error?.message ?? null
   }
@@ -121,7 +184,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!session) return 'You must be signed in.'
     const { data, error } = await supabase
       .from('profiles')
-      .upsert({ id: session.user.id, ...input })
+      .upsert({ id: session.user.id, ...input, onboarded: true })
       .select()
       .single()
     if (error) return error.message

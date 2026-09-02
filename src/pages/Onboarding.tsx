@@ -17,7 +17,7 @@ function Onboarding() {
 
   if (loading) return null
   if (!session) return <Navigate to="/auth" replace />
-  if (profile) return <Navigate to="/" replace />
+  if (profile?.onboarded) return <Navigate to="/" replace />
 
   const isComplete = fitnessLevel && goal && workoutType && daysPerWeek
 
