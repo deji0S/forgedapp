@@ -438,6 +438,17 @@ function ProfilePage() {
         <span className="text-neutral-500">→</span>
       </Link>
 
+      <Link
+        to="/settings"
+        className="flex items-center justify-between rounded-2xl border border-neutral-800 p-4 active:opacity-80"
+      >
+        <span>
+          <span className="block text-sm font-medium text-white">Settings</span>
+          <span className="block text-xs text-neutral-400">Password and email</span>
+        </span>
+        <span className="text-neutral-500">→</span>
+      </Link>
+
       <div className="space-y-3 rounded-2xl border border-neutral-800 p-4">
         <div className="flex items-center justify-between">
           <div>
