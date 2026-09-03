@@ -6,29 +6,28 @@ import { followUser, getFollowState, getPublicProfile, unfollowUser } from '../l
 import type { PublicProfile as PublicProfileType } from '../types/profile'
 import type { FollowState } from '../types/social'
 
-function FollowButton({ currentUserId, targetId }: { currentUserId: string; targetId: string }) {
-  const [state, setState] = useState<FollowState | null>(null)
+function FollowButton({
+  currentUserId,
+  targetId,
+  state,
+  onChange,
+}: {
+  currentUserId: string
+  targetId: string
+  state: FollowState | null
+  onChange: (state: FollowState) => void
+}) {
   const [pending, setPending] = useState(false)
-
-  useEffect(() => {
-    let active = true
-    getFollowState(currentUserId, targetId).then(({ data }) => {
-      if (active) setState(data)
-    })
-    return () => {
-      active = false
-    }
-  }, [currentUserId, targetId])
 
   async function handleClick() {
     if (!state || pending) return
     setPending(true)
     if (state.isFollowing) {
       const { error } = await unfollowUser(currentUserId, targetId)
-      if (!error) setState({ ...state, isFollowing: false })
+      if (!error) onChange({ ...state, isFollowing: false })
     } else {
       const { error } = await followUser(currentUserId, targetId)
-      if (!error) setState({ ...state, isFollowing: true })
+      if (!error) onChange({ ...state, isFollowing: true })
     }
     setPending(false)
   }
@@ -57,11 +56,12 @@ function PublicProfile() {
   const { id } = useParams<{ id: string }>()
   const { user } = useAuth()
   const [profile, setProfile] = useState<PublicProfileType | null>(null)
+  const [followState, setFollowState] = useState<FollowState | null>(null)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
 
   useEffect(() => {
-    if (!id) return
+    if (!id || !user) return
     let active = true
     setLoading(true)
     setNotFound(false)
@@ -71,10 +71,15 @@ function PublicProfile() {
       setNotFound(!data)
       setLoading(false)
     })
+    if (id !== user.id) {
+      getFollowState(user.id, id).then(({ data }) => {
+        if (active) setFollowState(data)
+      })
+    }
     return () => {
       active = false
     }
-  }, [id])
+  }, [id, user])
 
   return (
     <div className="space-y-4 p-4">
@@ -109,7 +114,22 @@ function PublicProfile() {
               {profile.username && <p className="text-neutral-400">@{profile.username}</p>}
             </div>
             {user && user.id !== profile.id && (
-              <FollowButton currentUserId={user.id} targetId={profile.id} />
+              <div className="flex items-center gap-2">
+                <FollowButton
+                  currentUserId={user.id}
+                  targetId={profile.id}
+                  state={followState}
+                  onChange={setFollowState}
+                />
+                {followState?.isFollowing && followState?.isFollowedBy && (
+                  <Link
+                    to={`/messages/${profile.id}`}
+                    className="rounded-xl border border-neutral-800 px-6 py-2 text-sm font-semibold text-white active:opacity-80"
+                  >
+                    Message
+                  </Link>
+                )}
+              </div>
             )}
           </div>
 
