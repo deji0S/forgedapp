@@ -6,37 +6,16 @@ import { usePremium } from '../lib/premium-context'
 import { uploadAvatar } from '../lib/avatar'
 import ImageCropper from '../components/ImageCropper'
 import OptionGroup from '../components/OptionGroup'
-import { DAYS_PER_WEEK, FITNESS_LEVELS, GOALS, WORKOUT_TYPES } from '../lib/profile-options'
+import {
+  DAYS_PER_WEEK,
+  FITNESS_LEVELS,
+  GOALS,
+  profileDetails,
+  WORKOUT_TYPES,
+} from '../lib/profile-options'
 import { getStreak } from '../lib/tracking'
 import type { FitnessLevel, Goal, Profile, WorkoutTypePreference } from '../types/profile'
 import type { Streak } from '../types/tracking'
-
-const GOAL_LABELS: Record<Profile['goal'], string> = {
-  lose_weight: 'Lose weight',
-  build_muscle: 'Build muscle',
-  improve_endurance: 'Improve endurance',
-  general_fitness: 'General fitness',
-}
-
-const WORKOUT_TYPE_LABELS: Record<Profile['workout_type'], string> = {
-  home: 'Home',
-  gym: 'Gym',
-  both: 'Home and gym',
-}
-
-function capitalize(value: string) {
-  return value.charAt(0).toUpperCase() + value.slice(1)
-}
-
-function profileDetails(profile: Profile): { label: string; value: string }[] {
-  const days = profile.days_per_week
-  return [
-    { label: 'Fitness level', value: capitalize(profile.fitness_level) },
-    { label: 'Goal', value: GOAL_LABELS[profile.goal] },
-    { label: 'Workout location', value: WORKOUT_TYPE_LABELS[profile.workout_type] },
-    { label: 'Training days', value: `${days} ${days === 1 ? 'day' : 'days'} a week` },
-  ]
-}
 
 function AvatarUpload() {
   const { user, profile, updateProfileAvatar } = useAuth()

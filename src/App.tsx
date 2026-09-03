@@ -11,6 +11,8 @@ import Premium from './pages/Premium'
 import Coach from './pages/Coach'
 import Workouts from './pages/Workouts'
 import WorkoutDetail from './pages/WorkoutDetail'
+import Connect from './pages/Connect'
+import PublicProfile from './pages/PublicProfile'
 
 function AppShell() {
   return (
@@ -20,6 +22,8 @@ function AppShell() {
         <Route path="/workouts" element={<Workouts />} />
         <Route path="/workouts/:id" element={<WorkoutDetail />} />
         <Route path="/progress" element={<Progress />} />
+        <Route path="/connect" element={<Connect />} />
+        <Route path="/connect/:id" element={<PublicProfile />} />
         <Route path="/coach" element={<Coach />} />
         <Route path="/premium" element={<Premium />} />
         <Route path="/profile" element={<ProfilePage />} />
