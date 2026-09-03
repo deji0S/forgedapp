@@ -62,7 +62,7 @@ export async function getFollowCounts(userId: string) {
   }
 }
 
-async function profilesInOrder(ids: string[]) {
+export async function getProfilesByIds(ids: string[]) {
   if (ids.length === 0) return { data: [] as PublicProfile[], error: null }
 
   const { data, error } = await supabase.from('profiles').select(PUBLIC_PROFILE_COLUMNS).in('id', ids)
@@ -80,7 +80,7 @@ export async function getFollowers(userId: string) {
     .eq('following_id', userId)
     .order('created_at', { ascending: false })
   if (error) return { data: [] as PublicProfile[], error }
-  return profilesInOrder(data.map((row) => row.follower_id))
+  return getProfilesByIds(data.map((row) => row.follower_id))
 }
 
 export async function getFollowing(userId: string) {
@@ -90,7 +90,7 @@ export async function getFollowing(userId: string) {
     .eq('follower_id', userId)
     .order('created_at', { ascending: false })
   if (error) return { data: [] as PublicProfile[], error }
-  return profilesInOrder(data.map((row) => row.following_id))
+  return getProfilesByIds(data.map((row) => row.following_id))
 }
 
 export async function followUser(currentUserId: string, targetId: string) {
