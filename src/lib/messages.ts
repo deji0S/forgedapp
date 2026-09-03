@@ -1,10 +1,13 @@
 import { supabase } from './supabase'
+import type { ChatAttachment } from './chat-media'
 import type { Message } from '../types/social'
+
+const MESSAGE_COLUMNS = 'id, sender_id, recipient_id, body, media_path, media_type, media_mime, created_at'
 
 export async function getConversation(currentUserId: string, otherUserId: string) {
   const { data, error } = await supabase
     .from('messages')
-    .select('id, sender_id, recipient_id, body, created_at')
+    .select(MESSAGE_COLUMNS)
     .or(
       `and(sender_id.eq.${currentUserId},recipient_id.eq.${otherUserId}),` +
         `and(sender_id.eq.${otherUserId},recipient_id.eq.${currentUserId})`,
@@ -13,11 +16,23 @@ export async function getConversation(currentUserId: string, otherUserId: string
   return { data: (data as Message[] | null) ?? [], error }
 }
 
-export async function sendMessage(senderId: string, recipientId: string, body: string) {
+export async function sendMessage(
+  senderId: string,
+  recipientId: string,
+  body: string | null,
+  attachment?: ChatAttachment | null,
+) {
   const { data, error } = await supabase
     .from('messages')
-    .insert({ sender_id: senderId, recipient_id: recipientId, body })
-    .select('id, sender_id, recipient_id, body, created_at')
+    .insert({
+      sender_id: senderId,
+      recipient_id: recipientId,
+      body,
+      media_path: attachment?.path ?? null,
+      media_type: attachment?.type ?? null,
+      media_mime: attachment?.mime ?? null,
+    })
+    .select(MESSAGE_COLUMNS)
     .single()
   return { data: data as Message | null, error }
 }
