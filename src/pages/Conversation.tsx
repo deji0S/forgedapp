@@ -209,12 +209,12 @@ function Conversation() {
     <div className="flex flex-col">
       <div className="sticky top-0 z-10 border-b border-neutral-800 bg-neutral-950/95 p-4 backdrop-blur">
         <div className="flex items-center gap-3">
-          <Link to={id ? `/connect/${id}` : '/connect'} className="text-brand-400 active:opacity-80">
+          <Link to="/messages" className="text-brand-400 active:opacity-80">
             ←
           </Link>
-          <p className="flex-1 font-medium text-white">
+          <Link to={id ? `/connect/${id}` : '/connect'} className="flex-1 font-medium text-white active:opacity-80">
             {profile?.display_name || profile?.username || 'Conversation'}
-          </p>
+          </Link>
           {!!streak?.current_streak && (
             <span className="rounded-full bg-neutral-800 px-3 py-1 text-xs font-semibold text-white">
               🔥 {streak.current_streak}-day streak
