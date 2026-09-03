@@ -6,9 +6,76 @@ import { getFollowState, getPublicProfile } from '../lib/social'
 import { getConversation, sendMessage, subscribeToIncomingMessages } from '../lib/messages'
 import { getChatMediaUrl, uploadChatAttachment, validateAttachment } from '../lib/chat-media'
 import type { ChatAttachment } from '../lib/chat-media'
-import { getChatStreak, recordChatOpen, subscribeToChatStreak } from '../lib/chat-streak'
+import {
+  chatStreakRecoveryEligibility,
+  getChatStreak,
+  getChatStreakRecoveryStatus,
+  recordChatOpen,
+  recoverChatStreak,
+  subscribeToChatStreak,
+} from '../lib/chat-streak'
+import type { RestoralStatus } from '../lib/streak'
+import { PremiumGate } from '../components/PremiumGate'
 import type { PublicProfile } from '../types/profile'
 import type { ChatStreak, Message } from '../types/social'
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+}
+
+function JointRestoralCard({
+  streak,
+  otherUserId,
+  onRestored,
+}: {
+  streak: ChatStreak
+  otherUserId: string
+  onRestored: (next: ChatStreak) => void
+}) {
+  const eligibility = chatStreakRecoveryEligibility(streak)
+  const [restoring, setRestoring] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  if (!eligibility.eligible) return null
+
+  async function handleRestore() {
+    setRestoring(true)
+    setError(null)
+    const { data, error: rpcError } = await recoverChatStreak(otherUserId)
+    setRestoring(false)
+    if (rpcError || !data) {
+      setError(rpcError?.message ?? 'Could not restore your joint streak.')
+      return
+    }
+    onRestored(data)
+  }
+
+  return (
+    <div className="space-y-3 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4">
+      <div>
+        <p className="text-sm font-semibold text-white">Joint streak at risk</p>
+        <p className="mt-1 text-xs text-neutral-300">
+          You missed {eligibility.missedDays} day{eligibility.missedDays === 1 ? '' : 's'} together.
+          Restore now to keep your {streak.longest_streak}-day best intact.
+        </p>
+      </div>
+      <PremiumGate
+        feature="Joint streak restoral"
+        description="Restore a lapsed joint streak once a week, usable by either of you."
+      >
+        <button
+          type="button"
+          onClick={handleRestore}
+          disabled={restoring}
+          className="w-full rounded-xl bg-amber-500 py-3 text-sm font-semibold text-black active:opacity-80 disabled:opacity-60"
+        >
+          {restoring ? 'Restoring…' : 'Restore joint streak'}
+        </button>
+      </PremiumGate>
+      {error && <p className="text-sm text-red-400">{error}</p>}
+    </div>
+  )
+}
 
 function MessageMedia({ message }: { message: Message }) {
   const [signedUrl, setSignedUrl] = useState<string | null>(null)
@@ -39,6 +106,7 @@ function Conversation() {
   const [profile, setProfile] = useState<PublicProfile | null>(null)
   const [canMessage, setCanMessage] = useState(false)
   const [streak, setStreak] = useState<ChatStreak | null>(null)
+  const [restoralStatus, setRestoralStatus] = useState<RestoralStatus | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [draft, setDraft] = useState('')
   const [attachment, setAttachment] = useState<ChatAttachment | null>(null)
@@ -69,6 +137,9 @@ function Conversation() {
             getChatStreak(user.id, id).then(({ data }) => {
               if (active) setStreak(data)
             })
+          })
+          getChatStreakRecoveryStatus(user.id, id).then((status) => {
+            if (active) setRestoralStatus(status)
           })
         }
       },
@@ -136,22 +207,41 @@ function Conversation() {
 
   return (
     <div className="flex flex-col">
-      <div className="sticky top-0 z-10 flex items-center gap-3 border-b border-neutral-800 bg-neutral-950/95 p-4 backdrop-blur">
-        <Link to={id ? `/connect/${id}` : '/connect'} className="text-brand-400 active:opacity-80">
-          ←
-        </Link>
-        <p className="flex-1 font-medium text-white">
-          {profile?.display_name || profile?.username || 'Conversation'}
-        </p>
-        {!!streak?.current_streak && (
-          <span className="rounded-full bg-neutral-800 px-3 py-1 text-xs font-semibold text-white">
-            🔥 {streak.current_streak}-day streak
-          </span>
+      <div className="sticky top-0 z-10 border-b border-neutral-800 bg-neutral-950/95 p-4 backdrop-blur">
+        <div className="flex items-center gap-3">
+          <Link to={id ? `/connect/${id}` : '/connect'} className="text-brand-400 active:opacity-80">
+            ←
+          </Link>
+          <p className="flex-1 font-medium text-white">
+            {profile?.display_name || profile?.username || 'Conversation'}
+          </p>
+          {!!streak?.current_streak && (
+            <span className="rounded-full bg-neutral-800 px-3 py-1 text-xs font-semibold text-white">
+              🔥 {streak.current_streak}-day streak
+            </span>
+          )}
+        </div>
+        {canMessage && restoralStatus && (
+          <p className="mt-1 pl-7 text-xs text-neutral-500">
+            Joint restoral:{' '}
+            {restoralStatus.remaining > 0 ? 'available' : `resets ${formatDate(restoralStatus.nextAvailable!)}`}
+          </p>
         )}
       </div>
 
       <div className="space-y-2 p-4">
         {loading && <p className="text-sm text-neutral-400">Loading…</p>}
+
+        {!loading && streak && id && (
+          <JointRestoralCard
+            streak={streak}
+            otherUserId={id}
+            onRestored={(next) => {
+              setStreak(next)
+              if (user) getChatStreakRecoveryStatus(user.id, id).then(setRestoralStatus)
+            }}
+          />
+        )}
 
         {!loading &&
           messages.map((message) => {

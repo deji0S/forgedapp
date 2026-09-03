@@ -15,8 +15,29 @@ import {
 } from '../lib/profile-options'
 import { getFollowCounts } from '../lib/social'
 import { getStreak } from '../lib/tracking'
+import { getStreakRecoveryStatus } from '../lib/streak'
+import type { RestoralStatus } from '../lib/streak'
 import type { FitnessLevel, Goal, Profile, WorkoutTypePreference } from '../types/profile'
 import type { Streak } from '../types/tracking'
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+}
+
+function RestoralStatusCard({ status }: { status: RestoralStatus | null }) {
+  return (
+    <div className="flex items-center justify-between rounded-2xl border border-neutral-800 p-4 text-sm">
+      <span className="text-neutral-400">Streak restoral</span>
+      <span className="font-medium text-white">
+        {status === null
+          ? '—'
+          : status.remaining > 0
+            ? 'Available'
+            : `Resets ${formatDate(status.nextAvailable!)}`}
+      </span>
+    </div>
+  )
+}
 
 function FollowCounts({ userId }: { userId: string }) {
   const [counts, setCounts] = useState<{ followers: number; following: number } | null>(null)
@@ -353,11 +374,13 @@ function ProfilePage() {
   const { user, profile, signOut } = useAuth()
   const { isPremium, subscription, loading: premiumLoading } = usePremium()
   const [streak, setStreak] = useState<Streak | null>(null)
+  const [restoralStatus, setRestoralStatus] = useState<RestoralStatus | null>(null)
   const [confirmingSignOut, setConfirmingSignOut] = useState(false)
 
   useEffect(() => {
     if (!user) return
     getStreak(user.id).then(({ data }) => setStreak(data))
+    getStreakRecoveryStatus(user.id).then(setRestoralStatus)
   }, [user])
 
   return (
@@ -377,6 +400,8 @@ function ProfilePage() {
           {streak?.current_streak ?? 0} {(streak?.current_streak ?? 0) === 1 ? 'day' : 'days'}
         </span>
       </div>
+
+      <RestoralStatusCard status={restoralStatus} />
 
       {profile && <TrainingPrefsCard profile={profile} />}
 

@@ -8,7 +8,12 @@ export interface RecoveryEligibility {
   reason: string | null
 }
 
-function isoDaysAgo(n: number): string {
+export interface RestoralStatus {
+  remaining: number
+  nextAvailable: string | null
+}
+
+export function isoDaysAgo(n: number): string {
   const d = new Date()
   d.setUTCHours(0, 0, 0, 0)
   d.setUTCDate(d.getUTCDate() - n)
@@ -41,4 +46,24 @@ export function recoveryEligibility(streak: Streak | null): RecoveryEligibility 
 
 export async function recoverStreak() {
   return supabase.rpc('recover_streak').single<Streak>()
+}
+
+/**
+ * Remaining personal streak recoveries, from the same rolling window
+ * public.recover_streak() enforces (30 days since the last use).
+ */
+export async function getStreakRecoveryStatus(userId: string): Promise<RestoralStatus> {
+  const { data } = await supabase
+    .from('streak_recoveries')
+    .select('created_at')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (!data) return { remaining: 1, nextAvailable: null }
+
+  const nextAvailable = new Date(new Date(data.created_at).getTime() + 30 * 24 * 60 * 60 * 1000)
+  const remaining = nextAvailable.getTime() <= Date.now() ? 1 : 0
+  return { remaining, nextAvailable: remaining === 0 ? nextAvailable.toISOString() : null }
 }
