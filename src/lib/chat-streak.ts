@@ -1,4 +1,6 @@
 import { supabase } from './supabase'
+import { isoDaysAgo } from './streak'
+import type { RecoveryEligibility, RestoralStatus } from './streak'
 import type { ChatStreak } from '../types/social'
 
 function todayIsoDate() {
@@ -29,6 +31,61 @@ export async function getChatStreak(userId: string, otherUserId: string) {
     )
     .maybeSingle()
   return { data: data as ChatStreak | null, error }
+}
+
+/**
+ * Client-side mirror of the eligibility checks in public.recover_chat_streak
+ * (migration 0018) — same 1-2 day lapse window as recoveryEligibility in
+ * lib/streak.ts, applied to last_joint_date instead of last_activity_date.
+ * The database function is the real gate.
+ */
+export function chatStreakRecoveryEligibility(streak: ChatStreak | null): RecoveryEligibility {
+  if (!streak || !streak.last_joint_date) {
+    return { eligible: false, missedDays: 0, reason: 'No joint streak to restore yet.' }
+  }
+  const last = streak.last_joint_date
+  const yesterday = isoDaysAgo(1)
+  const threeDaysAgo = isoDaysAgo(3)
+
+  if (last >= yesterday) {
+    return { eligible: false, missedDays: 0, reason: 'Your joint streak is still active.' }
+  }
+  if (last < threeDaysAgo) {
+    return { eligible: false, missedDays: 0, reason: 'This joint streak lapsed too long ago to restore.' }
+  }
+  const missedDays = last === isoDaysAgo(2) ? 1 : 2
+  return { eligible: true, missedDays, reason: null }
+}
+
+export async function recoverChatStreak(otherUserId: string) {
+  return supabase.rpc('recover_chat_streak', { p_other_user_id: otherUserId }).single<ChatStreak>()
+}
+
+/**
+ * Remaining joint streak restorals for this pair, from the same rolling
+ * window public.recover_chat_streak() enforces (7 days since either
+ * participant last used it for this pair).
+ */
+export async function getChatStreakRecoveryStatus(
+  userId: string,
+  otherUserId: string,
+): Promise<RestoralStatus> {
+  const { data } = await supabase
+    .from('chat_streak_recoveries')
+    .select('created_at')
+    .or(
+      `and(user_a_id.eq.${userId},user_b_id.eq.${otherUserId}),` +
+        `and(user_a_id.eq.${otherUserId},user_b_id.eq.${userId})`,
+    )
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (!data) return { remaining: 1, nextAvailable: null }
+
+  const nextAvailable = new Date(new Date(data.created_at).getTime() + 7 * 24 * 60 * 60 * 1000)
+  const remaining = nextAvailable.getTime() <= Date.now() ? 1 : 0
+  return { remaining, nextAvailable: remaining === 0 ? nextAvailable.toISOString() : null }
 }
 
 // The streak row's own RLS already limits delivery to rows the current user
