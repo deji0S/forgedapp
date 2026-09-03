@@ -13,6 +13,7 @@ import Workouts from './pages/Workouts'
 import WorkoutDetail from './pages/WorkoutDetail'
 import Connect from './pages/Connect'
 import PublicProfile from './pages/PublicProfile'
+import FollowList from './pages/FollowList'
 
 function AppShell() {
   return (
@@ -27,6 +28,8 @@ function AppShell() {
         <Route path="/coach" element={<Coach />} />
         <Route path="/premium" element={<Premium />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/profile/followers" element={<FollowList kind="followers" />} />
+        <Route path="/profile/following" element={<FollowList kind="following" />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
       <BottomNav />
