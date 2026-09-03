@@ -13,9 +13,31 @@ import {
   profileDetails,
   WORKOUT_TYPES,
 } from '../lib/profile-options'
+import { getFollowCounts } from '../lib/social'
 import { getStreak } from '../lib/tracking'
 import type { FitnessLevel, Goal, Profile, WorkoutTypePreference } from '../types/profile'
 import type { Streak } from '../types/tracking'
+
+function FollowCounts({ userId }: { userId: string }) {
+  const [counts, setCounts] = useState<{ followers: number; following: number } | null>(null)
+
+  useEffect(() => {
+    getFollowCounts(userId).then(({ followers, following }) => setCounts({ followers, following }))
+  }, [userId])
+
+  return (
+    <div className="flex divide-x divide-neutral-800 rounded-2xl border border-neutral-800 text-sm">
+      <Link to="/profile/followers" className="flex-1 space-y-1 p-4 text-center active:opacity-80">
+        <p className="text-lg font-semibold text-white">{counts?.followers ?? '—'}</p>
+        <p className="text-neutral-400">Followers</p>
+      </Link>
+      <Link to="/profile/following" className="flex-1 space-y-1 p-4 text-center active:opacity-80">
+        <p className="text-lg font-semibold text-white">{counts?.following ?? '—'}</p>
+        <p className="text-neutral-400">Following</p>
+      </Link>
+    </div>
+  )
+}
 
 function AvatarUpload() {
   const { user, profile, updateProfileAvatar } = useAuth()
@@ -346,6 +368,8 @@ function ProfilePage() {
       <AvatarUpload />
 
       <HandleCard />
+
+      {user && <FollowCounts userId={user.id} />}
 
       <div className="flex items-center justify-between rounded-2xl border border-neutral-800 p-4 text-sm">
         <span className="text-neutral-400">Current streak</span>

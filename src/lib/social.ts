@@ -50,6 +50,49 @@ export async function getFollowState(currentUserId: string, targetId: string) {
   return { data: state, error: null }
 }
 
+export async function getFollowCounts(userId: string) {
+  const [followers, following] = await Promise.all([
+    supabase.from('follows').select('follower_id', { count: 'exact', head: true }).eq('following_id', userId),
+    supabase.from('follows').select('following_id', { count: 'exact', head: true }).eq('follower_id', userId),
+  ])
+  return {
+    followers: followers.count ?? 0,
+    following: following.count ?? 0,
+    error: followers.error ?? following.error ?? null,
+  }
+}
+
+async function profilesInOrder(ids: string[]) {
+  if (ids.length === 0) return { data: [] as PublicProfile[], error: null }
+
+  const { data, error } = await supabase.from('profiles').select(PUBLIC_PROFILE_COLUMNS).in('id', ids)
+  if (error) return { data: [] as PublicProfile[], error }
+
+  const byId = new Map((data as PublicProfile[]).map((profile) => [profile.id, profile]))
+  const ordered = ids.map((id) => byId.get(id)).filter((profile): profile is PublicProfile => !!profile)
+  return { data: ordered, error: null }
+}
+
+export async function getFollowers(userId: string) {
+  const { data, error } = await supabase
+    .from('follows')
+    .select('follower_id')
+    .eq('following_id', userId)
+    .order('created_at', { ascending: false })
+  if (error) return { data: [] as PublicProfile[], error }
+  return profilesInOrder(data.map((row) => row.follower_id))
+}
+
+export async function getFollowing(userId: string) {
+  const { data, error } = await supabase
+    .from('follows')
+    .select('following_id')
+    .eq('follower_id', userId)
+    .order('created_at', { ascending: false })
+  if (error) return { data: [] as PublicProfile[], error }
+  return profilesInOrder(data.map((row) => row.following_id))
+}
+
 export async function followUser(currentUserId: string, targetId: string) {
   const { error } = await supabase
     .from('follows')
