@@ -60,7 +60,7 @@ function Connect() {
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search by username or name"
         autoComplete="off"
-        className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white placeholder:text-neutral-500 focus:border-brand-500 focus:outline-none"
+        className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white placeholder:text-neutral-500 focus:border-white focus:outline-none"
       />
 
       {loading && <p className="text-sm text-neutral-400">Searching…</p>}

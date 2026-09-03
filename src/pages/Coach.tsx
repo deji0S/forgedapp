@@ -26,7 +26,7 @@ function CoachReportView({ logs, loading }: { logs: WorkoutLog[]; loading: boole
       <ul className="space-y-3">
         {report.points.map((point) => (
           <li key={point.label} className="rounded-2xl border border-neutral-800 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-brand-400">
+            <p className="text-xs font-semibold uppercase tracking-wide text-blue-400">
               {point.label}
             </p>
             <p className="mt-1 text-sm text-neutral-200">{point.detail}</p>

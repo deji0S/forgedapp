@@ -40,7 +40,7 @@ function AdvancedAnalytics({ logs }: { logs: WorkoutLog[] }) {
           {weeks.map((week) => (
             <div key={week.weekStart} className="flex flex-1 flex-col items-center gap-1">
               <div
-                className="w-full rounded-t bg-brand-500"
+                className="w-full rounded-t bg-blue-500"
                 style={{ height: `${Math.round((week.reps / maxWeekReps) * 96) + 4}px` }}
               />
               <span className="text-[10px] text-neutral-500">{week.label}</span>
@@ -90,12 +90,12 @@ function AdvancedAnalytics({ logs }: { logs: WorkoutLog[] }) {
         ) : (
           <div className="flex overflow-hidden rounded-lg text-center text-[10px] font-medium text-white">
             {feedback.too_easy > 0 && (
-              <div className="bg-brand-700 py-1" style={{ width: `${(feedback.too_easy / feedbackTotal) * 100}%` }}>
+              <div className="bg-blue-700 py-1" style={{ width: `${(feedback.too_easy / feedbackTotal) * 100}%` }}>
                 Easy
               </div>
             )}
             {feedback.just_right > 0 && (
-              <div className="bg-brand-500 py-1" style={{ width: `${(feedback.just_right / feedbackTotal) * 100}%` }}>
+              <div className="bg-blue-500 py-1" style={{ width: `${(feedback.just_right / feedbackTotal) * 100}%` }}>
                 Right
               </div>
             )}

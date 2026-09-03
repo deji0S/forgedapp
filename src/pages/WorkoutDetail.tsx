@@ -76,7 +76,7 @@ function WorkoutDetail() {
     return (
       <div className="space-y-3 p-4">
         <p className="text-sm text-neutral-400">Workout not found.</p>
-        <Link to="/workouts" className="text-sm font-medium text-brand-400">
+        <Link to="/workouts" className="text-sm font-medium text-white">
           Back to workouts
         </Link>
       </div>
@@ -111,8 +111,8 @@ function WorkoutDetail() {
       {error && <p className="text-sm text-red-400">{error}</p>}
 
       {loggedWorkoutId ? (
-        <div className="space-y-4 rounded-2xl border border-brand-500 bg-brand-500/10 p-4">
-          <p className="text-center text-sm font-semibold text-brand-400">Workout logged 🎉</p>
+        <div className="space-y-4 rounded-2xl border border-green-500 bg-green-500/10 p-4">
+          <p className="text-center text-sm font-semibold text-green-400">Workout logged 🎉</p>
 
           {insightLoading ? (
             <div className="space-y-2">
@@ -120,16 +120,16 @@ function WorkoutDetail() {
               <div className="h-4 w-3/5 animate-pulse rounded bg-white/10" />
             </div>
           ) : insight ? (
-            <div className="space-y-2 border-t border-brand-500/30 pt-3">
+            <div className="space-y-2 border-t border-green-500/30 pt-3">
               <p className="text-sm text-white">{insight.message}</p>
-              <p className="text-xs text-brand-300">
+              <p className="text-xs text-green-300">
                 <span className="font-semibold">Next time: </span>
                 {insight.suggestion}
               </p>
             </div>
           ) : null}
 
-          <div className="space-y-2 border-t border-brand-500/30 pt-3">
+          <div className="space-y-2 border-t border-green-500/30 pt-3">
             <p className="text-xs text-neutral-300">How did it feel?</p>
             <div className="flex gap-2">
               {FEEDBACK_OPTIONS.map((option) => (
@@ -140,7 +140,7 @@ function WorkoutDetail() {
                   className={cn(
                     'flex-1 rounded-lg border px-2 py-2 text-xs font-medium',
                     feedback === option.value
-                      ? 'border-brand-400 bg-brand-500 text-white'
+                      ? 'border-green-400 bg-green-500 text-white'
                       : 'border-neutral-700 text-neutral-300',
                   )}
                 >
@@ -152,7 +152,7 @@ function WorkoutDetail() {
 
           <Link
             to="/"
-            className="block w-full rounded-xl bg-brand-500 py-3 text-center text-sm font-semibold text-white active:opacity-80"
+            className="block w-full rounded-xl bg-green-500 py-3 text-center text-sm font-semibold text-white active:opacity-80"
           >
             Back to home
           </Link>
@@ -162,7 +162,7 @@ function WorkoutDetail() {
           type="button"
           onClick={handleComplete}
           disabled={completing}
-          className="w-full rounded-xl bg-brand-500 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+          className="w-full rounded-xl bg-white py-3 text-sm font-semibold text-black active:opacity-80 disabled:opacity-60"
         >
           {completing ? 'Logging…' : 'Complete workout'}
         </button>

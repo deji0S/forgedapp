@@ -66,7 +66,7 @@ function WorkoutForm({
         placeholder="Workout name"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-brand-500 focus:outline-none"
+        className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-white focus:outline-none"
       />
 
       <div className="space-y-2">
@@ -77,7 +77,7 @@ function WorkoutForm({
               placeholder="Exercise"
               value={exercise.name}
               onChange={(e) => updateExercise(index, { name: e.target.value })}
-              className="min-w-0 flex-1 rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2 text-sm text-white focus:border-brand-500 focus:outline-none"
+              className="min-w-0 flex-1 rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2 text-sm text-white focus:border-white focus:outline-none"
             />
             <input
               type="number"
@@ -85,7 +85,7 @@ function WorkoutForm({
               aria-label="Sets"
               value={exercise.sets}
               onChange={(e) => updateExercise(index, { sets: Number(e.target.value) })}
-              className="w-14 rounded-lg border border-neutral-800 bg-neutral-900 px-2 py-2 text-center text-sm text-white focus:border-brand-500 focus:outline-none"
+              className="w-14 rounded-lg border border-neutral-800 bg-neutral-900 px-2 py-2 text-center text-sm text-white focus:border-white focus:outline-none"
             />
             <span className="text-xs text-neutral-500">×</span>
             <input
@@ -94,7 +94,7 @@ function WorkoutForm({
               aria-label="Reps"
               value={exercise.reps}
               onChange={(e) => updateExercise(index, { reps: Number(e.target.value) })}
-              className="w-14 rounded-lg border border-neutral-800 bg-neutral-900 px-2 py-2 text-center text-sm text-white focus:border-brand-500 focus:outline-none"
+              className="w-14 rounded-lg border border-neutral-800 bg-neutral-900 px-2 py-2 text-center text-sm text-white focus:border-white focus:outline-none"
             />
             {exercises.length > 1 && (
               <button
@@ -113,7 +113,7 @@ function WorkoutForm({
       <button
         type="button"
         onClick={() => setExercises((prev) => [...prev, { ...BLANK_EXERCISE }])}
-        className="text-sm font-medium text-brand-400"
+        className="text-sm font-medium text-white"
       >
         + Add exercise
       </button>
@@ -134,7 +134,7 @@ function WorkoutForm({
         <button
           type="submit"
           disabled={submitting}
-          className="flex-1 rounded-xl bg-brand-500 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+          className="flex-1 rounded-xl bg-white py-3 text-sm font-semibold text-black active:opacity-80 disabled:opacity-60"
         >
           {submitting ? 'Saving…' : submitLabel}
         </button>

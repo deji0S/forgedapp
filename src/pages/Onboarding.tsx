@@ -75,7 +75,7 @@ function Onboarding() {
       <button
         type="submit"
         disabled={!isComplete || submitting}
-        className="w-full rounded-xl bg-brand-500 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-40"
+        className="w-full rounded-xl bg-white py-3 text-sm font-semibold text-black active:opacity-80 disabled:opacity-40"
       >
         {submitting ? 'Saving…' : 'Finish setup'}
       </button>

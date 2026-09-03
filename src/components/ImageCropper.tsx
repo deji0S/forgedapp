@@ -135,7 +135,7 @@ function ImageCropper({ src, onCancel, onConfirm }: ImageCropperProps) {
         value={scale}
         onChange={(e) => handleZoomChange(Number(e.target.value))}
         disabled={!natural}
-        className="w-full max-w-xs accent-brand-500"
+        className="w-full max-w-xs accent-white"
         aria-label="Zoom"
       />
 
@@ -152,7 +152,7 @@ function ImageCropper({ src, onCancel, onConfirm }: ImageCropperProps) {
           type="button"
           onClick={handleConfirm}
           disabled={!natural || saving}
-          className="flex-1 rounded-xl bg-brand-500 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+          className="flex-1 rounded-xl bg-white py-3 text-sm font-semibold text-black active:opacity-80 disabled:opacity-60"
         >
           {saving ? 'Saving…' : 'Save'}
         </button>

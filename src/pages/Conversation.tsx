@@ -73,7 +73,7 @@ function JointRestoralCard({
           type="button"
           onClick={handleRestore}
           disabled={restoring}
-          className="w-full rounded-xl bg-amber-500 py-3 text-sm font-semibold text-black active:opacity-80 disabled:opacity-60"
+          className="w-full rounded-xl bg-blue-500 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
         >
           {restoring ? 'Restoring…' : 'Restore joint streak'}
         </button>
@@ -142,12 +142,12 @@ function MessageGroup({
         <div
           key={message.id}
           className={`max-w-[75%] space-y-1 rounded-2xl px-3 py-2 text-sm ${
-            mine ? 'bg-brand-500 text-white' : 'bg-neutral-800 text-white'
+            mine ? 'bg-white text-black' : 'bg-neutral-800 text-white'
           }`}
         >
           {message.media_path && <MessageMedia message={message} />}
           {message.body && <p className="whitespace-pre-wrap break-words px-1">{message.body}</p>}
-          <p className={`flex items-center gap-1 px-1 text-[10px] ${mine ? 'text-white/70' : 'text-neutral-400'}`}>
+          <p className={`flex items-center gap-1 px-1 text-[10px] ${mine ? 'text-black/60' : 'text-neutral-400'}`}>
             {formatMessageTime(message.created_at)}
             {mine && message.read_at && <span aria-label="Read">✓</span>}
           </p>
@@ -297,9 +297,9 @@ function Conversation() {
 
   return (
     <div className="flex flex-col">
-      <div className="sticky top-0 z-10 border-b border-neutral-800 bg-neutral-950/95 p-4 backdrop-blur">
+      <div className="sticky top-0 z-10 border-b border-neutral-800 bg-black/95 p-4 backdrop-blur">
         <div className="flex items-center gap-3">
-          <Link to="/messages" className="text-brand-400 active:opacity-80">
+          <Link to="/messages" className="text-white active:opacity-80">
             ←
           </Link>
           <Link to={id ? `/connect/${id}` : '/connect'} className="flex-1 font-medium text-white active:opacity-80">
@@ -365,7 +365,7 @@ function Conversation() {
       </div>
 
       {canMessage ? (
-        <div className="sticky bottom-20 space-y-2 border-t border-neutral-800 bg-neutral-950/95 p-4 backdrop-blur">
+        <div className="sticky bottom-20 space-y-2 border-t border-neutral-800 bg-black/95 p-4 backdrop-blur">
           {attachment && (
             <div className="flex items-center justify-between rounded-xl border border-neutral-800 p-2 text-xs text-neutral-300">
               <span>{attachment.type === 'video' ? '🎥 Video attached' : '🖼️ Photo attached'}</span>
@@ -403,12 +403,12 @@ function Conversation() {
               placeholder="Message…"
               maxLength={2000}
               autoComplete="off"
-              className="flex-1 rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white placeholder:text-neutral-500 focus:border-brand-500 focus:outline-none"
+              className="flex-1 rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white placeholder:text-neutral-500 focus:border-white focus:outline-none"
             />
             <button
               type="submit"
               disabled={sending || uploading || (!draft.trim() && !attachment)}
-              className="rounded-xl bg-brand-500 px-5 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+              className="rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black active:opacity-80 disabled:opacity-60"
             >
               Send
             </button>
@@ -416,7 +416,7 @@ function Conversation() {
         </div>
       ) : (
         !loading && (
-          <p className="sticky bottom-20 border-t border-neutral-800 bg-neutral-950/95 p-4 text-center text-sm text-neutral-400 backdrop-blur">
+          <p className="sticky bottom-20 border-t border-neutral-800 bg-black/95 p-4 text-center text-sm text-neutral-400 backdrop-blur">
             You can message each other once you both follow each other.
           </p>
         )

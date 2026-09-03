@@ -70,7 +70,7 @@ function Premium() {
       </div>
 
       {checkoutResult === 'success' && !isPremium && (
-        <p className="rounded-xl bg-brand-500/15 p-3 text-sm text-brand-300">
+        <p className="rounded-xl bg-blue-500/15 p-3 text-sm text-blue-300">
           Payment received — activating your premium access…
         </p>
       )}
@@ -97,7 +97,7 @@ function Premium() {
         <div className="h-12 animate-pulse rounded-xl bg-neutral-900" />
       ) : isPremium ? (
         <div className="space-y-3">
-          <p className="rounded-xl bg-brand-500/15 p-3 text-center text-sm font-medium text-brand-300">
+          <p className="rounded-xl bg-blue-500/15 p-3 text-center text-sm font-medium text-blue-300">
             You’re on Premium
             {subscription?.cancel_at_period_end ? ' — cancels at period end' : ''}.
           </p>
@@ -115,7 +115,7 @@ function Premium() {
           type="button"
           onClick={() => handle('checkout')}
           disabled={busy}
-          className="w-full rounded-xl bg-brand-500 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+          className="w-full rounded-xl bg-blue-500 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
         >
           {busy ? 'Redirecting…' : 'Upgrade to Premium'}
         </button>

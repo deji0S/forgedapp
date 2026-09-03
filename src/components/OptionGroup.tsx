@@ -19,7 +19,7 @@ export default function OptionGroup<T extends string>({
           className={cn(
             'rounded-xl border px-4 py-2 text-sm font-medium',
             value === option.value
-              ? 'border-brand-500 bg-brand-500 text-white'
+              ? 'border-white bg-white text-black'
               : 'border-neutral-800 text-neutral-300',
           )}
         >

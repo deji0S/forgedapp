@@ -235,7 +235,7 @@ function Workouts() {
           onClick={() => !deleteBusy && setDeletingId(null)}
         >
           <div
-            className="w-full max-w-sm space-y-4 rounded-2xl border border-neutral-800 bg-neutral-950 p-5"
+            className="w-full max-w-sm space-y-4 rounded-2xl border border-neutral-800 bg-black p-5"
             onClick={(e) => e.stopPropagation()}
           >
             <p id="delete-workout-title" className="text-sm font-medium text-white">

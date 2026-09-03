@@ -67,7 +67,7 @@ function AuthPage() {
                 placeholder="your_handle"
                 value={username}
                 onChange={(event) => setUsername(event.target.value.toLowerCase())}
-                className="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-white focus:border-brand-500 focus:outline-none"
+                className="w-full rounded-lg border border-neutral-800 bg-black px-3 py-2 text-sm text-white focus:border-white focus:outline-none"
               />
               <p className="text-xs text-neutral-500">
                 3–20 characters: lowercase letters, numbers, underscores. This is how others find you.
@@ -83,7 +83,7 @@ function AuthPage() {
               placeholder="Email or Username"
               value={identifier}
               onChange={(event) => setIdentifier(event.target.value)}
-              className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-brand-500 focus:outline-none"
+              className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-white focus:outline-none"
             />
           ) : (
             <input
@@ -93,7 +93,7 @@ function AuthPage() {
               placeholder="Email"
               value={identifier}
               onChange={(event) => setIdentifier(event.target.value)}
-              className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-brand-500 focus:outline-none"
+              className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-white focus:outline-none"
             />
           )}
           <input
@@ -104,13 +104,13 @@ function AuthPage() {
             placeholder="Password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-brand-500 focus:outline-none"
+            className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-white focus:outline-none"
           />
           {error && <p className="text-sm text-red-400">{error}</p>}
           <button
             type="submit"
             disabled={submitting}
-            className="w-full rounded-xl bg-brand-500 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+            className="w-full rounded-xl bg-white py-3 text-sm font-semibold text-black active:opacity-80 disabled:opacity-60"
           >
             {submitting ? 'Please wait…' : mode === 'sign-in' ? 'Sign in' : 'Sign up'}
           </button>
@@ -124,7 +124,7 @@ function AuthPage() {
             setMode(mode === 'sign-in' ? 'sign-up' : 'sign-in')
             setError(null)
           }}
-          className="text-sm font-medium text-brand-400"
+          className="text-sm font-medium text-white"
         >
           {mode === 'sign-in' ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
         </button>
