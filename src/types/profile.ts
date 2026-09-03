@@ -16,6 +16,18 @@ export interface Profile {
   updated_at: string
 }
 
+export type PublicProfile = Pick<
+  Profile,
+  | 'id'
+  | 'username'
+  | 'display_name'
+  | 'avatar_url'
+  | 'fitness_level'
+  | 'goal'
+  | 'workout_type'
+  | 'days_per_week'
+>
+
 export interface ProfileHandleInput {
   username: string
   display_name: string
