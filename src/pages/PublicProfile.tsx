@@ -1,11 +1,61 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { useAuth } from '../lib/auth-context'
 import { profileDetails } from '../lib/profile-options'
-import { getPublicProfile } from '../lib/social'
+import { followUser, getFollowState, getPublicProfile, unfollowUser } from '../lib/social'
 import type { PublicProfile as PublicProfileType } from '../types/profile'
+import type { FollowState } from '../types/social'
+
+function FollowButton({ currentUserId, targetId }: { currentUserId: string; targetId: string }) {
+  const [state, setState] = useState<FollowState | null>(null)
+  const [pending, setPending] = useState(false)
+
+  useEffect(() => {
+    let active = true
+    getFollowState(currentUserId, targetId).then(({ data }) => {
+      if (active) setState(data)
+    })
+    return () => {
+      active = false
+    }
+  }, [currentUserId, targetId])
+
+  async function handleClick() {
+    if (!state || pending) return
+    setPending(true)
+    if (state.isFollowing) {
+      const { error } = await unfollowUser(currentUserId, targetId)
+      if (!error) setState({ ...state, isFollowing: false })
+    } else {
+      const { error } = await followUser(currentUserId, targetId)
+      if (!error) setState({ ...state, isFollowing: true })
+    }
+    setPending(false)
+  }
+
+  if (!state) return null
+
+  const label = state.isFollowing ? 'Following' : state.isFollowedBy ? 'Follow Back' : 'Follow'
+
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      disabled={pending}
+      className={`rounded-xl px-6 py-2 text-sm font-semibold active:opacity-80 disabled:opacity-60 ${
+        state.isFollowing
+          ? 'bg-neutral-800 text-white'
+          : 'bg-brand-500 text-white'
+      }`}
+    >
+      {pending ? '…' : label}
+    </button>
+  )
+}
 
 function PublicProfile() {
   const { id } = useParams<{ id: string }>()
+  const { user } = useAuth()
   const [profile, setProfile] = useState<PublicProfileType | null>(null)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
@@ -58,6 +108,9 @@ function PublicProfile() {
               </p>
               {profile.username && <p className="text-neutral-400">@{profile.username}</p>}
             </div>
+            {user && user.id !== profile.id && (
+              <FollowButton currentUserId={user.id} targetId={profile.id} />
+            )}
           </div>
 
           <div className="space-y-3 rounded-2xl border border-neutral-800 p-4 text-sm">
