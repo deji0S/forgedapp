@@ -15,3 +15,9 @@ export interface Message {
   media_mime: string | null
   created_at: string
 }
+
+export interface ChatStreak {
+  current_streak: number
+  longest_streak: number
+  last_joint_date: string | null
+}

@@ -6,8 +6,9 @@ import { getFollowState, getPublicProfile } from '../lib/social'
 import { getConversation, sendMessage, subscribeToIncomingMessages } from '../lib/messages'
 import { getChatMediaUrl, uploadChatAttachment, validateAttachment } from '../lib/chat-media'
 import type { ChatAttachment } from '../lib/chat-media'
+import { getChatStreak, recordChatOpen, subscribeToChatStreak } from '../lib/chat-streak'
 import type { PublicProfile } from '../types/profile'
-import type { Message } from '../types/social'
+import type { ChatStreak, Message } from '../types/social'
 
 function MessageMedia({ message }: { message: Message }) {
   const [signedUrl, setSignedUrl] = useState<string | null>(null)
@@ -37,6 +38,7 @@ function Conversation() {
   const { user } = useAuth()
   const [profile, setProfile] = useState<PublicProfile | null>(null)
   const [canMessage, setCanMessage] = useState(false)
+  const [streak, setStreak] = useState<ChatStreak | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [draft, setDraft] = useState('')
   const [attachment, setAttachment] = useState<ChatAttachment | null>(null)
@@ -55,10 +57,20 @@ function Conversation() {
     Promise.all([getPublicProfile(id), getFollowState(user.id, id), getConversation(user.id, id)]).then(
       ([profileResult, followResult, conversationResult]) => {
         if (!active) return
+        const mutual = !!followResult.data?.isFollowing && !!followResult.data?.isFollowedBy
         setProfile(profileResult.data)
-        setCanMessage(!!followResult.data?.isFollowing && !!followResult.data?.isFollowedBy)
+        setCanMessage(mutual)
         setMessages(conversationResult.data)
         setLoading(false)
+
+        if (mutual) {
+          recordChatOpen(user.id, id).then(() => {
+            if (!active) return
+            getChatStreak(user.id, id).then(({ data }) => {
+              if (active) setStreak(data)
+            })
+          })
+        }
       },
     )
 
@@ -72,6 +84,11 @@ function Conversation() {
     return subscribeToIncomingMessages(user.id, id, (message) => {
       setMessages((prev) => [...prev, message])
     })
+  }, [user, id])
+
+  useEffect(() => {
+    if (!user || !id) return
+    return subscribeToChatStreak(user.id, id, setStreak)
   }, [user, id])
 
   useEffect(() => {
@@ -123,9 +140,14 @@ function Conversation() {
         <Link to={id ? `/connect/${id}` : '/connect'} className="text-brand-400 active:opacity-80">
           ←
         </Link>
-        <p className="font-medium text-white">
+        <p className="flex-1 font-medium text-white">
           {profile?.display_name || profile?.username || 'Conversation'}
         </p>
+        {!!streak?.current_streak && (
+          <span className="rounded-full bg-neutral-800 px-3 py-1 text-xs font-semibold text-white">
+            🔥 {streak.current_streak}-day streak
+          </span>
+        )}
       </div>
 
       <div className="space-y-2 p-4">
