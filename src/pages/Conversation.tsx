@@ -77,6 +77,79 @@ function JointRestoralCard({
   )
 }
 
+function TinyAvatar({ url }: { url: string | null }) {
+  if (url) {
+    return <img src={url} alt="" className="h-6 w-6 rounded-full border border-neutral-800 object-cover" />
+  }
+  return (
+    <div className="flex h-6 w-6 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-neutral-500">
+      <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5">
+        <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2c0-2.76-3.58-5-8-5Z" />
+      </svg>
+    </div>
+  )
+}
+
+function formatMessageTime(iso: string) {
+  return new Date(iso).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })
+}
+
+interface SenderInfo {
+  avatarUrl: string | null
+  username: string | null
+  displayName: string | null
+}
+
+// Consecutive messages from the same sender are grouped so the
+// avatar/username header only renders once per run, not per line.
+function groupMessages(messages: Message[]) {
+  const groups: { senderId: string; messages: Message[] }[] = []
+  for (const message of messages) {
+    const lastGroup = groups[groups.length - 1]
+    if (lastGroup && lastGroup.senderId === message.sender_id) {
+      lastGroup.messages.push(message)
+    } else {
+      groups.push({ senderId: message.sender_id, messages: [message] })
+    }
+  }
+  return groups
+}
+
+function MessageGroup({
+  sender,
+  messages,
+  mine,
+}: {
+  sender: SenderInfo
+  messages: Message[]
+  mine: boolean
+}) {
+  return (
+    <div className={`flex flex-col gap-1 ${mine ? 'items-end' : 'items-start'}`}>
+      <div className={`flex items-center gap-2 px-1 ${mine ? 'flex-row-reverse' : ''}`}>
+        <TinyAvatar url={sender.avatarUrl} />
+        <span className="text-xs font-medium text-neutral-400">
+          {sender.username ? `@${sender.username}` : sender.displayName || 'Forged user'}
+        </span>
+      </div>
+      {messages.map((message) => (
+        <div
+          key={message.id}
+          className={`max-w-[75%] space-y-1 rounded-2xl px-3 py-2 text-sm ${
+            mine ? 'bg-brand-500 text-white' : 'bg-neutral-800 text-white'
+          }`}
+        >
+          {message.media_path && <MessageMedia message={message} />}
+          {message.body && <p className="whitespace-pre-wrap break-words px-1">{message.body}</p>}
+          <p className={`px-1 text-[10px] ${mine ? 'text-white/70' : 'text-neutral-400'}`}>
+            {formatMessageTime(message.created_at)}
+          </p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 function MessageMedia({ message }: { message: Message }) {
   const [signedUrl, setSignedUrl] = useState<string | null>(null)
 
@@ -102,7 +175,7 @@ function MessageMedia({ message }: { message: Message }) {
 
 function Conversation() {
   const { id } = useParams<{ id: string }>()
-  const { user } = useAuth()
+  const { user, profile: authProfile } = useAuth()
   const [profile, setProfile] = useState<PublicProfile | null>(null)
   const [canMessage, setCanMessage] = useState(false)
   const [streak, setStreak] = useState<ChatStreak | null>(null)
@@ -244,19 +317,26 @@ function Conversation() {
         )}
 
         {!loading &&
-          messages.map((message) => {
-            const mine = message.sender_id === user?.id
+          groupMessages(messages).map((group) => {
+            const mine = group.senderId === user?.id
+            const sender: SenderInfo = mine
+              ? {
+                  avatarUrl: authProfile?.avatar_url ?? null,
+                  username: authProfile?.username ?? null,
+                  displayName: authProfile?.display_name ?? null,
+                }
+              : {
+                  avatarUrl: profile?.avatar_url ?? null,
+                  username: profile?.username ?? null,
+                  displayName: profile?.display_name ?? null,
+                }
             return (
-              <div key={message.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
-                <div
-                  className={`max-w-[75%] space-y-1 rounded-2xl px-3 py-2 text-sm ${
-                    mine ? 'bg-brand-500 text-white' : 'bg-neutral-800 text-white'
-                  }`}
-                >
-                  {message.media_path && <MessageMedia message={message} />}
-                  {message.body && <p className="whitespace-pre-wrap break-words px-1">{message.body}</p>}
-                </div>
-              </div>
+              <MessageGroup
+                key={group.messages[0].id}
+                sender={sender}
+                messages={group.messages}
+                mine={mine}
+              />
             )
           })}
 
