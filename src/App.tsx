@@ -14,6 +14,7 @@ import WorkoutDetail from './pages/WorkoutDetail'
 import Connect from './pages/Connect'
 import PublicProfile from './pages/PublicProfile'
 import FollowList from './pages/FollowList'
+import Messages from './pages/Messages'
 import Conversation from './pages/Conversation'
 
 function AppShell() {
@@ -26,6 +27,7 @@ function AppShell() {
         <Route path="/progress" element={<Progress />} />
         <Route path="/connect" element={<Connect />} />
         <Route path="/connect/:id" element={<PublicProfile />} />
+        <Route path="/messages" element={<Messages />} />
         <Route path="/messages/:id" element={<Conversation />} />
         <Route path="/coach" element={<Coach />} />
         <Route path="/premium" element={<Premium />} />

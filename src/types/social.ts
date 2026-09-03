@@ -1,3 +1,5 @@
+import type { PublicProfile } from './profile'
+
 export interface FollowState {
   isFollowing: boolean
   isFollowedBy: boolean
@@ -14,6 +16,11 @@ export interface Message {
   media_type: MessageMediaType | null
   media_mime: string | null
   created_at: string
+}
+
+export interface ConversationPreview {
+  profile: PublicProfile
+  lastMessage: Message
 }
 
 export interface ChatStreak {

@@ -5,6 +5,7 @@ const TABS = [
   { to: '/workouts', label: 'Workouts' },
   { to: '/progress', label: 'Progress' },
   { to: '/connect', label: 'Connect' },
+  { to: '/messages', label: 'Messages' },
   { to: '/profile', label: 'Fitness Profile' },
 ]
 
