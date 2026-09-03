@@ -128,7 +128,7 @@ function AvatarUpload() {
         type="button"
         onClick={() => fileInputRef.current?.click()}
         disabled={uploading}
-        className="text-sm font-medium text-brand-400 active:opacity-80 disabled:opacity-60"
+        className="text-sm font-medium text-white active:opacity-80 disabled:opacity-60"
       >
         Change photo
       </button>
@@ -195,7 +195,7 @@ function HandleCard() {
             onChange={(e) => setDisplayName(e.target.value)}
             maxLength={60}
             required
-            className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-brand-500 focus:outline-none"
+            className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-white focus:outline-none"
           />
         </div>
 
@@ -211,7 +211,7 @@ function HandleCard() {
             pattern="[a-z0-9_]{3,20}"
             title="3-20 characters: lowercase letters, numbers, underscores"
             required
-            className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-brand-500 focus:outline-none"
+            className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-white focus:outline-none"
           />
           <p className="text-xs text-neutral-500">
             3-20 characters: lowercase letters, numbers, underscores.
@@ -232,7 +232,7 @@ function HandleCard() {
           <button
             type="submit"
             disabled={saving}
-            className="flex-1 rounded-xl bg-brand-500 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+            className="flex-1 rounded-xl bg-white py-3 text-sm font-semibold text-black active:opacity-80 disabled:opacity-60"
           >
             {saving ? 'Saving…' : 'Save'}
           </button>
@@ -250,7 +250,7 @@ function HandleCard() {
       <button
         type="button"
         onClick={startEditing}
-        className="text-sm font-medium text-brand-400 active:opacity-80"
+        className="text-sm font-medium text-white active:opacity-80"
       >
         Edit
       </button>
@@ -339,7 +339,7 @@ function TrainingPrefsCard({ profile }: { profile: Profile }) {
           <button
             type="submit"
             disabled={saving}
-            className="flex-1 rounded-xl bg-brand-500 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+            className="flex-1 rounded-xl bg-white py-3 text-sm font-semibold text-black active:opacity-80 disabled:opacity-60"
           >
             {saving ? 'Saving…' : 'Save'}
           </button>
@@ -355,7 +355,7 @@ function TrainingPrefsCard({ profile }: { profile: Profile }) {
         <button
           type="button"
           onClick={startEditing}
-          className="text-sm font-medium text-brand-400 active:opacity-80"
+          className="text-sm font-medium text-white active:opacity-80"
         >
           Edit
         </button>
@@ -450,7 +450,7 @@ function ProfilePage() {
           onClick={() => setConfirmingSignOut(false)}
         >
           <div
-            className="w-full max-w-sm space-y-4 rounded-2xl border border-neutral-800 bg-neutral-950 p-5"
+            className="w-full max-w-sm space-y-4 rounded-2xl border border-neutral-800 bg-black p-5"
             onClick={(e) => e.stopPropagation()}
           >
             <p id="signout-title" className="text-sm font-medium text-white">

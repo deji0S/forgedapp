@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/auth-context'
 
 const inputClass =
-  'w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-brand-500 focus:outline-none'
+  'w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-white focus:outline-none'
 
 function ChangePasswordCard() {
   const { changePassword } = useAuth()
@@ -83,7 +83,7 @@ function ChangePasswordCard() {
       <button
         type="submit"
         disabled={saving}
-        className="w-full rounded-xl bg-brand-500 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+        className="w-full rounded-xl bg-white py-3 text-sm font-semibold text-black active:opacity-80 disabled:opacity-60"
       >
         {saving ? 'Saving…' : 'Update password'}
       </button>
@@ -151,7 +151,7 @@ function ChangeEmailCard() {
       <button
         type="submit"
         disabled={saving}
-        className="w-full rounded-xl bg-brand-500 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+        className="w-full rounded-xl bg-white py-3 text-sm font-semibold text-black active:opacity-80 disabled:opacity-60"
       >
         {saving ? 'Sending…' : 'Send confirmation'}
       </button>

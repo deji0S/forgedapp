@@ -44,7 +44,7 @@ function FollowButton({
       className={`rounded-xl px-6 py-2 text-sm font-semibold active:opacity-80 disabled:opacity-60 ${
         state.isFollowing
           ? 'bg-neutral-800 text-white'
-          : 'bg-brand-500 text-white'
+          : 'bg-white text-black'
       }`}
     >
       {pending ? '…' : label}
@@ -83,7 +83,7 @@ function PublicProfile() {
 
   return (
     <div className="space-y-4 p-4">
-      <Link to="/connect" className="text-sm font-medium text-brand-400 active:opacity-80">
+      <Link to="/connect" className="text-sm font-medium text-white active:opacity-80">
         ← Back to Connect
       </Link>
 

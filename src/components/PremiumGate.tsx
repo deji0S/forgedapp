@@ -23,13 +23,13 @@ export function PremiumGate({ feature, description, children }: PremiumGateProps
   if (isPremium) return <>{children}</>
 
   return (
-    <div className="space-y-2 rounded-2xl border border-brand-500/40 bg-brand-500/10 p-5 text-center">
-      <p className="text-xs font-semibold uppercase tracking-wide text-brand-400">Premium</p>
+    <div className="space-y-2 rounded-2xl border border-blue-500/40 bg-blue-500/10 p-5 text-center">
+      <p className="text-xs font-semibold uppercase tracking-wide text-blue-400">Premium</p>
       <p className="text-sm font-medium text-white">{feature} is a premium feature</p>
       {description && <p className="text-xs text-neutral-400">{description}</p>}
       <Link
         to="/premium"
-        className="mt-2 inline-block rounded-xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white active:opacity-80"
+        className="mt-2 inline-block rounded-xl bg-blue-500 px-4 py-2 text-sm font-semibold text-white active:opacity-80"
       >
         Upgrade for £4.99/mo
       </Link>

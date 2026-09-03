@@ -12,7 +12,7 @@ function UpgradeBanner() {
   return (
     <Link
       to="/premium"
-      className="flex items-center justify-between rounded-2xl border border-brand-500/40 bg-brand-500/10 p-4 active:opacity-80"
+      className="flex items-center justify-between rounded-2xl border border-blue-500/40 bg-blue-500/10 p-4 active:opacity-80"
     >
       <span>
         <span className="block text-sm font-semibold text-white">Upgrade to Premium</span>
@@ -67,7 +67,7 @@ function StreakRecoveryCard({
           type="button"
           onClick={handleRecover}
           disabled={recovering}
-          className="w-full rounded-xl bg-amber-500 py-3 text-sm font-semibold text-black active:opacity-80 disabled:opacity-60"
+          className="w-full rounded-xl bg-blue-500 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
         >
           {recovering ? 'Recovering…' : 'Recover my streak'}
         </button>
@@ -123,17 +123,17 @@ function Home() {
         <h1 className="text-2xl font-semibold text-white">Let's train</h1>
       </header>
 
-      <section className="rounded-2xl bg-brand-500 p-5 text-white shadow-sm">
-        <p className="text-sm font-medium text-brand-100">Today's workout</p>
+      <section className="rounded-2xl bg-white p-5 text-black shadow-sm">
+        <p className="text-sm font-medium text-neutral-600">Today's workout</p>
         {loading ? (
-          <div className="mt-1 h-7 w-2/3 animate-pulse rounded bg-white/20" />
+          <div className="mt-1 h-7 w-2/3 animate-pulse rounded bg-black/10" />
         ) : plan ? (
           <>
             <h2 className="mt-1 text-xl font-semibold">{plan.name}</h2>
-            <p className="mt-1 text-sm text-brand-100">{plan.exercises.length} exercises</p>
+            <p className="mt-1 text-sm text-neutral-600">{plan.exercises.length} exercises</p>
             <Link
               to={`/workouts/${plan.id}`}
-              className="mt-4 block w-full rounded-xl bg-white py-3 text-center text-sm font-semibold text-brand-600 active:opacity-80"
+              className="mt-4 block w-full rounded-xl bg-black py-3 text-center text-sm font-semibold text-white active:opacity-80"
             >
               Start workout
             </Link>
@@ -141,10 +141,10 @@ function Home() {
         ) : (
           <>
             <h2 className="mt-1 text-xl font-semibold">No workout planned</h2>
-            <p className="mt-1 text-sm text-brand-100">Create a workout to get started.</p>
+            <p className="mt-1 text-sm text-neutral-600">Create a workout to get started.</p>
             <Link
               to="/workouts"
-              className="mt-4 block w-full rounded-xl bg-white py-3 text-center text-sm font-semibold text-brand-600 active:opacity-80"
+              className="mt-4 block w-full rounded-xl bg-black py-3 text-center text-sm font-semibold text-white active:opacity-80"
             >
               Create workout
             </Link>
@@ -178,7 +178,7 @@ function Home() {
         onClick={handleCheckIn}
         disabled={checkedIn || checkingIn}
         className={`w-full rounded-xl py-3 text-sm font-semibold active:opacity-80 disabled:active:opacity-100 ${
-          checkedIn ? 'bg-brand-500/20 text-brand-400' : 'bg-brand-500 text-white'
+          checkedIn ? 'bg-green-500/20 text-green-400' : 'bg-white text-black'
         }`}
       >
         {checkedIn ? 'Checked in for today' : checkingIn ? 'Checking in…' : 'Check in for today'}

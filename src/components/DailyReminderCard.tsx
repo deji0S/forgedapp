@@ -67,12 +67,12 @@ export default function DailyReminderCard() {
           onClick={() => handleToggle(!(prefs?.enabled ?? false))}
           disabled={enabling}
           className={`h-6 w-11 shrink-0 rounded-full transition-colors disabled:opacity-60 ${
-            prefs?.enabled ? 'bg-brand-500' : 'bg-neutral-700'
+            prefs?.enabled ? 'bg-white' : 'bg-neutral-700'
           }`}
         >
           <span
-            className={`block h-5 w-5 translate-x-0.5 rounded-full bg-white transition-transform ${
-              prefs?.enabled ? 'translate-x-[22px]' : ''
+            className={`block h-5 w-5 translate-x-0.5 rounded-full transition-transform ${
+              prefs?.enabled ? 'translate-x-[22px] bg-black' : 'bg-white'
             }`}
           />
         </button>
@@ -83,7 +83,7 @@ export default function DailyReminderCard() {
           type="time"
           value={reminderTime}
           onChange={(e) => handleTimeChange(e.target.value)}
-          className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-brand-500 focus:outline-none"
+          className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-white focus:outline-none"
         />
       )}
 
