@@ -3,7 +3,13 @@ import type { ChangeEvent, FormEvent } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useAuth } from '../lib/auth-context'
 import { getFollowState, getPublicProfile } from '../lib/social'
-import { getConversation, sendMessage, subscribeToIncomingMessages } from '../lib/messages'
+import {
+  getConversation,
+  markConversationRead,
+  sendMessage,
+  subscribeToIncomingMessages,
+  subscribeToReadReceipts,
+} from '../lib/messages'
 import { getChatMediaUrl, uploadChatAttachment, validateAttachment } from '../lib/chat-media'
 import type { ChatAttachment } from '../lib/chat-media'
 import {
@@ -141,8 +147,9 @@ function MessageGroup({
         >
           {message.media_path && <MessageMedia message={message} />}
           {message.body && <p className="whitespace-pre-wrap break-words px-1">{message.body}</p>}
-          <p className={`px-1 text-[10px] ${mine ? 'text-white/70' : 'text-neutral-400'}`}>
+          <p className={`flex items-center gap-1 px-1 text-[10px] ${mine ? 'text-white/70' : 'text-neutral-400'}`}>
             {formatMessageTime(message.created_at)}
+            {mine && message.read_at && <span aria-label="Read">✓</span>}
           </p>
         </div>
       ))}
@@ -203,6 +210,7 @@ function Conversation() {
         setCanMessage(mutual)
         setMessages(conversationResult.data)
         setLoading(false)
+        markConversationRead(user.id, id)
 
         if (mutual) {
           recordChatOpen(user.id, id).then(() => {
@@ -227,6 +235,15 @@ function Conversation() {
     if (!user || !id) return
     return subscribeToIncomingMessages(user.id, id, (message) => {
       setMessages((prev) => [...prev, message])
+      // The chat is open, so this new message is immediately "seen".
+      markConversationRead(user.id, id)
+    })
+  }, [user, id])
+
+  useEffect(() => {
+    if (!user || !id) return
+    return subscribeToReadReceipts(user.id, id, (updated) => {
+      setMessages((prev) => prev.map((m) => (m.id === updated.id ? updated : m)))
     })
   }, [user, id])
 

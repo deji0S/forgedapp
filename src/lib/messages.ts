@@ -3,7 +3,8 @@ import type { ChatAttachment } from './chat-media'
 import { getProfilesByIds } from './social'
 import type { ConversationPreview, Message } from '../types/social'
 
-const MESSAGE_COLUMNS = 'id, sender_id, recipient_id, body, media_path, media_type, media_mime, created_at'
+const MESSAGE_COLUMNS =
+  'id, sender_id, recipient_id, body, media_path, media_type, media_mime, read_at, created_at'
 
 // A conversation is just the set of distinct people a user has exchanged
 // messages with -- there's no separate conversations table (see the
@@ -69,6 +70,53 @@ export async function sendMessage(
     .select(MESSAGE_COLUMNS)
     .single()
   return { data: data as Message | null, error }
+}
+
+// Marks every unread message from `otherUserId` to the current user as
+// read. RLS is the entire gate here (see migration 0019): the update policy
+// only permits touching rows where the caller is the recipient, and the
+// column grant only permits touching read_at -- so this can't be used to
+// mark someone else's messages read, or to edit a message's content.
+export async function markConversationRead(currentUserId: string, otherUserId: string) {
+  const { error } = await supabase
+    .from('messages')
+    .update({ read_at: new Date().toISOString() })
+    .eq('sender_id', otherUserId)
+    .eq('recipient_id', currentUserId)
+    .is('read_at', null)
+  return { error }
+}
+
+// Delivers read-receipt updates for messages the current user SENT to
+// otherUserId, in real time. Filtering on recipient_id (rather than
+// sender_id) combined with the messages select RLS means only rows where
+// the current user is the sender come through -- the same trick
+// subscribeToIncomingMessages uses in the other direction.
+export function subscribeToReadReceipts(
+  currentUserId: string,
+  otherUserId: string,
+  onRead: (message: Message) => void,
+) {
+  const channel = supabase
+    .channel(`read-receipts:${currentUserId}->${otherUserId}`)
+    .on(
+      'postgres_changes',
+      {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'messages',
+        filter: `recipient_id=eq.${otherUserId}`,
+      },
+      (payload) => {
+        const message = payload.new as Message
+        if (message.sender_id === currentUserId) onRead(message)
+      },
+    )
+    .subscribe()
+
+  return () => {
+    supabase.removeChannel(channel)
+  }
 }
 
 // Delivers new incoming messages from `otherUserId` in real time. Messages

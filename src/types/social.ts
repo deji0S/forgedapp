@@ -15,6 +15,7 @@ export interface Message {
   media_path: string | null
   media_type: MessageMediaType | null
   media_mime: string | null
+  read_at: string | null
   created_at: string
 }
 
