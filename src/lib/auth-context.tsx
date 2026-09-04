@@ -19,7 +19,7 @@ interface AuthContextValue {
   completeOnboarding: (input: OnboardingInput) => Promise<string | null>
   updateProfilePreferences: (input: OnboardingInput) => Promise<string | null>
   updateProfileHandle: (input: ProfileHandleInput) => Promise<string | null>
-  updateProfileAvatar: (avatarUrl: string) => Promise<string | null>
+  updateProfileAvatar: (avatarUrl: string | null) => Promise<string | null>
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -226,7 +226,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return null
   }
 
-  async function updateProfileAvatar(avatarUrl: string) {
+  async function updateProfileAvatar(avatarUrl: string | null) {
     if (!session) return 'You must be signed in.'
     const { data, error } = await supabase
       .from('profiles')

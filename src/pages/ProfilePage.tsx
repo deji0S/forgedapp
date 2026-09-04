@@ -3,7 +3,7 @@ import type { ChangeEvent, FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/auth-context'
 import { usePremium } from '../lib/premium-context'
-import { uploadAvatar } from '../lib/avatar'
+import { removeAvatar, uploadAvatar } from '../lib/avatar'
 import ImageCropper from '../components/ImageCropper'
 import OptionGroup from '../components/OptionGroup'
 import {
@@ -66,6 +66,8 @@ function AvatarUpload() {
   const [cropSrc, setCropSrc] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [confirmingRemove, setConfirmingRemove] = useState(false)
+  const [removing, setRemoving] = useState(false)
 
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]
@@ -101,6 +103,22 @@ function AvatarUpload() {
     if (message) setError(message)
   }
 
+  async function handleRemoveConfirm() {
+    if (!user) return
+    setRemoving(true)
+    setError(null)
+    const { error: removeError } = await removeAvatar(user.id)
+    if (removeError) {
+      setRemoving(false)
+      setError(removeError.message)
+      return
+    }
+    const message = await updateProfileAvatar(null)
+    setRemoving(false)
+    setConfirmingRemove(false)
+    if (message) setError(message)
+  }
+
   return (
     <div className="flex flex-col items-center gap-3">
       <div className="relative">
@@ -117,21 +135,33 @@ function AvatarUpload() {
             </svg>
           </div>
         )}
-        {uploading && (
+        {(uploading || removing) && (
           <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/60 text-xs text-white">
-            Saving…
+            {removing ? 'Removing…' : 'Saving…'}
           </div>
         )}
       </div>
 
-      <button
-        type="button"
-        onClick={() => fileInputRef.current?.click()}
-        disabled={uploading}
-        className="text-sm font-medium text-neutral-900 dark:text-white active:opacity-80 disabled:opacity-60"
-      >
-        Change photo
-      </button>
+      <div className="flex items-center gap-4">
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploading || removing}
+          className="text-sm font-medium text-neutral-900 dark:text-white active:opacity-80 disabled:opacity-60"
+        >
+          Change photo
+        </button>
+        {profile?.avatar_url && (
+          <button
+            type="button"
+            onClick={() => setConfirmingRemove(true)}
+            disabled={uploading || removing}
+            className="text-sm font-medium text-red-700 dark:text-red-400 active:opacity-80 disabled:opacity-60"
+          >
+            Remove photo
+          </button>
+        )}
+      </div>
       <input
         ref={fileInputRef}
         type="file"
@@ -143,6 +173,44 @@ function AvatarUpload() {
       {error && <p className="text-sm text-red-700 dark:text-red-400">{error}</p>}
 
       {cropSrc && <ImageCropper src={cropSrc} onCancel={closeCropper} onConfirm={handleCropConfirm} />}
+
+      {confirmingRemove && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="remove-avatar-title"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-6"
+          onClick={() => !removing && setConfirmingRemove(false)}
+        >
+          <div
+            className="w-full max-w-sm space-y-4 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-black p-5"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p id="remove-avatar-title" className="text-sm font-medium text-neutral-900 dark:text-white">
+              Remove your profile picture? This can't be undone.
+            </p>
+            {error && <p className="text-sm text-red-700 dark:text-red-400">{error}</p>}
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setConfirmingRemove(false)}
+                disabled={removing}
+                className="flex-1 rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white active:opacity-80 disabled:opacity-60"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleRemoveConfirm}
+                disabled={removing}
+                className="flex-1 rounded-xl bg-red-600 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+              >
+                {removing ? 'Removing…' : 'Remove'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
