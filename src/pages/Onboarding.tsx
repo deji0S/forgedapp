@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth-context'
+import { ForgedLogo } from '../components/AppHeader'
 import OptionGroup from '../components/OptionGroup'
 import { DAYS_PER_WEEK, FITNESS_LEVELS, GOALS, WORKOUT_TYPES } from '../lib/profile-options'
 import type { FitnessLevel, Goal, WorkoutTypePreference } from '../types/profile'
@@ -39,6 +40,7 @@ function Onboarding() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8 p-6 pb-10">
+      <ForgedLogo className="h-7" />
       <div>
         <h1 className="text-2xl font-semibold text-neutral-900 dark:text-white">Let's set you up</h1>
         <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
