@@ -17,3 +17,10 @@ export async function uploadAvatar(userId: string, blob: Blob) {
   const { data } = supabase.storage.from(BUCKET).getPublicUrl(path)
   return { url: `${data.publicUrl}?t=${Date.now()}`, error: null }
 }
+
+/** Deletes `<userId>/avatar.jpg` from storage. */
+export async function removeAvatar(userId: string) {
+  const path = `${userId}/avatar.jpg`
+  const { error } = await supabase.storage.from(BUCKET).remove([path])
+  return { error }
+}
