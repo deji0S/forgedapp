@@ -95,3 +95,56 @@ body {
     animation: none;
   }
 }
+
+/* Flame mark next to the Profile page's streak count — see
+   components/FlameIcon.tsx. The flicker (flame itself) and glow (blurred
+   halo behind it) animate on independent cycles so the effect reads as
+   organic rather than a mechanical pulse; both are opacity/transform only. */
+@keyframes flame-flicker {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  25% {
+    transform: scale(0.95) rotate(-1.5deg);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.05) rotate(1deg);
+    opacity: 1;
+  }
+  75% {
+    transform: scale(0.97) rotate(-0.5deg);
+    opacity: 0.94;
+  }
+}
+
+@keyframes flame-glow-pulse {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.2);
+  }
+}
+
+.flame-flicker {
+  transform-origin: 50% 85%;
+  animation: flame-flicker 2.6s ease-in-out infinite;
+}
+
+.flame-glow {
+  animation: flame-glow-pulse 3.4s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flame-flicker,
+  .flame-glow {
+    animation: none;
+  }
+}
