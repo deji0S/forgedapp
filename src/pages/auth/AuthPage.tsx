@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Navigate } from 'react-router-dom'
 import { ForgedLogo } from '../../components/AppHeader'
+import { AuthBackground } from '../../components/AuthBackground'
 import { useAuth } from '../../lib/auth-context'
 
 function AuthPage() {
@@ -34,8 +35,11 @@ function AuthPage() {
   }
 
   return (
-    <div className="flex min-h-svh flex-col justify-center gap-6 p-6">
-      <ForgedLogo className="h-7" />
+    <div className="relative flex min-h-svh flex-col justify-center gap-6 overflow-hidden p-6">
+      <AuthBackground />
+      <div className="flex justify-center">
+        <ForgedLogo className="h-14" />
+      </div>
       <div>
         <h1 className="text-2xl font-semibold text-neutral-900 dark:text-white">
           {mode === 'sign-in' ? 'Welcome back' : 'Create your account'}
