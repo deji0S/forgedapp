@@ -46,7 +46,7 @@ function FollowList({ kind }: { kind: 'followers' | 'following' }) {
   return (
     <div className="space-y-4 p-4">
       <Link to="/profile" className="text-sm font-medium text-white active:opacity-80">
-        ← Back to Fitness Profile
+        ← Back to Profile
       </Link>
 
       <h1 className="text-2xl font-semibold text-white">

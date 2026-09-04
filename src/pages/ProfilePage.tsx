@@ -385,7 +385,7 @@ function ProfilePage() {
 
   return (
     <div className="space-y-4 p-4">
-      <h1 className="text-2xl font-semibold text-white">Fitness Profile</h1>
+      <h1 className="text-2xl font-semibold text-white">Profile</h1>
       <p className="text-sm text-neutral-400">{user?.email}</p>
 
       <AvatarUpload />
