@@ -318,7 +318,7 @@ function HandleCard() {
       <button
         type="button"
         onClick={startEditing}
-        className="text-sm font-medium text-neutral-900 dark:text-white active:opacity-80"
+        className="rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-1.5 text-sm font-medium text-neutral-900 dark:text-white active:opacity-80"
       >
         Edit
       </button>
@@ -423,7 +423,7 @@ function TrainingPrefsCard({ profile }: { profile: Profile }) {
         <button
           type="button"
           onClick={startEditing}
-          className="text-sm font-medium text-neutral-900 dark:text-white active:opacity-80"
+          className="rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-1.5 text-sm font-medium text-neutral-900 dark:text-white active:opacity-80"
         >
           Edit
         </button>
