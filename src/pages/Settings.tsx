@@ -247,7 +247,7 @@ function Settings() {
   return (
     <div className="space-y-4 p-4">
       <Link to="/profile" className="text-sm font-medium text-neutral-400">
-        ← Fitness Profile
+        ← Profile
       </Link>
 
       <h1 className="text-2xl font-semibold text-white">Settings</h1>
