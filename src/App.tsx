@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom'
+import AppHeader from './components/AppHeader'
 import BottomNav from './components/BottomNav'
 import { RequireOnboarding } from './components/RouteGuards'
 import AuthPage from './pages/auth/AuthPage'
@@ -20,6 +21,7 @@ import Conversation from './pages/Conversation'
 function AppShell() {
   return (
     <div className="flex-1 pb-20">
+      <AppHeader />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/workouts" element={<Workouts />} />

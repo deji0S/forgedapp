@@ -297,7 +297,8 @@ function Conversation() {
 
   return (
     <div className="flex flex-col">
-      <div className="sticky top-0 z-10 border-b border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-black/95 p-4 backdrop-blur">
+      {/* Docks just below the global AppHeader (h-6 logo + py-3 + 1px border = 49px). */}
+      <div className="sticky top-[49px] z-10 border-b border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-black/95 p-4 backdrop-blur">
         <div className="flex items-center gap-3">
           <Link to="/messages" className="text-neutral-900 dark:text-white active:opacity-80">
             ←
