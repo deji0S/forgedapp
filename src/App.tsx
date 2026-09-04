@@ -43,7 +43,7 @@ function AppShell() {
 
 function App() {
   return (
-    <div className="mx-auto flex min-h-svh max-w-md flex-col bg-black">
+    <div className="mx-auto flex min-h-svh max-w-md flex-col bg-white dark:bg-black">
       <Routes>
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/onboarding" element={<Onboarding />} />

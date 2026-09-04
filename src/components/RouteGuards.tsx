@@ -5,7 +5,7 @@ import { useAuth } from '../lib/auth-context'
 function FullScreenLoader() {
   return (
     <div className="flex min-h-svh items-center justify-center">
-      <p className="text-sm text-neutral-400">Loading…</p>
+      <p className="text-sm text-neutral-600 dark:text-neutral-400">Loading…</p>
     </div>
   )
 }

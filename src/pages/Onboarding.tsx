@@ -40,29 +40,29 @@ function Onboarding() {
   return (
     <form onSubmit={handleSubmit} className="space-y-8 p-6 pb-10">
       <div>
-        <h1 className="text-2xl font-semibold text-white">Let's set you up</h1>
-        <p className="mt-1 text-sm text-neutral-400">
+        <h1 className="text-2xl font-semibold text-neutral-900 dark:text-white">Let's set you up</h1>
+        <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
           A few quick questions to personalize your training.
         </p>
       </div>
 
       <section className="space-y-3">
-        <h2 className="text-sm font-semibold text-white">Fitness level</h2>
+        <h2 className="text-sm font-semibold text-neutral-900 dark:text-white">Fitness level</h2>
         <OptionGroup options={FITNESS_LEVELS} value={fitnessLevel} onChange={setFitnessLevel} />
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-sm font-semibold text-white">Goal</h2>
+        <h2 className="text-sm font-semibold text-neutral-900 dark:text-white">Goal</h2>
         <OptionGroup options={GOALS} value={goal} onChange={setGoal} />
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-sm font-semibold text-white">Workout type</h2>
+        <h2 className="text-sm font-semibold text-neutral-900 dark:text-white">Workout type</h2>
         <OptionGroup options={WORKOUT_TYPES} value={workoutType} onChange={setWorkoutType} />
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-sm font-semibold text-white">Days per week</h2>
+        <h2 className="text-sm font-semibold text-neutral-900 dark:text-white">Days per week</h2>
         <OptionGroup
           options={DAYS_PER_WEEK.map((day) => ({ value: String(day), label: String(day) }))}
           value={daysPerWeek ? String(daysPerWeek) : null}
@@ -70,12 +70,12 @@ function Onboarding() {
         />
       </section>
 
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {error && <p className="text-sm text-red-700 dark:text-red-400">{error}</p>}
 
       <button
         type="submit"
         disabled={!isComplete || submitting}
-        className="w-full rounded-xl bg-white py-3 text-sm font-semibold text-black active:opacity-80 disabled:opacity-40"
+        className="w-full rounded-xl bg-black dark:bg-white py-3 text-sm font-semibold text-white dark:text-black active:opacity-80 disabled:opacity-40"
       >
         {submitting ? 'Saving…' : 'Finish setup'}
       </button>

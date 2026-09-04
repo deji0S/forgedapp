@@ -10,12 +10,12 @@ function ResultAvatar({ profile }: { profile: PublicProfile }) {
       <img
         src={profile.avatar_url}
         alt=""
-        className="h-12 w-12 rounded-full border border-neutral-800 object-cover"
+        className="h-12 w-12 rounded-full border border-neutral-200 dark:border-neutral-800 object-cover"
       />
     )
   }
   return (
-    <div className="flex h-12 w-12 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-neutral-500">
+    <div className="flex h-12 w-12 items-center justify-center rounded-full border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 text-neutral-500">
       <svg viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
         <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2c0-2.76-3.58-5-8-5Z" />
       </svg>
@@ -52,7 +52,7 @@ function Connect() {
 
   return (
     <div className="space-y-4 p-4">
-      <h1 className="text-2xl font-semibold text-white">Connect</h1>
+      <h1 className="text-2xl font-semibold text-neutral-900 dark:text-white">Connect</h1>
 
       <input
         type="search"
@@ -60,13 +60,13 @@ function Connect() {
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search by username or name"
         autoComplete="off"
-        className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white placeholder:text-neutral-500 focus:border-white focus:outline-none"
+        className="w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder:text-neutral-500 focus:border-black dark:focus:border-white focus:outline-none"
       />
 
-      {loading && <p className="text-sm text-neutral-400">Searching…</p>}
+      {loading && <p className="text-sm text-neutral-600 dark:text-neutral-400">Searching…</p>}
 
       {!loading && searched && results.length === 0 && (
-        <p className="text-sm text-neutral-400">No one found for "{query.trim()}".</p>
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">No one found for "{query.trim()}".</p>
       )}
 
       {!loading && results.length > 0 && (
@@ -75,15 +75,15 @@ function Connect() {
             <li key={profile.id}>
               <Link
                 to={`/connect/${profile.id}`}
-                className="flex items-center gap-3 rounded-2xl border border-neutral-800 p-3 active:opacity-80"
+                className="flex items-center gap-3 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-3 active:opacity-80"
               >
                 <ResultAvatar profile={profile} />
                 <div className="min-w-0">
-                  <p className="truncate font-medium text-white">
+                  <p className="truncate font-medium text-neutral-900 dark:text-white">
                     {profile.display_name || profile.username || 'Forged user'}
                   </p>
                   {profile.username && (
-                    <p className="truncate text-sm text-neutral-400">@{profile.username}</p>
+                    <p className="truncate text-sm text-neutral-600 dark:text-neutral-400">@{profile.username}</p>
                   )}
                 </div>
               </Link>

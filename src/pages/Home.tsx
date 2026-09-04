@@ -15,8 +15,8 @@ function UpgradeBanner() {
       className="flex items-center justify-between rounded-2xl border border-blue-500/40 bg-blue-500/10 p-4 active:opacity-80"
     >
       <span>
-        <span className="block text-sm font-semibold text-white">Upgrade to Premium</span>
-        <span className="block text-xs text-neutral-400">
+        <span className="block text-sm font-semibold text-neutral-900 dark:text-white">Upgrade to Premium</span>
+        <span className="block text-xs text-neutral-600 dark:text-neutral-400">
           AI coach, advanced analytics, and streak recovery — £4.99/mo
         </span>
       </span>
@@ -53,8 +53,8 @@ function StreakRecoveryCard({
   return (
     <section className="space-y-3 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4">
       <div>
-        <p className="text-sm font-semibold text-white">Streak at risk</p>
-        <p className="mt-1 text-xs text-neutral-300">
+        <p className="text-sm font-semibold text-neutral-900 dark:text-white">Streak at risk</p>
+        <p className="mt-1 text-xs text-neutral-700 dark:text-neutral-300">
           You missed {eligibility.missedDays} day{eligibility.missedDays === 1 ? '' : 's'}. Recover
           now to keep your {streak.longest_streak}-day best intact.
         </p>
@@ -72,7 +72,7 @@ function StreakRecoveryCard({
           {recovering ? 'Recovering…' : 'Recover my streak'}
         </button>
       </PremiumGate>
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {error && <p className="text-sm text-red-700 dark:text-red-400">{error}</p>}
     </section>
   )
 }
@@ -119,21 +119,21 @@ function Home() {
   return (
     <div className="space-y-6 p-4">
       <header>
-        <p className="text-sm text-neutral-400">Welcome back</p>
-        <h1 className="text-2xl font-semibold text-white">Let's train</h1>
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">Welcome back</p>
+        <h1 className="text-2xl font-semibold text-neutral-900 dark:text-white">Let's train</h1>
       </header>
 
-      <section className="rounded-2xl bg-white p-5 text-black shadow-sm">
-        <p className="text-sm font-medium text-neutral-600">Today's workout</p>
+      <section className="rounded-2xl bg-black text-white shadow-sm dark:bg-white dark:text-black p-5">
+        <p className="text-sm font-medium text-neutral-400 dark:text-neutral-600">Today's workout</p>
         {loading ? (
-          <div className="mt-1 h-7 w-2/3 animate-pulse rounded bg-black/10" />
+          <div className="mt-1 h-7 w-2/3 animate-pulse rounded bg-white/10 dark:bg-black/10" />
         ) : plan ? (
           <>
             <h2 className="mt-1 text-xl font-semibold">{plan.name}</h2>
-            <p className="mt-1 text-sm text-neutral-600">{plan.exercises.length} exercises</p>
+            <p className="mt-1 text-sm text-neutral-400 dark:text-neutral-600">{plan.exercises.length} exercises</p>
             <Link
               to={`/workouts/${plan.id}`}
-              className="mt-4 block w-full rounded-xl bg-black py-3 text-center text-sm font-semibold text-white active:opacity-80"
+              className="mt-4 block w-full rounded-xl bg-white py-3 text-center text-sm font-semibold text-black active:opacity-80 dark:bg-black dark:text-white"
             >
               Start workout
             </Link>
@@ -141,10 +141,10 @@ function Home() {
         ) : (
           <>
             <h2 className="mt-1 text-xl font-semibold">No workout planned</h2>
-            <p className="mt-1 text-sm text-neutral-600">Create a workout to get started.</p>
+            <p className="mt-1 text-sm text-neutral-400 dark:text-neutral-600">Create a workout to get started.</p>
             <Link
               to="/workouts"
-              className="mt-4 block w-full rounded-xl bg-black py-3 text-center text-sm font-semibold text-white active:opacity-80"
+              className="mt-4 block w-full rounded-xl bg-white py-3 text-center text-sm font-semibold text-black active:opacity-80 dark:bg-black dark:text-white"
             >
               Create workout
             </Link>
@@ -157,15 +157,15 @@ function Home() {
       {streak && <StreakRecoveryCard streak={streak} onRecovered={setStreak} />}
 
       <section className="grid grid-cols-2 gap-3">
-        <div className="rounded-2xl border border-neutral-800 p-4">
-          <p className="text-xs text-neutral-400">Current streak</p>
-          <p className="mt-1 text-lg font-semibold text-white">
+        <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4">
+          <p className="text-xs text-neutral-600 dark:text-neutral-400">Current streak</p>
+          <p className="mt-1 text-lg font-semibold text-neutral-900 dark:text-white">
             {currentStreak} {currentStreak === 1 ? 'day' : 'days'}
           </p>
         </div>
-        <div className="rounded-2xl border border-neutral-800 p-4">
-          <p className="text-xs text-neutral-400">Longest streak</p>
-          <p className="mt-1 text-lg font-semibold text-white">
+        <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4">
+          <p className="text-xs text-neutral-600 dark:text-neutral-400">Longest streak</p>
+          <p className="mt-1 text-lg font-semibold text-neutral-900 dark:text-white">
             {longestStreak} {longestStreak === 1 ? 'day' : 'days'}
           </p>
         </div>
@@ -178,7 +178,7 @@ function Home() {
         onClick={handleCheckIn}
         disabled={checkedIn || checkingIn}
         className={`w-full rounded-xl py-3 text-sm font-semibold active:opacity-80 disabled:active:opacity-100 ${
-          checkedIn ? 'bg-green-500/20 text-green-400' : 'bg-white text-black'
+          checkedIn ? 'bg-green-500/20 text-green-700 dark:text-green-400' : 'bg-black text-white dark:bg-white dark:text-black'
         }`}
       >
         {checkedIn ? 'Checked in for today' : checkingIn ? 'Checking in…' : 'Check in for today'}
@@ -186,11 +186,11 @@ function Home() {
 
       <Link
         to="/coach"
-        className="flex items-center justify-between rounded-2xl border border-neutral-800 p-4 active:opacity-80"
+        className="flex items-center justify-between rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 active:opacity-80"
       >
         <span>
-          <span className="block text-sm font-semibold text-white">Your coach</span>
-          <span className="block text-xs text-neutral-400">Personalized guidance from your training</span>
+          <span className="block text-sm font-semibold text-neutral-900 dark:text-white">Your coach</span>
+          <span className="block text-xs text-neutral-600 dark:text-neutral-400">Personalized guidance from your training</span>
         </span>
         <span className="text-neutral-500">→</span>
       </Link>
