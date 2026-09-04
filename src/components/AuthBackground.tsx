@@ -4,16 +4,23 @@
  * stays cheap on battery and doesn't cause layout/paint thrash on mobile.
  * `prefers-reduced-motion` disables the animation (see index.css).
  *
- * Absolutely positioned behind the form content (`-z-10`) with
- * `pointer-events-none`, so it never intercepts taps on the email/password
- * fields regardless of stacking.
+ * Sized relative to the auth column itself (the app shell is a max-w-md
+ * column, not the full viewport) so the blobs read as soft shapes rather
+ * than the flat middle slice of something far larger than the screen.
+ *
+ * Absolutely positioned and painted before the form content in the DOM, so
+ * it sits behind it without needing a z-index — deliberately NOT a negative
+ * z-index: combined with a plain (non-stacking-context) `overflow-hidden`
+ * ancestor, a negative z-index here hits a Chromium clipping bug that
+ * shrinks the whole layer down to a sliver. `pointer-events-none` keeps it
+ * from ever intercepting taps on the email/password fields regardless.
  */
 export function AuthBackground() {
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-      <div className="auth-bg-blob-a absolute -left-1/4 -top-1/4 h-[70vmax] w-[70vmax] rounded-full bg-neutral-400/15 blur-3xl dark:bg-white/[0.06]" />
-      <div className="auth-bg-blob-b absolute -right-1/4 -bottom-1/4 h-[70vmax] w-[70vmax] rounded-full bg-neutral-400/15 blur-3xl dark:bg-white/[0.06]" />
-      <div className="auth-bg-grid absolute -inset-[10%] text-neutral-500/[0.08] dark:text-white/[0.06]" />
+    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="auth-bg-dots absolute -inset-6 text-neutral-900/[0.22] dark:text-white/[0.20]" />
+      <div className="auth-bg-blob-a absolute -left-16 -top-20 h-64 w-64 rounded-full bg-neutral-900/[0.14] blur-xl dark:bg-white/[0.20]" />
+      <div className="auth-bg-blob-b absolute -right-20 -bottom-16 h-72 w-72 rounded-full bg-neutral-900/[0.12] blur-xl dark:bg-white/[0.16]" />
     </div>
   )
 }
