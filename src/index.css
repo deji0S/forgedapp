@@ -1,11 +1,25 @@
 @import 'tailwindcss';
 
+/* Dark mode is toggled by a `.dark` class on <html> (see lib/theme-context.tsx)
+   rather than Tailwind's default prefers-color-scheme media query, so an
+   explicit Light/Dark choice can override the OS preference while System
+   mode still tracks it reactively. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans:
     'Clash Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 :root {
+  --page-bg: #fff;
+  --page-fg: #0a0a0a;
+  color-scheme: light;
+}
+
+:root.dark {
+  --page-bg: #000;
+  --page-fg: #fff;
   color-scheme: dark;
 }
 
@@ -19,6 +33,6 @@ body {
   margin: 0;
   overscroll-behavior-y: none;
   -webkit-tap-highlight-color: transparent;
-  background-color: #000;
-  color: #fff;
+  background-color: var(--page-bg);
+  color: var(--page-fg);
 }

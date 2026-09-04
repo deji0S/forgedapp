@@ -10,12 +10,12 @@ function ResultAvatar({ profile }: { profile: PublicProfile }) {
       <img
         src={profile.avatar_url}
         alt=""
-        className="h-12 w-12 rounded-full border border-neutral-800 object-cover"
+        className="h-12 w-12 rounded-full border border-neutral-200 dark:border-neutral-800 object-cover"
       />
     )
   }
   return (
-    <div className="flex h-12 w-12 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-neutral-500">
+    <div className="flex h-12 w-12 items-center justify-center rounded-full border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 text-neutral-500">
       <svg viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
         <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2c0-2.76-3.58-5-8-5Z" />
       </svg>
@@ -45,18 +45,18 @@ function FollowList({ kind }: { kind: 'followers' | 'following' }) {
 
   return (
     <div className="space-y-4 p-4">
-      <Link to="/profile" className="text-sm font-medium text-white active:opacity-80">
+      <Link to="/profile" className="text-sm font-medium text-neutral-900 dark:text-white active:opacity-80">
         ← Back to Profile
       </Link>
 
-      <h1 className="text-2xl font-semibold text-white">
+      <h1 className="text-2xl font-semibold text-neutral-900 dark:text-white">
         {kind === 'followers' ? 'Followers' : 'Following'}
       </h1>
 
-      {loading && <p className="text-sm text-neutral-400">Loading…</p>}
+      {loading && <p className="text-sm text-neutral-600 dark:text-neutral-400">Loading…</p>}
 
       {!loading && profiles.length === 0 && (
-        <p className="text-sm text-neutral-400">
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">
           {kind === 'followers' ? "No followers yet." : "Not following anyone yet."}
         </p>
       )}
@@ -67,15 +67,15 @@ function FollowList({ kind }: { kind: 'followers' | 'following' }) {
             <li key={profile.id}>
               <Link
                 to={`/connect/${profile.id}`}
-                className="flex items-center gap-3 rounded-2xl border border-neutral-800 p-3 active:opacity-80"
+                className="flex items-center gap-3 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-3 active:opacity-80"
               >
                 <ResultAvatar profile={profile} />
                 <div className="min-w-0">
-                  <p className="truncate font-medium text-white">
+                  <p className="truncate font-medium text-neutral-900 dark:text-white">
                     {profile.display_name || profile.username || 'Forged user'}
                   </p>
                   {profile.username && (
-                    <p className="truncate text-sm text-neutral-400">@{profile.username}</p>
+                    <p className="truncate text-sm text-neutral-600 dark:text-neutral-400">@{profile.username}</p>
                   )}
                 </div>
               </Link>

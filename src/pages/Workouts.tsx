@@ -89,14 +89,14 @@ function Workouts() {
   return (
     <div className="space-y-4 p-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-white">Workouts</h1>
+        <h1 className="text-2xl font-semibold text-neutral-900 dark:text-white">Workouts</h1>
         <button
           type="button"
           onClick={() => {
             setEditingId(null)
             setShowForm((v) => !v)
           }}
-          className="rounded-lg bg-neutral-800 px-3 py-1.5 text-sm font-medium text-white active:opacity-80"
+          className="rounded-lg bg-neutral-200 dark:bg-neutral-800 px-3 py-1.5 text-sm font-medium text-neutral-900 dark:text-white active:opacity-80"
         >
           {showForm ? 'Cancel' : '+ New'}
         </button>
@@ -111,9 +111,9 @@ function Workouts() {
       )}
 
       {loading ? (
-        <p className="text-sm text-neutral-400">Loading…</p>
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">Loading…</p>
       ) : plans.length === 0 ? (
-        <p className="text-sm text-neutral-400">
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">
           No workouts yet. Tap "+ New" to build your first one.
         </p>
       ) : (
@@ -137,7 +137,7 @@ function Workouts() {
                     onClick={() => handleMove(index, -1)}
                     disabled={index === 0 || reordering}
                     aria-label={`Move ${p.name} up`}
-                    className="flex flex-1 items-center justify-center rounded-lg border border-neutral-800 text-neutral-400 active:opacity-80 disabled:opacity-30"
+                    className="flex flex-1 items-center justify-center rounded-lg border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 active:opacity-80 disabled:opacity-30"
                   >
                     <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4">
                       <path
@@ -154,7 +154,7 @@ function Workouts() {
                     onClick={() => handleMove(index, 1)}
                     disabled={index === plans.length - 1 || reordering}
                     aria-label={`Move ${p.name} down`}
-                    className="flex flex-1 items-center justify-center rounded-lg border border-neutral-800 text-neutral-400 active:opacity-80 disabled:opacity-30"
+                    className="flex flex-1 items-center justify-center rounded-lg border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 active:opacity-80 disabled:opacity-30"
                   >
                     <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4">
                       <path
@@ -169,17 +169,17 @@ function Workouts() {
                 </div>
                 <Link
                   to={`/workouts/${p.id}`}
-                  className="block flex-1 rounded-2xl border border-neutral-800 p-4 active:opacity-80"
+                  className="block flex-1 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 active:opacity-80"
                 >
-                  <p className="font-medium text-white">{p.name}</p>
+                  <p className="font-medium text-neutral-900 dark:text-white">{p.name}</p>
                   {p.exercises.length > 0 ? (
-                    <ul className="mt-1 list-disc space-y-0.5 pl-4 text-xs text-neutral-400">
+                    <ul className="mt-1 list-disc space-y-0.5 pl-4 text-xs text-neutral-600 dark:text-neutral-400">
                       {p.exercises.map((ex, i) => (
                         <li key={i}>{ex.name}</li>
                       ))}
                     </ul>
                   ) : (
-                    <p className="mt-1 text-xs text-neutral-400">No exercises</p>
+                    <p className="mt-1 text-xs text-neutral-600 dark:text-neutral-400">No exercises</p>
                   )}
                 </Link>
                 <button
@@ -189,7 +189,7 @@ function Workouts() {
                     setEditingId(p.id)
                   }}
                   aria-label={`Edit ${p.name}`}
-                  className="flex w-12 shrink-0 items-center justify-center rounded-2xl border border-neutral-800 text-neutral-400 active:opacity-80"
+                  className="flex w-12 shrink-0 items-center justify-center rounded-2xl border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 active:opacity-80"
                 >
                   <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
                     <path
@@ -208,7 +208,7 @@ function Workouts() {
                     setDeletingId(p.id)
                   }}
                   aria-label={`Delete ${p.name}`}
-                  className="flex w-12 shrink-0 items-center justify-center rounded-2xl border border-neutral-800 text-neutral-400 active:opacity-80"
+                  className="flex w-12 shrink-0 items-center justify-center rounded-2xl border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 active:opacity-80"
                 >
                   <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
                     <path
@@ -235,19 +235,19 @@ function Workouts() {
           onClick={() => !deleteBusy && setDeletingId(null)}
         >
           <div
-            className="w-full max-w-sm space-y-4 rounded-2xl border border-neutral-800 bg-black p-5"
+            className="w-full max-w-sm space-y-4 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-black p-5"
             onClick={(e) => e.stopPropagation()}
           >
-            <p id="delete-workout-title" className="text-sm font-medium text-white">
+            <p id="delete-workout-title" className="text-sm font-medium text-neutral-900 dark:text-white">
               Delete this workout? This can't be undone.
             </p>
-            {deleteError && <p className="text-sm text-red-400">{deleteError}</p>}
+            {deleteError && <p className="text-sm text-red-700 dark:text-red-400">{deleteError}</p>}
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => setDeletingId(null)}
                 disabled={deleteBusy}
-                className="flex-1 rounded-xl bg-neutral-800 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+                className="flex-1 rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white active:opacity-80 disabled:opacity-60"
               >
                 Cancel
               </button>

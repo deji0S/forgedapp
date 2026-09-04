@@ -2,9 +2,34 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/auth-context'
+import { useTheme } from '../lib/theme-context'
+import type { ThemePreference } from '../lib/theme-context'
+import OptionGroup from '../components/OptionGroup'
 
 const inputClass =
-  'w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-white focus:outline-none'
+  'w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:border-black dark:focus:border-white focus:outline-none'
+
+const THEME_OPTIONS: { value: ThemePreference; label: string }[] = [
+  { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' },
+  { value: 'system', label: 'System' },
+]
+
+function AppearanceCard() {
+  const { preference, setPreference } = useTheme()
+
+  return (
+    <div className="space-y-3 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4">
+      <div>
+        <p className="text-sm font-medium text-neutral-900 dark:text-white">Appearance</p>
+        <p className="text-xs text-neutral-600 dark:text-neutral-400">
+          Choose how Forged looks on this device.
+        </p>
+      </div>
+      <OptionGroup options={THEME_OPTIONS} value={preference} onChange={setPreference} />
+    </div>
+  )
+}
 
 function ChangePasswordCard() {
   const { changePassword } = useAuth()
@@ -41,10 +66,10 @@ function ChangePasswordCard() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 rounded-2xl border border-neutral-800 p-4">
+    <form onSubmit={handleSubmit} className="space-y-3 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4">
       <div>
-        <p className="text-sm font-medium text-white">Change password</p>
-        <p className="text-xs text-neutral-400">Enter your current password to set a new one.</p>
+        <p className="text-sm font-medium text-neutral-900 dark:text-white">Change password</p>
+        <p className="text-xs text-neutral-600 dark:text-neutral-400">Enter your current password to set a new one.</p>
       </div>
 
       <input
@@ -77,13 +102,13 @@ function ChangePasswordCard() {
         className={inputClass}
       />
 
-      {error && <p className="text-sm text-red-400">{error}</p>}
-      {done && <p className="text-sm text-green-400">Password updated.</p>}
+      {error && <p className="text-sm text-red-700 dark:text-red-400">{error}</p>}
+      {done && <p className="text-sm text-green-700 dark:text-green-400">Password updated.</p>}
 
       <button
         type="submit"
         disabled={saving}
-        className="w-full rounded-xl bg-white py-3 text-sm font-semibold text-black active:opacity-80 disabled:opacity-60"
+        className="w-full rounded-xl bg-black dark:bg-white py-3 text-sm font-semibold text-white dark:text-black active:opacity-80 disabled:opacity-60"
       >
         {saving ? 'Saving…' : 'Update password'}
       </button>
@@ -122,11 +147,11 @@ function ChangeEmailCard() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 rounded-2xl border border-neutral-800 p-4">
+    <form onSubmit={handleSubmit} className="space-y-3 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4">
       <div>
-        <p className="text-sm font-medium text-white">Change email</p>
-        <p className="text-xs text-neutral-400">
-          Currently <span className="text-neutral-300">{user?.email}</span>
+        <p className="text-sm font-medium text-neutral-900 dark:text-white">Change email</p>
+        <p className="text-xs text-neutral-600 dark:text-neutral-400">
+          Currently <span className="text-neutral-700 dark:text-neutral-300">{user?.email}</span>
         </p>
       </div>
 
@@ -140,9 +165,9 @@ function ChangeEmailCard() {
         className={inputClass}
       />
 
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {error && <p className="text-sm text-red-700 dark:text-red-400">{error}</p>}
       {sent && (
-        <p className="text-sm text-green-400">
+        <p className="text-sm text-green-700 dark:text-green-400">
           Confirmation links sent. Check both your current and new inbox — the change takes effect
           once you confirm from both.
         </p>
@@ -151,7 +176,7 @@ function ChangeEmailCard() {
       <button
         type="submit"
         disabled={saving}
-        className="w-full rounded-xl bg-white py-3 text-sm font-semibold text-black active:opacity-80 disabled:opacity-60"
+        className="w-full rounded-xl bg-black dark:bg-white py-3 text-sm font-semibold text-white dark:text-black active:opacity-80 disabled:opacity-60"
       >
         {saving ? 'Sending…' : 'Send confirmation'}
       </button>
@@ -188,8 +213,8 @@ function DeleteAccountCard() {
   return (
     <div className="space-y-3 rounded-2xl border border-red-500/40 p-4">
       <div>
-        <p className="text-sm font-medium text-white">Delete account</p>
-        <p className="text-xs text-neutral-400">
+        <p className="text-sm font-medium text-neutral-900 dark:text-white">Delete account</p>
+        <p className="text-xs text-neutral-600 dark:text-neutral-400">
           Permanently removes your account and all your data — workouts, streaks, and subscription
           records. This cannot be undone.
         </p>
@@ -197,7 +222,7 @@ function DeleteAccountCard() {
 
       {expanded ? (
         <form onSubmit={handleSubmit} className="space-y-3">
-          <p className="text-xs text-neutral-400">
+          <p className="text-xs text-neutral-600 dark:text-neutral-400">
             Type your email or password to confirm.
           </p>
           <input
@@ -210,14 +235,14 @@ function DeleteAccountCard() {
             className={inputClass}
           />
 
-          {error && <p className="text-sm text-red-400">{error}</p>}
+          {error && <p className="text-sm text-red-700 dark:text-red-400">{error}</p>}
 
           <div className="flex gap-2">
             <button
               type="button"
               onClick={cancel}
               disabled={deleting}
-              className="flex-1 rounded-xl bg-neutral-800 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+              className="flex-1 rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white active:opacity-80 disabled:opacity-60"
             >
               Cancel
             </button>
@@ -234,7 +259,7 @@ function DeleteAccountCard() {
         <button
           type="button"
           onClick={() => setExpanded(true)}
-          className="w-full rounded-xl border border-red-500/50 py-3 text-sm font-semibold text-red-400 active:opacity-80"
+          className="w-full rounded-xl border border-red-500/50 py-3 text-sm font-semibold text-red-700 dark:text-red-400 active:opacity-80"
         >
           Delete my account
         </button>
@@ -246,12 +271,13 @@ function DeleteAccountCard() {
 function Settings() {
   return (
     <div className="space-y-4 p-4">
-      <Link to="/profile" className="text-sm font-medium text-neutral-400">
+      <Link to="/profile" className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
         ← Profile
       </Link>
 
-      <h1 className="text-2xl font-semibold text-white">Settings</h1>
+      <h1 className="text-2xl font-semibold text-neutral-900 dark:text-white">Settings</h1>
 
+      <AppearanceCard />
       <ChangePasswordCard />
       <ChangeEmailCard />
       <DeleteAccountCard />

@@ -24,10 +24,10 @@ const PREMIUM_FEATURES = [
 
 function priceBlock() {
   return (
-    <div className="rounded-2xl border border-neutral-800 p-5">
-      <p className="text-3xl font-semibold text-white">
+    <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-5">
+      <p className="text-3xl font-semibold text-neutral-900 dark:text-white">
         £4.99
-        <span className="text-base font-normal text-neutral-400">/month</span>
+        <span className="text-base font-normal text-neutral-600 dark:text-neutral-400">/month</span>
       </p>
       <p className="mt-1 text-xs text-neutral-500">Cancel anytime.</p>
     </div>
@@ -62,20 +62,20 @@ function Premium() {
   return (
     <div className="space-y-6 p-4">
       <div>
-        <Link to="/" className="text-sm font-medium text-neutral-400">
+        <Link to="/" className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
           ← Home
         </Link>
-        <h1 className="mt-2 text-2xl font-semibold text-white">Forged Premium</h1>
-        <p className="mt-1 text-sm text-neutral-400">{PRODUCT_TAGLINE}</p>
+        <h1 className="mt-2 text-2xl font-semibold text-neutral-900 dark:text-white">Forged Premium</h1>
+        <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">{PRODUCT_TAGLINE}</p>
       </div>
 
       {checkoutResult === 'success' && !isPremium && (
-        <p className="rounded-xl bg-blue-500/15 p-3 text-sm text-blue-300">
+        <p className="rounded-xl bg-blue-500/15 p-3 text-sm text-blue-700 dark:text-blue-300">
           Payment received — activating your premium access…
         </p>
       )}
       {checkoutResult === 'cancel' && (
-        <p className="rounded-xl bg-neutral-800 p-3 text-sm text-neutral-300">
+        <p className="rounded-xl bg-neutral-200 dark:bg-neutral-800 p-3 text-sm text-neutral-700 dark:text-neutral-300">
           Checkout canceled — no charge was made.
         </p>
       )}
@@ -84,20 +84,20 @@ function Premium() {
 
       <ul className="space-y-3">
         {PREMIUM_FEATURES.map((feature) => (
-          <li key={feature.title} className="rounded-2xl border border-neutral-800 p-4">
-            <p className="text-sm font-semibold text-white">{feature.title}</p>
-            <p className="mt-1 text-xs text-neutral-400">{feature.body}</p>
+          <li key={feature.title} className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4">
+            <p className="text-sm font-semibold text-neutral-900 dark:text-white">{feature.title}</p>
+            <p className="mt-1 text-xs text-neutral-600 dark:text-neutral-400">{feature.body}</p>
           </li>
         ))}
       </ul>
 
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {error && <p className="text-sm text-red-700 dark:text-red-400">{error}</p>}
 
       {loading ? (
-        <div className="h-12 animate-pulse rounded-xl bg-neutral-900" />
+        <div className="h-12 animate-pulse rounded-xl bg-neutral-100 dark:bg-neutral-900" />
       ) : isPremium ? (
         <div className="space-y-3">
-          <p className="rounded-xl bg-blue-500/15 p-3 text-center text-sm font-medium text-blue-300">
+          <p className="rounded-xl bg-blue-500/15 p-3 text-center text-sm font-medium text-blue-700 dark:text-blue-300">
             You’re on Premium
             {subscription?.cancel_at_period_end ? ' — cancels at period end' : ''}.
           </p>
@@ -105,7 +105,7 @@ function Premium() {
             type="button"
             onClick={() => handle('portal')}
             disabled={busy}
-            className="w-full rounded-xl bg-neutral-800 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+            className="w-full rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white active:opacity-80 disabled:opacity-60"
           >
             {busy ? 'Opening…' : 'Manage billing'}
           </button>

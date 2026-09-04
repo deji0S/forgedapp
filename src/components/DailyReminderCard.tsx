@@ -54,11 +54,11 @@ export default function DailyReminderCard() {
   }
 
   return (
-    <section className="space-y-3 rounded-2xl border border-neutral-800 p-4">
+    <section className="space-y-3 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-white">Daily reminder</p>
-          <p className="text-xs text-neutral-400">Nudges you if your streak is at risk.</p>
+          <p className="text-sm font-medium text-neutral-900 dark:text-white">Daily reminder</p>
+          <p className="text-xs text-neutral-600 dark:text-neutral-400">Nudges you if your streak is at risk.</p>
         </div>
         <button
           type="button"
@@ -67,12 +67,12 @@ export default function DailyReminderCard() {
           onClick={() => handleToggle(!(prefs?.enabled ?? false))}
           disabled={enabling}
           className={`h-6 w-11 shrink-0 rounded-full transition-colors disabled:opacity-60 ${
-            prefs?.enabled ? 'bg-white' : 'bg-neutral-700'
+            prefs?.enabled ? 'bg-black dark:bg-white' : 'bg-neutral-300 dark:bg-neutral-700'
           }`}
         >
           <span
-            className={`block h-5 w-5 translate-x-0.5 rounded-full transition-transform ${
-              prefs?.enabled ? 'translate-x-[22px] bg-black' : 'bg-white'
+            className={`block h-5 w-5 translate-x-0.5 rounded-full shadow-sm transition-transform ${
+              prefs?.enabled ? 'translate-x-[22px] bg-white dark:bg-black' : 'bg-white'
             }`}
           />
         </button>
@@ -83,11 +83,11 @@ export default function DailyReminderCard() {
           type="time"
           value={reminderTime}
           onChange={(e) => handleTimeChange(e.target.value)}
-          className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-white focus:outline-none"
+          className="w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:border-black dark:focus:border-white focus:outline-none"
         />
       )}
 
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {error && <p className="text-sm text-red-700 dark:text-red-400">{error}</p>}
     </section>
   )
 }

@@ -59,8 +59,8 @@ function JointRestoralCard({
   return (
     <div className="space-y-3 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4">
       <div>
-        <p className="text-sm font-semibold text-white">Joint streak at risk</p>
-        <p className="mt-1 text-xs text-neutral-300">
+        <p className="text-sm font-semibold text-neutral-900 dark:text-white">Joint streak at risk</p>
+        <p className="mt-1 text-xs text-neutral-700 dark:text-neutral-300">
           You missed {eligibility.missedDays} day{eligibility.missedDays === 1 ? '' : 's'} together.
           Restore now to keep your {streak.longest_streak}-day best intact.
         </p>
@@ -78,17 +78,17 @@ function JointRestoralCard({
           {restoring ? 'Restoring…' : 'Restore joint streak'}
         </button>
       </PremiumGate>
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {error && <p className="text-sm text-red-700 dark:text-red-400">{error}</p>}
     </div>
   )
 }
 
 function TinyAvatar({ url }: { url: string | null }) {
   if (url) {
-    return <img src={url} alt="" className="h-6 w-6 rounded-full border border-neutral-800 object-cover" />
+    return <img src={url} alt="" className="h-6 w-6 rounded-full border border-neutral-200 dark:border-neutral-800 object-cover" />
   }
   return (
-    <div className="flex h-6 w-6 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-neutral-500">
+    <div className="flex h-6 w-6 items-center justify-center rounded-full border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 text-neutral-500">
       <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5">
         <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2c0-2.76-3.58-5-8-5Z" />
       </svg>
@@ -134,7 +134,7 @@ function MessageGroup({
     <div className={`flex flex-col gap-1 ${mine ? 'items-end' : 'items-start'}`}>
       <div className={`flex items-center gap-2 px-1 ${mine ? 'flex-row-reverse' : ''}`}>
         <TinyAvatar url={sender.avatarUrl} />
-        <span className="text-xs font-medium text-neutral-400">
+        <span className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
           {sender.username ? `@${sender.username}` : sender.displayName || 'Forged user'}
         </span>
       </div>
@@ -142,12 +142,12 @@ function MessageGroup({
         <div
           key={message.id}
           className={`max-w-[75%] space-y-1 rounded-2xl px-3 py-2 text-sm ${
-            mine ? 'bg-white text-black' : 'bg-neutral-800 text-white'
+            mine ? 'bg-black dark:bg-white text-white dark:text-black' : 'bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-white'
           }`}
         >
           {message.media_path && <MessageMedia message={message} />}
           {message.body && <p className="whitespace-pre-wrap break-words px-1">{message.body}</p>}
-          <p className={`flex items-center gap-1 px-1 text-[10px] ${mine ? 'text-black/60' : 'text-neutral-400'}`}>
+          <p className={`flex items-center gap-1 px-1 text-[10px] ${mine ? 'text-white/60 dark:text-black/60' : 'text-neutral-600 dark:text-neutral-400'}`}>
             {formatMessageTime(message.created_at)}
             {mine && message.read_at && <span aria-label="Read">✓</span>}
           </p>
@@ -172,7 +172,7 @@ function MessageMedia({ message }: { message: Message }) {
   }, [message.media_path])
 
   if (!message.media_path) return null
-  if (!signedUrl) return <div className="h-40 w-56 animate-pulse rounded-xl bg-neutral-700" />
+  if (!signedUrl) return <div className="h-40 w-56 animate-pulse rounded-xl bg-neutral-300 dark:bg-neutral-700" />
 
   if (message.media_type === 'video') {
     return <video src={signedUrl} controls className="max-h-72 w-full rounded-xl" />
@@ -297,16 +297,16 @@ function Conversation() {
 
   return (
     <div className="flex flex-col">
-      <div className="sticky top-0 z-10 border-b border-neutral-800 bg-black/95 p-4 backdrop-blur">
+      <div className="sticky top-0 z-10 border-b border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-black/95 p-4 backdrop-blur">
         <div className="flex items-center gap-3">
-          <Link to="/messages" className="text-white active:opacity-80">
+          <Link to="/messages" className="text-neutral-900 dark:text-white active:opacity-80">
             ←
           </Link>
-          <Link to={id ? `/connect/${id}` : '/connect'} className="flex-1 font-medium text-white active:opacity-80">
+          <Link to={id ? `/connect/${id}` : '/connect'} className="flex-1 font-medium text-neutral-900 dark:text-white active:opacity-80">
             {profile?.display_name || profile?.username || 'Conversation'}
           </Link>
           {!!streak?.current_streak && (
-            <span className="rounded-full bg-neutral-800 px-3 py-1 text-xs font-semibold text-white">
+            <span className="rounded-full bg-neutral-200 dark:bg-neutral-800 px-3 py-1 text-xs font-semibold text-neutral-900 dark:text-white">
               🔥 {streak.current_streak}-day streak
             </span>
           )}
@@ -320,7 +320,7 @@ function Conversation() {
       </div>
 
       <div className="space-y-2 p-4">
-        {loading && <p className="text-sm text-neutral-400">Loading…</p>}
+        {loading && <p className="text-sm text-neutral-600 dark:text-neutral-400">Loading…</p>}
 
         {!loading && streak && id && (
           <JointRestoralCard
@@ -358,21 +358,21 @@ function Conversation() {
           })}
 
         {!loading && messages.length === 0 && (
-          <p className="text-sm text-neutral-400">No messages yet — say hello.</p>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">No messages yet — say hello.</p>
         )}
 
         <div ref={bottomRef} />
       </div>
 
       {canMessage ? (
-        <div className="sticky bottom-20 space-y-2 border-t border-neutral-800 bg-black/95 p-4 backdrop-blur">
+        <div className="sticky bottom-20 space-y-2 border-t border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-black/95 p-4 backdrop-blur">
           {attachment && (
-            <div className="flex items-center justify-between rounded-xl border border-neutral-800 p-2 text-xs text-neutral-300">
+            <div className="flex items-center justify-between rounded-xl border border-neutral-200 dark:border-neutral-800 p-2 text-xs text-neutral-700 dark:text-neutral-300">
               <span>{attachment.type === 'video' ? '🎥 Video attached' : '🖼️ Photo attached'}</span>
               <button
                 type="button"
                 onClick={() => setAttachment(null)}
-                className="font-semibold text-red-400 active:opacity-80"
+                className="font-semibold text-red-700 dark:text-red-400 active:opacity-80"
               >
                 Remove
               </button>
@@ -391,7 +391,7 @@ function Conversation() {
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className="rounded-xl border border-neutral-800 px-4 py-3 text-sm text-white active:opacity-80 disabled:opacity-60"
+              className="rounded-xl border border-neutral-200 dark:border-neutral-800 px-4 py-3 text-sm text-neutral-900 dark:text-white active:opacity-80 disabled:opacity-60"
               aria-label="Attach photo or video"
             >
               {uploading ? '…' : '📎'}
@@ -403,12 +403,12 @@ function Conversation() {
               placeholder="Message…"
               maxLength={2000}
               autoComplete="off"
-              className="flex-1 rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white placeholder:text-neutral-500 focus:border-white focus:outline-none"
+              className="flex-1 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder:text-neutral-500 focus:border-black dark:focus:border-white focus:outline-none"
             />
             <button
               type="submit"
               disabled={sending || uploading || (!draft.trim() && !attachment)}
-              className="rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black active:opacity-80 disabled:opacity-60"
+              className="rounded-xl bg-black dark:bg-white px-5 py-3 text-sm font-semibold text-white dark:text-black active:opacity-80 disabled:opacity-60"
             >
               Send
             </button>
@@ -416,13 +416,13 @@ function Conversation() {
         </div>
       ) : (
         !loading && (
-          <p className="sticky bottom-20 border-t border-neutral-800 bg-black/95 p-4 text-center text-sm text-neutral-400 backdrop-blur">
+          <p className="sticky bottom-20 border-t border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-black/95 p-4 text-center text-sm text-neutral-600 dark:text-neutral-400 backdrop-blur">
             You can message each other once you both follow each other.
           </p>
         )
       )}
 
-      {error && <p className="px-4 pb-4 text-sm text-red-400">{error}</p>}
+      {error && <p className="px-4 pb-4 text-sm text-red-700 dark:text-red-400">{error}</p>}
     </div>
   )
 }

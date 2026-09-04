@@ -26,9 +26,9 @@ function formatDate(iso: string) {
 
 function RestoralStatusCard({ status }: { status: RestoralStatus | null }) {
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-neutral-800 p-4 text-sm">
-      <span className="text-neutral-400">Streak restoral</span>
-      <span className="font-medium text-white">
+    <div className="flex items-center justify-between rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 text-sm">
+      <span className="text-neutral-600 dark:text-neutral-400">Streak restoral</span>
+      <span className="font-medium text-neutral-900 dark:text-white">
         {status === null
           ? '—'
           : status.remaining > 0
@@ -47,14 +47,14 @@ function FollowCounts({ userId }: { userId: string }) {
   }, [userId])
 
   return (
-    <div className="flex divide-x divide-neutral-800 rounded-2xl border border-neutral-800 text-sm">
+    <div className="flex divide-x divide-neutral-200 dark:divide-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-800 text-sm">
       <Link to="/profile/followers" className="flex-1 space-y-1 p-4 text-center active:opacity-80">
-        <p className="text-lg font-semibold text-white">{counts?.followers ?? '—'}</p>
-        <p className="text-neutral-400">Followers</p>
+        <p className="text-lg font-semibold text-neutral-900 dark:text-white">{counts?.followers ?? '—'}</p>
+        <p className="text-neutral-600 dark:text-neutral-400">Followers</p>
       </Link>
       <Link to="/profile/following" className="flex-1 space-y-1 p-4 text-center active:opacity-80">
-        <p className="text-lg font-semibold text-white">{counts?.following ?? '—'}</p>
-        <p className="text-neutral-400">Following</p>
+        <p className="text-lg font-semibold text-neutral-900 dark:text-white">{counts?.following ?? '—'}</p>
+        <p className="text-neutral-600 dark:text-neutral-400">Following</p>
       </Link>
     </div>
   )
@@ -108,10 +108,10 @@ function AvatarUpload() {
           <img
             src={profile.avatar_url}
             alt="Profile picture"
-            className="h-24 w-24 rounded-full border border-neutral-800 object-cover"
+            className="h-24 w-24 rounded-full border border-neutral-200 dark:border-neutral-800 object-cover"
           />
         ) : (
-          <div className="flex h-24 w-24 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-neutral-500">
+          <div className="flex h-24 w-24 items-center justify-center rounded-full border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 text-neutral-500">
             <svg viewBox="0 0 24 24" fill="currentColor" className="h-12 w-12">
               <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2c0-2.76-3.58-5-8-5Z" />
             </svg>
@@ -128,7 +128,7 @@ function AvatarUpload() {
         type="button"
         onClick={() => fileInputRef.current?.click()}
         disabled={uploading}
-        className="text-sm font-medium text-white active:opacity-80 disabled:opacity-60"
+        className="text-sm font-medium text-neutral-900 dark:text-white active:opacity-80 disabled:opacity-60"
       >
         Change photo
       </button>
@@ -140,7 +140,7 @@ function AvatarUpload() {
         className="hidden"
       />
 
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {error && <p className="text-sm text-red-700 dark:text-red-400">{error}</p>}
 
       {cropSrc && <ImageCropper src={cropSrc} onCancel={closeCropper} onConfirm={handleCropConfirm} />}
     </div>
@@ -182,10 +182,10 @@ function HandleCard() {
     return (
       <form
         onSubmit={handleSubmit}
-        className="space-y-3 rounded-2xl border border-neutral-800 p-4 text-sm"
+        className="space-y-3 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 text-sm"
       >
         <div className="space-y-1">
-          <label htmlFor="display_name" className="text-xs text-neutral-400">
+          <label htmlFor="display_name" className="text-xs text-neutral-600 dark:text-neutral-400">
             Display name
           </label>
           <input
@@ -195,12 +195,12 @@ function HandleCard() {
             onChange={(e) => setDisplayName(e.target.value)}
             maxLength={60}
             required
-            className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-white focus:outline-none"
+            className="w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:border-black dark:focus:border-white focus:outline-none"
           />
         </div>
 
         <div className="space-y-1">
-          <label htmlFor="username" className="text-xs text-neutral-400">
+          <label htmlFor="username" className="text-xs text-neutral-600 dark:text-neutral-400">
             Username
           </label>
           <input
@@ -211,28 +211,28 @@ function HandleCard() {
             pattern="[a-z0-9_]{3,20}"
             title="3-20 characters: lowercase letters, numbers, underscores"
             required
-            className="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white focus:border-white focus:outline-none"
+            className="w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:border-black dark:focus:border-white focus:outline-none"
           />
           <p className="text-xs text-neutral-500">
             3-20 characters: lowercase letters, numbers, underscores.
           </p>
         </div>
 
-        {error && <p className="text-sm text-red-400">{error}</p>}
+        {error && <p className="text-sm text-red-700 dark:text-red-400">{error}</p>}
 
         <div className="flex gap-2">
           <button
             type="button"
             onClick={() => setEditing(false)}
             disabled={saving}
-            className="flex-1 rounded-xl bg-neutral-800 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+            className="flex-1 rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white active:opacity-80 disabled:opacity-60"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="flex-1 rounded-xl bg-white py-3 text-sm font-semibold text-black active:opacity-80 disabled:opacity-60"
+            className="flex-1 rounded-xl bg-black dark:bg-white py-3 text-sm font-semibold text-white dark:text-black active:opacity-80 disabled:opacity-60"
           >
             {saving ? 'Saving…' : 'Save'}
           </button>
@@ -242,15 +242,15 @@ function HandleCard() {
   }
 
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-neutral-800 p-4 text-sm">
+    <div className="flex items-center justify-between rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 text-sm">
       <div>
-        <p className="font-medium text-white">{profile?.display_name || 'Add a display name'}</p>
-        <p className="text-neutral-400">{profile?.username ? `@${profile.username}` : 'No username yet'}</p>
+        <p className="font-medium text-neutral-900 dark:text-white">{profile?.display_name || 'Add a display name'}</p>
+        <p className="text-neutral-600 dark:text-neutral-400">{profile?.username ? `@${profile.username}` : 'No username yet'}</p>
       </div>
       <button
         type="button"
         onClick={startEditing}
-        className="text-sm font-medium text-white active:opacity-80"
+        className="text-sm font-medium text-neutral-900 dark:text-white active:opacity-80"
       >
         Edit
       </button>
@@ -299,25 +299,25 @@ function TrainingPrefsCard({ profile }: { profile: Profile }) {
     return (
       <form
         onSubmit={handleSubmit}
-        className="space-y-4 rounded-2xl border border-neutral-800 p-4 text-sm"
+        className="space-y-4 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 text-sm"
       >
         <div className="space-y-2">
-          <p className="text-xs text-neutral-400">Fitness level</p>
+          <p className="text-xs text-neutral-600 dark:text-neutral-400">Fitness level</p>
           <OptionGroup options={FITNESS_LEVELS} value={fitnessLevel} onChange={setFitnessLevel} />
         </div>
 
         <div className="space-y-2">
-          <p className="text-xs text-neutral-400">Goal</p>
+          <p className="text-xs text-neutral-600 dark:text-neutral-400">Goal</p>
           <OptionGroup options={GOALS} value={goal} onChange={setGoal} />
         </div>
 
         <div className="space-y-2">
-          <p className="text-xs text-neutral-400">Workout type</p>
+          <p className="text-xs text-neutral-600 dark:text-neutral-400">Workout type</p>
           <OptionGroup options={WORKOUT_TYPES} value={workoutType} onChange={setWorkoutType} />
         </div>
 
         <div className="space-y-2">
-          <p className="text-xs text-neutral-400">Days per week</p>
+          <p className="text-xs text-neutral-600 dark:text-neutral-400">Days per week</p>
           <OptionGroup
             options={DAYS_PER_WEEK.map((day) => ({ value: String(day), label: String(day) }))}
             value={String(daysPerWeek)}
@@ -325,21 +325,21 @@ function TrainingPrefsCard({ profile }: { profile: Profile }) {
           />
         </div>
 
-        {error && <p className="text-sm text-red-400">{error}</p>}
+        {error && <p className="text-sm text-red-700 dark:text-red-400">{error}</p>}
 
         <div className="flex gap-2">
           <button
             type="button"
             onClick={() => setEditing(false)}
             disabled={saving}
-            className="flex-1 rounded-xl bg-neutral-800 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+            className="flex-1 rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white active:opacity-80 disabled:opacity-60"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="flex-1 rounded-xl bg-white py-3 text-sm font-semibold text-black active:opacity-80 disabled:opacity-60"
+            className="flex-1 rounded-xl bg-black dark:bg-white py-3 text-sm font-semibold text-white dark:text-black active:opacity-80 disabled:opacity-60"
           >
             {saving ? 'Saving…' : 'Save'}
           </button>
@@ -349,21 +349,21 @@ function TrainingPrefsCard({ profile }: { profile: Profile }) {
   }
 
   return (
-    <div className="space-y-3 rounded-2xl border border-neutral-800 p-4 text-sm">
+    <div className="space-y-3 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 text-sm">
       <div className="flex items-center justify-between">
-        <p className="font-medium text-white">Training preferences</p>
+        <p className="font-medium text-neutral-900 dark:text-white">Training preferences</p>
         <button
           type="button"
           onClick={startEditing}
-          className="text-sm font-medium text-white active:opacity-80"
+          className="text-sm font-medium text-neutral-900 dark:text-white active:opacity-80"
         >
           Edit
         </button>
       </div>
       {profileDetails(profile).map((detail) => (
         <p key={detail.label} className="flex justify-between">
-          <span className="text-neutral-400">{detail.label}</span>
-          <span className="font-medium text-white">{detail.value}</span>
+          <span className="text-neutral-600 dark:text-neutral-400">{detail.label}</span>
+          <span className="font-medium text-neutral-900 dark:text-white">{detail.value}</span>
         </p>
       ))}
     </div>
@@ -385,8 +385,8 @@ function ProfilePage() {
 
   return (
     <div className="space-y-4 p-4">
-      <h1 className="text-2xl font-semibold text-white">Profile</h1>
-      <p className="text-sm text-neutral-400">{user?.email}</p>
+      <h1 className="text-2xl font-semibold text-neutral-900 dark:text-white">Profile</h1>
+      <p className="text-sm text-neutral-600 dark:text-neutral-400">{user?.email}</p>
 
       <AvatarUpload />
 
@@ -394,9 +394,9 @@ function ProfilePage() {
 
       {user && <FollowCounts userId={user.id} />}
 
-      <div className="flex items-center justify-between rounded-2xl border border-neutral-800 p-4 text-sm">
-        <span className="text-neutral-400">Current streak</span>
-        <span className="font-medium text-white">
+      <div className="flex items-center justify-between rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 text-sm">
+        <span className="text-neutral-600 dark:text-neutral-400">Current streak</span>
+        <span className="font-medium text-neutral-900 dark:text-white">
           {streak?.current_streak ?? 0} {(streak?.current_streak ?? 0) === 1 ? 'day' : 'days'}
         </span>
       </div>
@@ -407,11 +407,11 @@ function ProfilePage() {
 
       <Link
         to="/premium"
-        className="flex items-center justify-between rounded-2xl border border-neutral-800 p-4 active:opacity-80"
+        className="flex items-center justify-between rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 active:opacity-80"
       >
         <span>
-          <span className="block text-sm font-medium text-white">Membership</span>
-          <span className="block text-xs text-neutral-400">
+          <span className="block text-sm font-medium text-neutral-900 dark:text-white">Membership</span>
+          <span className="block text-xs text-neutral-600 dark:text-neutral-400">
             {premiumLoading
               ? 'Checking…'
               : isPremium
@@ -424,11 +424,11 @@ function ProfilePage() {
 
       <Link
         to="/settings"
-        className="flex items-center justify-between rounded-2xl border border-neutral-800 p-4 active:opacity-80"
+        className="flex items-center justify-between rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 active:opacity-80"
       >
         <span>
-          <span className="block text-sm font-medium text-white">Settings</span>
-          <span className="block text-xs text-neutral-400">Password and email</span>
+          <span className="block text-sm font-medium text-neutral-900 dark:text-white">Settings</span>
+          <span className="block text-xs text-neutral-600 dark:text-neutral-400">Password and email</span>
         </span>
         <span className="text-neutral-500">→</span>
       </Link>
@@ -436,7 +436,7 @@ function ProfilePage() {
       <button
         type="button"
         onClick={() => setConfirmingSignOut(true)}
-        className="w-full rounded-xl bg-neutral-800 py-3 text-sm font-semibold text-white active:opacity-80"
+        className="w-full rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white active:opacity-80"
       >
         Sign out
       </button>
@@ -450,17 +450,17 @@ function ProfilePage() {
           onClick={() => setConfirmingSignOut(false)}
         >
           <div
-            className="w-full max-w-sm space-y-4 rounded-2xl border border-neutral-800 bg-black p-5"
+            className="w-full max-w-sm space-y-4 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-black p-5"
             onClick={(e) => e.stopPropagation()}
           >
-            <p id="signout-title" className="text-sm font-medium text-white">
+            <p id="signout-title" className="text-sm font-medium text-neutral-900 dark:text-white">
               Are you sure you want to sign out?
             </p>
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => setConfirmingSignOut(false)}
-                className="flex-1 rounded-xl bg-neutral-800 py-3 text-sm font-semibold text-white active:opacity-80"
+                className="flex-1 rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white active:opacity-80"
               >
                 Cancel
               </button>

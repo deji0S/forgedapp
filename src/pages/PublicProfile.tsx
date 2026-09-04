@@ -43,8 +43,8 @@ function FollowButton({
       disabled={pending}
       className={`rounded-xl px-6 py-2 text-sm font-semibold active:opacity-80 disabled:opacity-60 ${
         state.isFollowing
-          ? 'bg-neutral-800 text-white'
-          : 'bg-white text-black'
+          ? 'bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-white'
+          : 'bg-black dark:bg-white text-white dark:text-black'
       }`}
     >
       {pending ? '…' : label}
@@ -83,13 +83,13 @@ function PublicProfile() {
 
   return (
     <div className="space-y-4 p-4">
-      <Link to="/connect" className="text-sm font-medium text-white active:opacity-80">
+      <Link to="/connect" className="text-sm font-medium text-neutral-900 dark:text-white active:opacity-80">
         ← Back to Connect
       </Link>
 
-      {loading && <p className="text-sm text-neutral-400">Loading…</p>}
+      {loading && <p className="text-sm text-neutral-600 dark:text-neutral-400">Loading…</p>}
 
-      {!loading && notFound && <p className="text-sm text-neutral-400">This user couldn't be found.</p>}
+      {!loading && notFound && <p className="text-sm text-neutral-600 dark:text-neutral-400">This user couldn't be found.</p>}
 
       {!loading && profile && (
         <>
@@ -98,20 +98,20 @@ function PublicProfile() {
               <img
                 src={profile.avatar_url}
                 alt="Profile picture"
-                className="h-24 w-24 rounded-full border border-neutral-800 object-cover"
+                className="h-24 w-24 rounded-full border border-neutral-200 dark:border-neutral-800 object-cover"
               />
             ) : (
-              <div className="flex h-24 w-24 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-neutral-500">
+              <div className="flex h-24 w-24 items-center justify-center rounded-full border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 text-neutral-500">
                 <svg viewBox="0 0 24 24" fill="currentColor" className="h-12 w-12">
                   <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2c0-2.76-3.58-5-8-5Z" />
                 </svg>
               </div>
             )}
             <div className="text-center">
-              <p className="text-lg font-semibold text-white">
+              <p className="text-lg font-semibold text-neutral-900 dark:text-white">
                 {profile.display_name || profile.username || 'Forged user'}
               </p>
-              {profile.username && <p className="text-neutral-400">@{profile.username}</p>}
+              {profile.username && <p className="text-neutral-600 dark:text-neutral-400">@{profile.username}</p>}
             </div>
             {user && user.id !== profile.id && (
               <div className="flex items-center gap-2">
@@ -124,7 +124,7 @@ function PublicProfile() {
                 {followState?.isFollowing && followState?.isFollowedBy && (
                   <Link
                     to={`/messages/${profile.id}`}
-                    className="rounded-xl border border-neutral-800 px-6 py-2 text-sm font-semibold text-white active:opacity-80"
+                    className="rounded-xl border border-neutral-200 dark:border-neutral-800 px-6 py-2 text-sm font-semibold text-neutral-900 dark:text-white active:opacity-80"
                   >
                     Message
                   </Link>
@@ -133,12 +133,12 @@ function PublicProfile() {
             )}
           </div>
 
-          <div className="space-y-3 rounded-2xl border border-neutral-800 p-4 text-sm">
-            <p className="font-medium text-white">Fitness profile</p>
+          <div className="space-y-3 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 text-sm">
+            <p className="font-medium text-neutral-900 dark:text-white">Fitness profile</p>
             {profileDetails(profile).map((detail) => (
               <p key={detail.label} className="flex justify-between">
-                <span className="text-neutral-400">{detail.label}</span>
-                <span className="font-medium text-white">{detail.value}</span>
+                <span className="text-neutral-600 dark:text-neutral-400">{detail.label}</span>
+                <span className="font-medium text-neutral-900 dark:text-white">{detail.value}</span>
               </p>
             ))}
           </div>

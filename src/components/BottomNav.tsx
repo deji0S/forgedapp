@@ -59,7 +59,7 @@ const TABS = [
 
 function BottomNav() {
   return (
-    <nav className="fixed inset-x-0 bottom-0 border-t border-neutral-800 bg-black/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
+    <nav className="fixed inset-x-0 bottom-0 border-t border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-black/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
       <ul className="flex">
         {TABS.map((tab) => (
           <li key={tab.to} className="flex-1">
@@ -68,7 +68,7 @@ function BottomNav() {
               end={tab.to === '/'}
               className={({ isActive }) =>
                 `flex flex-col items-center gap-1 py-3 text-center text-xs font-medium leading-tight ${
-                  isActive ? 'text-white' : 'text-neutral-400'
+                  isActive ? 'text-neutral-900 dark:text-white' : 'text-neutral-600 dark:text-neutral-400'
                 }`
               }
             >
