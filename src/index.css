@@ -74,17 +74,17 @@ body {
 .auth-bg-dots {
   background-image: radial-gradient(currentColor 1.4px, transparent 1.4px);
   background-size: 26px 26px;
-  animation: auth-bg-drift-dots 42s ease-in-out infinite;
+  animation: auth-bg-drift-dots 28s ease-in-out infinite;
   will-change: transform;
 }
 
 .auth-bg-blob-a {
-  animation: auth-bg-drift-a 34s ease-in-out infinite;
+  animation: auth-bg-drift-a 22s ease-in-out infinite;
   will-change: transform;
 }
 
 .auth-bg-blob-b {
-  animation: auth-bg-drift-b 40s ease-in-out infinite;
+  animation: auth-bg-drift-b 26s ease-in-out infinite;
   will-change: transform;
 }
 
