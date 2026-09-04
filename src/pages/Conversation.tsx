@@ -123,21 +123,26 @@ function groupMessages(messages: Message[]) {
 
 function MessageGroup({
   sender,
+  senderId,
   messages,
   mine,
 }: {
   sender: SenderInfo
+  senderId: string
   messages: Message[]
   mine: boolean
 }) {
   return (
     <div className={`flex flex-col gap-1 ${mine ? 'items-end' : 'items-start'}`}>
-      <div className={`flex items-center gap-2 px-1 ${mine ? 'flex-row-reverse' : ''}`}>
+      <Link
+        to={mine ? '/profile' : `/connect/${senderId}`}
+        className={`flex items-center gap-2 px-1 active:opacity-80 ${mine ? 'flex-row-reverse' : ''}`}
+      >
         <TinyAvatar url={sender.avatarUrl} />
         <span className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
           {sender.username ? `@${sender.username}` : sender.displayName || 'Forged user'}
         </span>
-      </div>
+      </Link>
       {messages.map((message) => (
         <div
           key={message.id}
@@ -303,7 +308,11 @@ function Conversation() {
           <Link to="/messages" className="text-neutral-900 dark:text-white active:opacity-80">
             ←
           </Link>
-          <Link to={id ? `/connect/${id}` : '/connect'} className="flex-1 font-medium text-neutral-900 dark:text-white active:opacity-80">
+          <Link
+            to={id ? `/connect/${id}` : '/connect'}
+            className="flex flex-1 items-center gap-2 font-medium text-neutral-900 dark:text-white active:opacity-80"
+          >
+            <TinyAvatar url={profile?.avatar_url ?? null} />
             {profile?.display_name || profile?.username || 'Conversation'}
           </Link>
           {!!streak?.current_streak && (
@@ -352,6 +361,7 @@ function Conversation() {
               <MessageGroup
                 key={group.messages[0].id}
                 sender={sender}
+                senderId={group.senderId}
                 messages={group.messages}
                 mine={mine}
               />

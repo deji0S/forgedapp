@@ -3,8 +3,11 @@ import { Link, useParams } from 'react-router-dom'
 import { useAuth } from '../lib/auth-context'
 import { profileDetails } from '../lib/profile-options'
 import { followUser, getFollowState, getPublicProfile, unfollowUser } from '../lib/social'
+import { getStreak } from '../lib/tracking'
+import { StreakHero } from '../components/StreakHero'
 import type { PublicProfile as PublicProfileType } from '../types/profile'
 import type { FollowState } from '../types/social'
+import type { Streak } from '../types/tracking'
 
 function FollowButton({
   currentUserId,
@@ -57,6 +60,7 @@ function PublicProfile() {
   const { user } = useAuth()
   const [profile, setProfile] = useState<PublicProfileType | null>(null)
   const [followState, setFollowState] = useState<FollowState | null>(null)
+  const [streak, setStreak] = useState<Streak | null>(null)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
 
@@ -65,11 +69,15 @@ function PublicProfile() {
     let active = true
     setLoading(true)
     setNotFound(false)
+    setStreak(null)
     getPublicProfile(id).then(({ data }) => {
       if (!active) return
       setProfile(data)
       setNotFound(!data)
       setLoading(false)
+    })
+    getStreak(id).then(({ data }) => {
+      if (active) setStreak(data)
     })
     if (id !== user.id) {
       getFollowState(user.id, id).then(({ data }) => {
@@ -132,6 +140,8 @@ function PublicProfile() {
               </div>
             )}
           </div>
+
+          <StreakHero streak={streak} />
 
           <div className="space-y-3 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 text-sm">
             <p className="font-medium text-neutral-900 dark:text-white">Fitness profile</p>

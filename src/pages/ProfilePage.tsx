@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/auth-context'
 import { usePremium } from '../lib/premium-context'
 import { removeAvatar, uploadAvatar } from '../lib/avatar'
-import { FlameIcon } from '../components/FlameIcon'
 import ImageCropper from '../components/ImageCropper'
 import OptionGroup from '../components/OptionGroup'
+import { StreakHero } from '../components/StreakHero'
 import {
   DAYS_PER_WEEK,
   FITNESS_LEVELS,
@@ -57,32 +57,6 @@ function FollowCounts({ userId }: { userId: string }) {
         <p className="text-lg font-semibold text-neutral-900 dark:text-white">{counts?.following ?? '—'}</p>
         <p className="text-neutral-600 dark:text-neutral-400">Following</p>
       </Link>
-    </div>
-  )
-}
-
-/**
- * Hero-style streak display — the centerpiece of the Profile page rather
- * than a small stat row, so it's one of the first things noticed.
- */
-function StreakHero({ streak }: { streak: Streak | null }) {
-  const current = streak?.current_streak ?? 0
-  const longest = streak?.longest_streak ?? 0
-
-  return (
-    <div className="flex flex-col items-center gap-1 rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 py-8 text-center">
-      <div className="flex items-center gap-3">
-        <FlameIcon className="h-11 w-11 text-neutral-900 dark:text-white" />
-        <span className="text-6xl font-bold tabular-nums leading-none text-neutral-900 dark:text-white">
-          {current}
-        </span>
-      </div>
-      <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400">Day streak</p>
-      {longest > current && (
-        <p className="mt-1 text-xs text-neutral-500">
-          Best: {longest} {longest === 1 ? 'day' : 'days'}
-        </p>
-      )}
     </div>
   )
 }
