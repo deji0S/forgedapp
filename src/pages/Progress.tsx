@@ -9,11 +9,15 @@ import {
   topExercises,
   weeklyVolume,
 } from '../lib/analytics'
+import { staggerDelay } from '../lib/motion'
 import type { Streak, WorkoutLog } from '../types/tracking'
 
-function StatCard({ label, value }: { label: string; value: string | number }) {
+function StatCard({ label, value, index }: { label: string; value: string | number; index: number }) {
   return (
-    <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4">
+    <div
+      style={staggerDelay(index, 50)}
+      className="stagger-item rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4"
+    >
       <p className="text-xs text-neutral-600 dark:text-neutral-400">{label}</p>
       <p className="mt-1 text-lg font-semibold text-neutral-900 dark:text-white">{value}</p>
     </div>
@@ -28,6 +32,15 @@ function AdvancedAnalytics({ logs }: { logs: WorkoutLog[] }) {
   const maxWeekReps = Math.max(1, ...weeks.map((w) => w.reps))
   const feedbackTotal = feedback.too_easy + feedback.just_right + feedback.too_hard
 
+  // Bars/segments start at 0 and grow to their real size just after mount,
+  // so the chart reads as building itself rather than snapping in at full
+  // height -- a plain CSS transition, retriggered by this one-shot flip.
+  const [grown, setGrown] = useState(false)
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setGrown(true))
+    return () => cancelAnimationFrame(frame)
+  }, [])
+
   if (logs.length === 0) {
     return <p className="text-sm text-neutral-600 dark:text-neutral-400">Log a workout to unlock your trends.</p>
   }
@@ -40,8 +53,8 @@ function AdvancedAnalytics({ logs }: { logs: WorkoutLog[] }) {
           {weeks.map((week) => (
             <div key={week.weekStart} className="flex flex-1 flex-col items-center gap-1">
               <div
-                className="w-full rounded-t bg-blue-500"
-                style={{ height: `${Math.round((week.reps / maxWeekReps) * 96) + 4}px` }}
+                className="w-full rounded-t bg-blue-500 transition-[height] duration-500 ease-out"
+                style={{ height: grown ? `${Math.round((week.reps / maxWeekReps) * 96) + 4}px` : 0 }}
               />
               <span className="text-[10px] text-neutral-500">{week.label}</span>
             </div>
@@ -90,17 +103,26 @@ function AdvancedAnalytics({ logs }: { logs: WorkoutLog[] }) {
         ) : (
           <div className="flex overflow-hidden rounded-lg text-center text-[10px] font-medium text-white">
             {feedback.too_easy > 0 && (
-              <div className="bg-blue-700 py-1" style={{ width: `${(feedback.too_easy / feedbackTotal) * 100}%` }}>
+              <div
+                className="bg-blue-700 py-1 transition-[width] duration-500 ease-out"
+                style={{ width: grown ? `${(feedback.too_easy / feedbackTotal) * 100}%` : 0 }}
+              >
                 Easy
               </div>
             )}
             {feedback.just_right > 0 && (
-              <div className="bg-blue-500 py-1" style={{ width: `${(feedback.just_right / feedbackTotal) * 100}%` }}>
+              <div
+                className="bg-blue-500 py-1 transition-[width] duration-500 ease-out"
+                style={{ width: grown ? `${(feedback.just_right / feedbackTotal) * 100}%` : 0 }}
+              >
                 Right
               </div>
             )}
             {feedback.too_hard > 0 && (
-              <div className="bg-neutral-600 py-1" style={{ width: `${(feedback.too_hard / feedbackTotal) * 100}%` }}>
+              <div
+                className="bg-neutral-600 py-1 transition-[width] duration-500 ease-out"
+                style={{ width: grown ? `${(feedback.too_hard / feedbackTotal) * 100}%` : 0 }}
+              >
                 Hard
               </div>
             )}
@@ -152,10 +174,10 @@ function Progress() {
         </p>
       ) : (
         <section className="grid grid-cols-2 gap-3">
-          <StatCard label="Total workouts" value={stats.totalWorkouts} />
-          <StatCard label="Last 7 days" value={stats.last7} />
-          <StatCard label="Last 30 days" value={stats.last30} />
-          <StatCard label="Current streak" value={`${streak?.current_streak ?? 0} days`} />
+          <StatCard index={0} label="Total workouts" value={stats.totalWorkouts} />
+          <StatCard index={1} label="Last 7 days" value={stats.last7} />
+          <StatCard index={2} label="Last 30 days" value={stats.last30} />
+          <StatCard index={3} label="Current streak" value={`${streak?.current_streak ?? 0} days`} />
         </section>
       )}
 

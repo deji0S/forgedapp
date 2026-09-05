@@ -148,3 +148,70 @@ body {
     animation: none;
   }
 }
+
+/* ---------------------------------------------------------------------
+   Shared motion system — one small set of primitives reused everywhere
+   (buttons, cards, list rows, tab bar, route changes) instead of one-off
+   animations per screen, so the app reads as consistently "alive" rather
+   than a grab-bag of effects. Transform/opacity only throughout, so it's
+   cheap to composite and never affects layout.
+   ------------------------------------------------------------------- */
+
+/* Tap/press feedback used on nearly every button and card-as-link,
+   replacing a bare opacity snap with a small eased scale+opacity dip so a
+   tap reads as a press. `:active` naturally doesn't fire on a `:disabled`
+   control, so disabled elements are unaffected without extra rules. */
+.pressable {
+  transition:
+    transform 150ms ease-out,
+    opacity 150ms ease-out;
+}
+.pressable:active {
+  transform: scale(0.98);
+  opacity: 0.8;
+}
+
+/* Brief fade + rise used both for a whole page's content on route change
+   (.page-enter, no delay) and for individual items appearing in a list or
+   stat grid (.stagger-item, paired with an inline animation-delay so
+   items cascade in rather than popping in all at once). */
+@keyframes enter-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* `backwards`, not `both`/`forwards`. `backwards` applies the *first*
+   keyframe during an animation-delay (so .stagger-item's per-item delay
+   doesn't flash the item at full opacity before its turn), but -- unlike
+   `forwards`/`both` -- it does NOT keep the animation "in effect" after it
+   finishes. That distinction matters: while a transform animation is
+   actively in effect (even mid-interpolation toward identity/"none"), the
+   element becomes a containing block for `position: fixed` descendants,
+   which would silently break this app's `fixed inset-0` confirm-dialog
+   overlays on any page these classes wrap. With `backwards`, once the
+   animation ends the element cleanly reverts to its normal, unanimated
+   style -- which already equals the end keyframe (opacity: 1, transform:
+   none), so nothing visibly changes at that boundary either. */
+.page-enter {
+  animation: enter-fade-up 220ms ease-out backwards;
+}
+
+.stagger-item {
+  animation: enter-fade-up 260ms ease-out backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pressable {
+    transition: none;
+  }
+  .page-enter,
+  .stagger-item {
+    animation: none;
+  }
+}

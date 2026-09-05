@@ -105,7 +105,7 @@ function Premium() {
             type="button"
             onClick={() => handle('portal')}
             disabled={busy}
-            className="w-full rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white active:opacity-80 disabled:opacity-60"
+            className="w-full rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white pressable disabled:opacity-60"
           >
             {busy ? 'Opening…' : 'Manage billing'}
           </button>
@@ -115,7 +115,7 @@ function Premium() {
           type="button"
           onClick={() => handle('checkout')}
           disabled={busy}
-          className="w-full rounded-xl bg-blue-500 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+          className="w-full rounded-xl bg-blue-500 py-3 text-sm font-semibold text-white pressable disabled:opacity-60"
         >
           {busy ? 'Redirecting…' : 'Upgrade to Premium'}
         </button>

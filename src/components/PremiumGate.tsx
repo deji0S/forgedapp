@@ -29,7 +29,7 @@ export function PremiumGate({ feature, description, children }: PremiumGateProps
       {description && <p className="text-xs text-neutral-600 dark:text-neutral-400">{description}</p>}
       <Link
         to="/premium"
-        className="mt-2 inline-block rounded-xl bg-blue-500 px-4 py-2 text-sm font-semibold text-white active:opacity-80"
+        className="mt-2 inline-block rounded-xl bg-blue-500 px-4 py-2 text-sm font-semibold text-white pressable"
       >
         Upgrade for £4.99/mo
       </Link>

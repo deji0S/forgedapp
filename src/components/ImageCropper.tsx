@@ -144,7 +144,7 @@ function ImageCropper({ src, onCancel, onConfirm }: ImageCropperProps) {
           type="button"
           onClick={onCancel}
           disabled={saving}
-          className="flex-1 rounded-xl bg-neutral-800 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+          className="flex-1 rounded-xl bg-neutral-800 py-3 text-sm font-semibold text-white pressable disabled:opacity-60"
         >
           Cancel
         </button>
@@ -152,7 +152,7 @@ function ImageCropper({ src, onCancel, onConfirm }: ImageCropperProps) {
           type="button"
           onClick={handleConfirm}
           disabled={!natural || saving}
-          className="flex-1 rounded-xl bg-white py-3 text-sm font-semibold text-black active:opacity-80 disabled:opacity-60"
+          className="flex-1 rounded-xl bg-white py-3 text-sm font-semibold text-black pressable disabled:opacity-60"
         >
           {saving ? 'Saving…' : 'Save'}
         </button>

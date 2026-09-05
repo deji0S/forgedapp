@@ -10,6 +10,7 @@ import {
 } from '../lib/tracking'
 import WorkoutForm from '../components/WorkoutForm'
 import type { WorkoutFormValues } from '../components/WorkoutForm'
+import { staggerDelay } from '../lib/motion'
 import type { WorkoutPlan } from '../types/tracking'
 
 function Workouts() {
@@ -96,7 +97,7 @@ function Workouts() {
             setEditingId(null)
             setShowForm((v) => !v)
           }}
-          className="rounded-lg bg-neutral-200 dark:bg-neutral-800 px-3 py-1.5 text-sm font-medium text-neutral-900 dark:text-white active:opacity-80"
+          className="rounded-lg bg-neutral-200 dark:bg-neutral-800 px-3 py-1.5 text-sm font-medium text-neutral-900 dark:text-white pressable"
         >
           {showForm ? 'Cancel' : '+ New'}
         </button>
@@ -130,14 +131,14 @@ function Workouts() {
                 />
               </li>
             ) : (
-              <li key={p.id} className="flex items-stretch gap-2">
+              <li key={p.id} style={staggerDelay(index)} className="stagger-item flex items-stretch gap-2">
                 <div className="flex w-8 shrink-0 flex-col gap-1">
                   <button
                     type="button"
                     onClick={() => handleMove(index, -1)}
                     disabled={index === 0 || reordering}
                     aria-label={`Move ${p.name} up`}
-                    className="flex flex-1 items-center justify-center rounded-lg border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 active:opacity-80 disabled:opacity-30"
+                    className="flex flex-1 items-center justify-center rounded-lg border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 pressable disabled:opacity-30"
                   >
                     <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4">
                       <path
@@ -154,7 +155,7 @@ function Workouts() {
                     onClick={() => handleMove(index, 1)}
                     disabled={index === plans.length - 1 || reordering}
                     aria-label={`Move ${p.name} down`}
-                    className="flex flex-1 items-center justify-center rounded-lg border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 active:opacity-80 disabled:opacity-30"
+                    className="flex flex-1 items-center justify-center rounded-lg border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 pressable disabled:opacity-30"
                   >
                     <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4">
                       <path
@@ -169,7 +170,7 @@ function Workouts() {
                 </div>
                 <Link
                   to={`/workouts/${p.id}`}
-                  className="block flex-1 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 active:opacity-80"
+                  className="block flex-1 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 pressable"
                 >
                   <p className="font-medium text-neutral-900 dark:text-white">{p.name}</p>
                   {p.exercises.length > 0 ? (
@@ -189,7 +190,7 @@ function Workouts() {
                     setEditingId(p.id)
                   }}
                   aria-label={`Edit ${p.name}`}
-                  className="flex w-12 shrink-0 items-center justify-center rounded-2xl border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 active:opacity-80"
+                  className="flex w-12 shrink-0 items-center justify-center rounded-2xl border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 pressable"
                 >
                   <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
                     <path
@@ -208,7 +209,7 @@ function Workouts() {
                     setDeletingId(p.id)
                   }}
                   aria-label={`Delete ${p.name}`}
-                  className="flex w-12 shrink-0 items-center justify-center rounded-2xl border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 active:opacity-80"
+                  className="flex w-12 shrink-0 items-center justify-center rounded-2xl border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 pressable"
                 >
                   <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
                     <path
@@ -247,7 +248,7 @@ function Workouts() {
                 type="button"
                 onClick={() => setDeletingId(null)}
                 disabled={deleteBusy}
-                className="flex-1 rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white active:opacity-80 disabled:opacity-60"
+                className="flex-1 rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white pressable disabled:opacity-60"
               >
                 Cancel
               </button>
@@ -255,7 +256,7 @@ function Workouts() {
                 type="button"
                 onClick={handleDelete}
                 disabled={deleteBusy}
-                className="flex-1 rounded-xl bg-red-600 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+                className="flex-1 rounded-xl bg-red-600 py-3 text-sm font-semibold text-white pressable disabled:opacity-60"
               >
                 {deleteBusy ? 'Deleting…' : 'Delete'}
               </button>

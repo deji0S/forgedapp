@@ -13,7 +13,7 @@ export function StreakHero({ streak }: { streak: Streak | null }) {
   return (
     <div className="flex flex-col items-center gap-1 rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 py-8 text-center">
       <div className="flex items-center gap-3">
-        <FlameIcon className="h-11 w-11 text-neutral-900 dark:text-white" />
+        <FlameIcon animated className="h-11 w-11 text-neutral-900 dark:text-white" />
         <span className="text-6xl font-bold tabular-nums leading-none text-neutral-900 dark:text-white">
           {current}
         </span>

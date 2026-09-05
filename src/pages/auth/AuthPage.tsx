@@ -117,7 +117,7 @@ function AuthPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full rounded-xl bg-black dark:bg-white py-3 text-sm font-semibold text-white dark:text-black active:opacity-80 disabled:opacity-60"
+              className="w-full rounded-xl bg-black dark:bg-white py-3 text-sm font-semibold text-white dark:text-black pressable disabled:opacity-60"
             >
               {submitting ? 'Please wait…' : mode === 'sign-in' ? 'Sign in' : 'Sign up'}
             </button>

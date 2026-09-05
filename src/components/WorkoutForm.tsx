@@ -100,7 +100,7 @@ function WorkoutForm({
               <button
                 type="button"
                 onClick={() => removeExercise(index)}
-                className="px-1 text-neutral-500 active:opacity-80"
+                className="px-1 text-neutral-500 pressable"
                 aria-label="Remove exercise"
               >
                 ✕
@@ -126,7 +126,7 @@ function WorkoutForm({
             type="button"
             onClick={onCancel}
             disabled={submitting}
-            className="flex-1 rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white active:opacity-80 disabled:opacity-60"
+            className="flex-1 rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white pressable disabled:opacity-60"
           >
             Cancel
           </button>
@@ -134,7 +134,7 @@ function WorkoutForm({
         <button
           type="submit"
           disabled={submitting}
-          className="flex-1 rounded-xl bg-black dark:bg-white py-3 text-sm font-semibold text-white dark:text-black active:opacity-80 disabled:opacity-60"
+          className="flex-1 rounded-xl bg-black dark:bg-white py-3 text-sm font-semibold text-white dark:text-black pressable disabled:opacity-60"
         >
           {submitting ? 'Saving…' : submitLabel}
         </button>
