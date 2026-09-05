@@ -10,7 +10,43 @@ import {
   weeklyVolume,
 } from '../lib/analytics'
 import { staggerDelay } from '../lib/motion'
+import { formatDuration } from '../lib/utils'
 import type { Streak, WorkoutLog } from '../types/tracking'
+
+function formatLoggedDate(isoDate: string) {
+  return new Date(`${isoDate}T00:00:00`).toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+  })
+}
+
+function RecentWorkouts({ logs }: { logs: WorkoutLog[] }) {
+  const recent = logs.slice(0, 10)
+
+  return (
+    <ul className="space-y-2">
+      {recent.map((log, index) => (
+        <li
+          key={log.id}
+          style={staggerDelay(index, 50)}
+          className="stagger-item flex items-center justify-between gap-3 rounded-2xl border border-neutral-200 p-3 dark:border-neutral-800"
+        >
+          <div>
+            <p className="text-sm font-medium text-neutral-900 dark:text-white">{log.name}</p>
+            <p className="text-xs text-neutral-600 dark:text-neutral-400">
+              {formatLoggedDate(log.logged_date)} · {log.exercises.length} exercises
+            </p>
+          </div>
+          {log.duration_ms ? (
+            <span className="shrink-0 text-sm font-semibold tabular-nums text-neutral-700 dark:text-neutral-300">
+              {formatDuration(log.duration_ms)}
+            </span>
+          ) : null}
+        </li>
+      ))}
+    </ul>
+  )
+}
 
 function StatCard({ label, value, index }: { label: string; value: string | number; index: number }) {
   return (
@@ -178,6 +214,13 @@ function Progress() {
           <StatCard index={1} label="Last 7 days" value={stats.last7} />
           <StatCard index={2} label="Last 30 days" value={stats.last30} />
           <StatCard index={3} label="Current streak" value={`${streak?.current_streak ?? 0} days`} />
+        </section>
+      )}
+
+      {logs.length > 0 && (
+        <section className="space-y-3">
+          <h2 className="text-sm font-semibold text-neutral-900 dark:text-white">Recent workouts</h2>
+          <RecentWorkouts logs={logs} />
         </section>
       )}
 
