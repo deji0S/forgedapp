@@ -215,3 +215,14 @@ body {
     animation: none;
   }
 }
+
+/* Hides the scrollbar on the horizontally-scrollable bottom nav (see
+   components/BottomNav.tsx) -- the row is still swipe/scroll-able, a
+   visible scrollbar on a tab bar just reads as un-tidy on a touch device. */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

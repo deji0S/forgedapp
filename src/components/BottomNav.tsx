@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 
 function HomeIcon() {
@@ -67,28 +68,51 @@ function isTabActive(pathname: string, to: string) {
 function BottomNav() {
   const { pathname } = useLocation()
   const activeIndex = TABS.findIndex((tab) => isTabActive(pathname, tab.to))
-  const tabWidthPct = 100 / TABS.length
+  const listRef = useRef<HTMLUListElement>(null)
+  const tabRefs = useRef<(HTMLLIElement | null)[]>([])
+  const [pill, setPill] = useState<{ left: number; width: number } | null>(null)
+
+  // Six tabs no longer fit as equal-width flex-1 cells without cramping, so
+  // each tab now has a fixed minimum width and the row scrolls horizontally
+  // instead of shrinking icons/labels. That means the pill can't be
+  // positioned with simple percentage math anymore -- it's measured off the
+  // actual active <li>'s offsetLeft/offsetWidth (relative to the scrolling
+  // <ul>, so it stays correctly attached to its tab as the row scrolls).
+  useLayoutEffect(() => {
+    const activeEl = tabRefs.current[activeIndex]
+    if (!activeEl) {
+      setPill(null)
+      return
+    }
+    setPill({ left: activeEl.offsetLeft, width: activeEl.offsetWidth })
+    activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' })
+  }, [activeIndex])
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 border-t border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-black/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
-      <ul className="relative flex">
-        {/* Sliding pill behind the active tab -- position/width are simple
-            percentages since every tab is an equal-width flex-1 item, so no
-            DOM measurement is needed to keep it aligned. */}
-        {activeIndex >= 0 && (
+    <nav
+      className="fixed inset-x-0 bottom-0 mx-auto max-w-md border-t border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-black/95 pb-[env(safe-area-inset-bottom)] backdrop-blur"
+    >
+      <ul ref={listRef} className="no-scrollbar relative flex overflow-x-auto">
+        {pill && (
           <li
             aria-hidden
-            className="pointer-events-none absolute inset-y-1.5 mx-1.5 rounded-xl bg-neutral-100 transition-[left] duration-300 ease-out dark:bg-neutral-900"
-            style={{ left: `${activeIndex * tabWidthPct}%`, width: `calc(${tabWidthPct}% - 12px)` }}
+            className="pointer-events-none absolute inset-y-1.5 rounded-xl bg-neutral-100 transition-[left,width] duration-300 ease-out dark:bg-neutral-900"
+            style={{ left: pill.left + 6, width: pill.width - 12 }}
           />
         )}
-        {TABS.map((tab) => (
-          <li key={tab.to} className="relative flex-1">
+        {TABS.map((tab, index) => (
+          <li
+            key={tab.to}
+            ref={(el) => {
+              tabRefs.current[index] = el
+            }}
+            className="relative min-w-[72px] flex-1 shrink-0"
+          >
             <NavLink
               to={tab.to}
               end={tab.to === '/'}
               className={({ isActive }) =>
-                `pressable flex flex-col items-center gap-1 py-3 text-center text-xs font-medium leading-tight transition-colors duration-200 ${
+                `pressable flex flex-col items-center gap-1 py-3 text-center text-xs font-medium leading-tight whitespace-nowrap transition-colors duration-200 ${
                   isActive ? 'text-neutral-900 dark:text-white' : 'text-neutral-600 dark:text-neutral-400'
                 }`
               }
