@@ -26,13 +26,28 @@ function WorkoutDetail() {
 
   const [feedback, setFeedback] = useState<WorkoutFeedback | null>(null)
 
+  // Local, per-session checklist -- lets someone tick exercises off as they
+  // work through the session. Not persisted: it's scoped to this viewing of
+  // the workout, and resets whenever a different plan is loaded.
+  const [completed, setCompleted] = useState<Set<number>>(new Set())
+
   useEffect(() => {
     if (!id) return
+    setCompleted(new Set())
     getWorkoutPlan(id).then(({ data }) => {
       setPlan(data)
       setLoading(false)
     })
   }, [id])
+
+  function toggleExerciseDone(index: number) {
+    setCompleted((prev) => {
+      const next = new Set(prev)
+      if (next.has(index)) next.delete(index)
+      else next.add(index)
+      return next
+    })
+  }
 
   async function handleComplete() {
     if (!user || !plan) return
@@ -90,22 +105,56 @@ function WorkoutDetail() {
           ← Workouts
         </Link>
         <h1 className="mt-2 text-2xl font-semibold text-neutral-900 dark:text-white">{plan.name}</h1>
-        <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">{plan.exercises.length} exercises</p>
+        <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+          {plan.exercises.length} exercises
+          {completed.size > 0 ? ` · ${completed.size} of ${plan.exercises.length} done` : ''}
+        </p>
       </div>
 
       <ul className="space-y-3">
-        {plan.exercises.map((exercise, index) => (
-          <li
-            key={index}
-            className="flex items-center justify-between rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4"
-          >
-            <span className="font-medium text-neutral-900 dark:text-white">{exercise.name}</span>
-            <span className="text-sm text-neutral-600 dark:text-neutral-400">
-              {exercise.sets} × {exercise.reps}
-              {exercise.weight_kg ? ` @ ${exercise.weight_kg}kg` : ''}
-            </span>
-          </li>
-        ))}
+        {plan.exercises.map((exercise, index) => {
+          const done = completed.has(index)
+          return (
+            <li
+              key={index}
+              className={cn(
+                'flex items-center gap-3 rounded-2xl border p-4 transition-colors',
+                done
+                  ? 'border-neutral-200 bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-950'
+                  : 'border-neutral-200 dark:border-neutral-800',
+              )}
+            >
+              <input
+                type="checkbox"
+                checked={done}
+                onChange={() => toggleExerciseDone(index)}
+                aria-label={`Mark ${exercise.name} complete`}
+                className="h-5 w-5 shrink-0 accent-black dark:accent-white"
+              />
+              <div className="flex flex-1 items-center justify-between gap-3">
+                <span
+                  className={cn(
+                    'font-medium',
+                    done
+                      ? 'text-neutral-500 line-through dark:text-neutral-500'
+                      : 'text-neutral-900 dark:text-white',
+                  )}
+                >
+                  {exercise.name}
+                </span>
+                <span
+                  className={cn(
+                    'text-sm',
+                    done ? 'text-neutral-400 dark:text-neutral-600' : 'text-neutral-600 dark:text-neutral-400',
+                  )}
+                >
+                  {exercise.sets} × {exercise.reps}
+                  {exercise.weight_kg ? ` @ ${exercise.weight_kg}kg` : ''}
+                </span>
+              </div>
+            </li>
+          )
+        })}
       </ul>
 
       {error && <p className="text-sm text-red-700 dark:text-red-400">{error}</p>}
