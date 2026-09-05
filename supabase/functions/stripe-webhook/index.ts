@@ -9,6 +9,12 @@
 // (or deploy with `verify_jwt = false`). Authenticity is instead enforced by
 // verifying the Stripe-Signature against STRIPE_WEBHOOK_SECRET below.
 //
+// Also handles checkout.session.completed for the one-time £1 streak restoral
+// (mode: 'payment', metadata.type === 'streak_restoral') by applying the
+// bridge via public.apply_purchased_streak_restoral() -- see
+// supabase/functions/stripe-streak-restoral-checkout for how that session is
+// created.
+//
 // Point a Stripe webhook endpoint at:
 //   https://bozzojpwswuvbmqazvle.supabase.co/functions/v1/stripe-webhook
 // subscribed to at least:
@@ -140,6 +146,17 @@ Deno.serve(async (req) => {
               : session.subscription.id
           const subscription = await stripe.subscriptions.retrieve(subId)
           await upsertFromSubscription(subscription, session.client_reference_id ?? undefined)
+        } else if (session.mode === 'payment' && session.metadata?.type === 'streak_restoral') {
+          const userId = session.metadata.supabase_user_id ?? session.client_reference_id ?? undefined
+          if (!userId) {
+            console.error('stripe-webhook: streak restoral session missing user id', session.id)
+            break
+          }
+          const { error } = await admin.rpc('apply_purchased_streak_restoral', {
+            p_user_id: userId,
+            p_stripe_session_id: session.id,
+          })
+          if (error) throw new Error(error.message)
         }
         break
       }
