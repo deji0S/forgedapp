@@ -49,6 +49,31 @@ export async function recoverStreak() {
 }
 
 /**
+ * A streak that broke exactly "today" -- last activity was two days ago, so
+ * the required daily-or-yesterday cadence lapsed as of this UTC calendar day.
+ * Used to gate the purchasable restoral to its 24-hour offer window, which
+ * (like the rest of the eligibility checks in this file) is expressed in
+ * whole UTC days rather than a stored break timestamp.
+ */
+export function justBrokeWithin24h(streak: Streak | null): boolean {
+  return recoveryEligibility(streak).missedDays === 1
+}
+
+/** Redirects the browser to Stripe Checkout for the one-time £1 streak restoral. */
+export async function startStreakRestoralCheckout(): Promise<never> {
+  const { data, error } = await supabase.functions.invoke<{ url?: string; error?: string }>(
+    'stripe-streak-restoral-checkout',
+    { body: { returnUrl: window.location.origin } },
+  )
+  if (error) throw new Error(error.message)
+  if (data?.error) throw new Error(data.error)
+  if (!data?.url) throw new Error('Could not start the checkout. Please try again.')
+  window.location.href = data.url
+  // Redirecting away; nothing after this runs.
+  return new Promise<never>(() => {})
+}
+
+/**
  * Remaining personal streak recoveries, from the same rolling window
  * public.recover_streak() enforces (30 days since the last use).
  */

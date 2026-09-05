@@ -1,12 +1,18 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../lib/auth-context'
 import { usePremium } from '../lib/premium-context'
 import { PremiumGate } from '../components/PremiumGate'
 import DailyReminderCard from '../components/DailyReminderCard'
 import { FlameIcon } from '../components/FlameIcon'
 import { checkInToday, getStreak, getTodayCheckin, listWorkoutPlans } from '../lib/tracking'
-import { recoverStreak, recoveryEligibility } from '../lib/streak'
+import {
+  getStreakRecoveryStatus,
+  recoverStreak,
+  recoveryEligibility,
+  startStreakRestoralCheckout,
+  type RestoralStatus,
+} from '../lib/streak'
 import { staggerDelay } from '../lib/motion'
 import type { Streak, WorkoutPlan } from '../types/tracking'
 
@@ -30,16 +36,28 @@ function UpgradeBanner() {
 
 function StreakRecoveryCard({
   streak,
+  restoralStatus,
   onRecovered,
 }: {
   streak: Streak
+  restoralStatus: RestoralStatus | null
   onRecovered: (next: Streak) => void
 }) {
+  const { isPremium } = usePremium()
   const eligibility = useMemo(() => recoveryEligibility(streak), [streak])
   const [recovering, setRecovering] = useState(false)
+  const [purchasing, setPurchasing] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   if (!eligibility.eligible) return null
+
+  // The purchasable restoral is only offered in the first 24 hours after a
+  // streak breaks (missedDays === 1 -- last activity was exactly two days
+  // ago). Past that, behavior is unchanged: premium keeps its existing 1-2
+  // day free-recovery window, everyone else sees the upgrade upsell.
+  const withinPurchaseWindow = eligibility.missedDays === 1
+  const hasFreeRestoral = isPremium && (restoralStatus?.remaining ?? 0) > 0
+  const offerPaid = withinPurchaseWindow && !hasFreeRestoral
 
   async function handleRecover() {
     setRecovering(true)
@@ -51,6 +69,17 @@ function StreakRecoveryCard({
       return
     }
     onRecovered(data)
+  }
+
+  async function handlePurchase() {
+    setPurchasing(true)
+    setError(null)
+    try {
+      await startStreakRestoralCheckout()
+    } catch (err) {
+      setPurchasing(false)
+      setError(err instanceof Error ? err.message : 'Could not start checkout.')
+    }
   }
 
   return (
@@ -65,19 +94,30 @@ function StreakRecoveryCard({
           now to keep your {streak.longest_streak}-day best intact.
         </p>
       </div>
-      <PremiumGate
-        feature="Streak recovery"
-        description="Restore a lapsed streak once every 30 days."
-      >
+      {offerPaid ? (
         <button
           type="button"
-          onClick={handleRecover}
-          disabled={recovering}
+          onClick={handlePurchase}
+          disabled={purchasing}
           className="w-full rounded-xl bg-blue-500 py-3 text-sm font-semibold text-white pressable disabled:opacity-60"
         >
-          {recovering ? 'Recovering…' : 'Recover my streak'}
+          {purchasing ? 'Redirecting…' : 'Restore for £1'}
         </button>
-      </PremiumGate>
+      ) : (
+        <PremiumGate
+          feature="Streak recovery"
+          description="Restore a lapsed streak once every 30 days."
+        >
+          <button
+            type="button"
+            onClick={handleRecover}
+            disabled={recovering}
+            className="w-full rounded-xl bg-blue-500 py-3 text-sm font-semibold text-white pressable disabled:opacity-60"
+          >
+            {recovering ? 'Recovering…' : 'Recover my streak'}
+          </button>
+        </PremiumGate>
+      )}
       {error && <p className="text-sm text-red-700 dark:text-red-400">{error}</p>}
     </section>
   )
@@ -86,30 +126,47 @@ function StreakRecoveryCard({
 function Home() {
   const { user } = useAuth()
   const { isPremium, loading: premiumLoading } = usePremium()
+  const [params] = useSearchParams()
   const [streak, setStreak] = useState<Streak | null>(null)
+  const [restoralStatus, setRestoralStatus] = useState<RestoralStatus | null>(null)
   const [plan, setPlan] = useState<WorkoutPlan | null>(null)
   const [checkedIn, setCheckedIn] = useState(false)
   const [loading, setLoading] = useState(true)
   const [checkingIn, setCheckingIn] = useState(false)
+  const restoralResult = params.get('restoral')
 
   useEffect(() => {
     if (!user) return
     let active = true
 
-    Promise.all([getStreak(user.id), listWorkoutPlans(user.id), getTodayCheckin(user.id)]).then(
-      ([streakRes, plansRes, checkinRes]) => {
-        if (!active) return
-        setStreak(streakRes.data)
-        setPlan(plansRes.data?.[0] ?? null)
-        setCheckedIn(Boolean(checkinRes.data))
-        setLoading(false)
-      },
-    )
+    Promise.all([
+      getStreak(user.id),
+      listWorkoutPlans(user.id),
+      getTodayCheckin(user.id),
+      getStreakRecoveryStatus(user.id),
+    ]).then(([streakRes, plansRes, checkinRes, restoralRes]) => {
+      if (!active) return
+      setStreak(streakRes.data)
+      setPlan(plansRes.data?.[0] ?? null)
+      setCheckedIn(Boolean(checkinRes.data))
+      setRestoralStatus(restoralRes)
+      setLoading(false)
+    })
 
     return () => {
       active = false
     }
   }, [user])
+
+  // The webhook that applies a purchased restoral can land a beat after the
+  // redirect back from Stripe Checkout, so poll the streak briefly.
+  useEffect(() => {
+    if (restoralResult !== 'success' || !user) return
+    const timers = [0, 2000, 5000, 10000].map((ms) =>
+      window.setTimeout(() => getStreak(user.id).then(({ data }) => setStreak(data)), ms),
+    )
+    return () => timers.forEach(window.clearTimeout)
+  }, [restoralResult, user])
 
   async function handleCheckIn() {
     if (!user || checkedIn) return
@@ -160,7 +217,20 @@ function Home() {
 
       {!premiumLoading && !isPremium && <UpgradeBanner />}
 
-      {streak && <StreakRecoveryCard streak={streak} onRecovered={setStreak} />}
+      {restoralResult === 'success' && (
+        <p className="rounded-xl bg-blue-500/15 p-3 text-sm text-blue-700 dark:text-blue-300">
+          Payment received — restoring your streak…
+        </p>
+      )}
+      {restoralResult === 'cancel' && (
+        <p className="rounded-xl bg-neutral-200 dark:bg-neutral-800 p-3 text-sm text-neutral-700 dark:text-neutral-300">
+          Checkout canceled — no charge was made.
+        </p>
+      )}
+
+      {streak && (
+        <StreakRecoveryCard streak={streak} restoralStatus={restoralStatus} onRecovered={setStreak} />
+      )}
 
       <section className="grid grid-cols-2 gap-3">
         <div
