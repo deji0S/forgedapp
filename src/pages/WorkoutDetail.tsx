@@ -31,6 +31,14 @@ function formatDuration(ms: number) {
   return hours > 0 ? `${hours}:${mm}:${ss}` : `${mm}:${ss}`
 }
 
+// Same as formatDuration but with centiseconds, for the per-exercise
+// stopwatch readout -- the workout-wide total stays whole-second (coarse
+// precision reads better in a summary line).
+function formatDurationPrecise(ms: number) {
+  const centiseconds = Math.floor((ms % 1000) / 10)
+  return `${formatDuration(ms)}.${String(centiseconds).padStart(2, '0')}`
+}
+
 function WorkoutDetail() {
   const { id } = useParams<{ id: string }>()
   const { user } = useAuth()
@@ -68,12 +76,13 @@ function WorkoutDetail() {
     })
   }, [id])
 
-  // Re-render once a second, but only while at least one stopwatch is
-  // running -- otherwise the displayed times would freeze until some other
-  // state change happened to re-render the page.
+  // Re-render at a rate fast enough for the centisecond readout to look
+  // live, but only while at least one stopwatch is running -- otherwise the
+  // displayed times would freeze until some other state change happened to
+  // re-render the page.
   useEffect(() => {
     if (!timers.some((t) => t.runningSince !== null)) return
-    const interval = setInterval(() => setTick((t) => t + 1), 1000)
+    const interval = setInterval(() => setTick((t) => t + 1), 50)
     return () => clearInterval(interval)
   }, [timers])
 
@@ -179,28 +188,6 @@ function WorkoutDetail() {
                   : 'border-neutral-200 dark:border-neutral-800',
               )}
             >
-              {/* The stopwatch is the prominent, easy-to-tap part of this
-                  card -- large digits, a full-height Start/Stop button --
-                  sitting above the more compact exercise details below. */}
-              {timer && (
-                <div className="flex items-center justify-between gap-3 rounded-xl bg-neutral-100 p-3 dark:bg-neutral-900">
-                  <span className="text-3xl font-bold tabular-nums leading-none text-neutral-900 dark:text-white">
-                    {formatDuration(elapsedMs(timer, Date.now()))}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => (running ? stopExerciseTimer(index) : startExerciseTimer(index))}
-                    aria-label={`${running ? 'Stop' : 'Start'} timer for ${exercise.name}`}
-                    className={cn(
-                      'pressable rounded-xl px-6 py-3 text-base font-semibold text-white',
-                      running ? 'bg-red-600' : 'bg-green-500',
-                    )}
-                  >
-                    {running ? 'Stop' : 'Start'}
-                  </button>
-                </div>
-              )}
-
               <div className="flex items-center gap-3">
                 <input
                   type="checkbox"
@@ -231,6 +218,30 @@ function WorkoutDetail() {
                   </span>
                 </div>
               </div>
+
+              {/* Per-exercise stopwatch, below the exercise itself -- a
+                  quiet secondary row (small text, thin separator) rather
+                  than its own boxed-out block. */}
+              {timer && (
+                <div className="flex items-center justify-between gap-3 border-t border-neutral-200 pt-2 dark:border-neutral-800">
+                  <span className="text-sm font-semibold tabular-nums text-neutral-600 dark:text-neutral-400">
+                    {formatDurationPrecise(elapsedMs(timer, Date.now()))}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => (running ? stopExerciseTimer(index) : startExerciseTimer(index))}
+                    aria-label={`${running ? 'Stop' : 'Start'} timer for ${exercise.name}`}
+                    className={cn(
+                      'pressable rounded-lg px-4 py-1.5 text-sm font-semibold',
+                      running
+                        ? 'border border-red-500 text-red-700 dark:text-red-400'
+                        : 'bg-black text-white dark:bg-white dark:text-black',
+                    )}
+                  >
+                    {running ? 'Stop' : 'Start'}
+                  </button>
+                </div>
+              )}
             </li>
           )
         })}
