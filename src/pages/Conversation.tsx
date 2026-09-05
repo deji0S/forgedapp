@@ -73,7 +73,7 @@ function JointRestoralCard({
           type="button"
           onClick={handleRestore}
           disabled={restoring}
-          className="w-full rounded-xl bg-blue-500 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+          className="w-full rounded-xl bg-blue-500 py-3 text-sm font-semibold text-white pressable disabled:opacity-60"
         >
           {restoring ? 'Restoring…' : 'Restore joint streak'}
         </button>
@@ -136,7 +136,7 @@ function MessageGroup({
     <div className={`flex flex-col gap-1 ${mine ? 'items-end' : 'items-start'}`}>
       <Link
         to={mine ? '/profile' : `/connect/${senderId}`}
-        className={`flex items-center gap-2 px-1 active:opacity-80 ${mine ? 'flex-row-reverse' : ''}`}
+        className={`flex items-center gap-2 px-1 pressable ${mine ? 'flex-row-reverse' : ''}`}
       >
         <TinyAvatar url={sender.avatarUrl} />
         <span className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
@@ -305,12 +305,12 @@ function Conversation() {
       {/* Docks just below the global AppHeader (h-6 logo + py-3 + 1px border = 49px). */}
       <div className="sticky top-[49px] z-10 border-b border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-black/95 p-4 backdrop-blur">
         <div className="flex items-center gap-3">
-          <Link to="/messages" className="text-neutral-900 dark:text-white active:opacity-80">
+          <Link to="/messages" className="text-neutral-900 dark:text-white pressable">
             ←
           </Link>
           <Link
             to={id ? `/connect/${id}` : '/connect'}
-            className="flex flex-1 items-center gap-2 font-medium text-neutral-900 dark:text-white active:opacity-80"
+            className="flex flex-1 items-center gap-2 font-medium text-neutral-900 dark:text-white pressable"
           >
             <TinyAvatar url={profile?.avatar_url ?? null} />
             {profile?.display_name || profile?.username || 'Conversation'}
@@ -383,7 +383,7 @@ function Conversation() {
               <button
                 type="button"
                 onClick={() => setAttachment(null)}
-                className="font-semibold text-red-700 dark:text-red-400 active:opacity-80"
+                className="font-semibold text-red-700 dark:text-red-400 pressable"
               >
                 Remove
               </button>
@@ -402,7 +402,7 @@ function Conversation() {
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className="rounded-xl border border-neutral-200 dark:border-neutral-800 px-4 py-3 text-sm text-neutral-900 dark:text-white active:opacity-80 disabled:opacity-60"
+              className="rounded-xl border border-neutral-200 dark:border-neutral-800 px-4 py-3 text-sm text-neutral-900 dark:text-white pressable disabled:opacity-60"
               aria-label="Attach photo or video"
             >
               {uploading ? '…' : '📎'}
@@ -419,7 +419,7 @@ function Conversation() {
             <button
               type="submit"
               disabled={sending || uploading || (!draft.trim() && !attachment)}
-              className="rounded-xl bg-black dark:bg-white px-5 py-3 text-sm font-semibold text-white dark:text-black active:opacity-80 disabled:opacity-60"
+              className="rounded-xl bg-black dark:bg-white px-5 py-3 text-sm font-semibold text-white dark:text-black pressable disabled:opacity-60"
             >
               Send
             </button>

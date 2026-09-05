@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 
 function HomeIcon() {
   return (
@@ -57,17 +57,38 @@ const TABS = [
   { to: '/profile', label: 'Profile', Icon: ProfileIcon },
 ]
 
+// Same "is this tab active" rule NavLink's `end` prop uses, duplicated here
+// so the sliding indicator (which needs a plain index, not a per-link
+// render callback) agrees with what each NavLink actually highlights.
+function isTabActive(pathname: string, to: string) {
+  return to === '/' ? pathname === '/' : pathname === to || pathname.startsWith(`${to}/`)
+}
+
 function BottomNav() {
+  const { pathname } = useLocation()
+  const activeIndex = TABS.findIndex((tab) => isTabActive(pathname, tab.to))
+  const tabWidthPct = 100 / TABS.length
+
   return (
     <nav className="fixed inset-x-0 bottom-0 border-t border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-black/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
-      <ul className="flex">
+      <ul className="relative flex">
+        {/* Sliding pill behind the active tab -- position/width are simple
+            percentages since every tab is an equal-width flex-1 item, so no
+            DOM measurement is needed to keep it aligned. */}
+        {activeIndex >= 0 && (
+          <li
+            aria-hidden
+            className="pointer-events-none absolute inset-y-1.5 mx-1.5 rounded-xl bg-neutral-100 transition-[left] duration-300 ease-out dark:bg-neutral-900"
+            style={{ left: `${activeIndex * tabWidthPct}%`, width: `calc(${tabWidthPct}% - 12px)` }}
+          />
+        )}
         {TABS.map((tab) => (
-          <li key={tab.to} className="flex-1">
+          <li key={tab.to} className="relative flex-1">
             <NavLink
               to={tab.to}
               end={tab.to === '/'}
               className={({ isActive }) =>
-                `flex flex-col items-center gap-1 py-3 text-center text-xs font-medium leading-tight ${
+                `pressable flex flex-col items-center gap-1 py-3 text-center text-xs font-medium leading-tight transition-colors duration-200 ${
                   isActive ? 'text-neutral-900 dark:text-white' : 'text-neutral-600 dark:text-neutral-400'
                 }`
               }

@@ -108,7 +108,7 @@ function ChangePasswordCard() {
       <button
         type="submit"
         disabled={saving}
-        className="w-full rounded-xl bg-black dark:bg-white py-3 text-sm font-semibold text-white dark:text-black active:opacity-80 disabled:opacity-60"
+        className="w-full rounded-xl bg-black dark:bg-white py-3 text-sm font-semibold text-white dark:text-black pressable disabled:opacity-60"
       >
         {saving ? 'Saving…' : 'Update password'}
       </button>
@@ -176,7 +176,7 @@ function ChangeEmailCard() {
       <button
         type="submit"
         disabled={saving}
-        className="w-full rounded-xl bg-black dark:bg-white py-3 text-sm font-semibold text-white dark:text-black active:opacity-80 disabled:opacity-60"
+        className="w-full rounded-xl bg-black dark:bg-white py-3 text-sm font-semibold text-white dark:text-black pressable disabled:opacity-60"
       >
         {saving ? 'Sending…' : 'Send confirmation'}
       </button>
@@ -242,14 +242,14 @@ function DeleteAccountCard() {
               type="button"
               onClick={cancel}
               disabled={deleting}
-              className="flex-1 rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white active:opacity-80 disabled:opacity-60"
+              className="flex-1 rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white pressable disabled:opacity-60"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={deleting || !confirmation.trim()}
-              className="flex-1 rounded-xl bg-red-600 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-50"
+              className="flex-1 rounded-xl bg-red-600 py-3 text-sm font-semibold text-white pressable disabled:opacity-50"
             >
               {deleting ? 'Deleting…' : 'Delete forever'}
             </button>
@@ -259,7 +259,7 @@ function DeleteAccountCard() {
         <button
           type="button"
           onClick={() => setExpanded(true)}
-          className="w-full rounded-xl border border-red-500/50 py-3 text-sm font-semibold text-red-700 dark:text-red-400 active:opacity-80"
+          className="w-full rounded-xl border border-red-500/50 py-3 text-sm font-semibold text-red-700 dark:text-red-400 pressable"
         >
           Delete my account
         </button>

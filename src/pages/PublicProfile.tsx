@@ -44,7 +44,7 @@ function FollowButton({
       type="button"
       onClick={handleClick}
       disabled={pending}
-      className={`rounded-xl px-6 py-2 text-sm font-semibold active:opacity-80 disabled:opacity-60 ${
+      className={`rounded-xl px-6 py-2 text-sm font-semibold pressable disabled:opacity-60 ${
         state.isFollowing
           ? 'bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-white'
           : 'bg-black dark:bg-white text-white dark:text-black'
@@ -91,7 +91,7 @@ function PublicProfile() {
 
   return (
     <div className="space-y-4 p-4">
-      <Link to="/connect" className="text-sm font-medium text-neutral-900 dark:text-white active:opacity-80">
+      <Link to="/connect" className="text-sm font-medium text-neutral-900 dark:text-white pressable">
         ← Back to Connect
       </Link>
 
@@ -132,7 +132,7 @@ function PublicProfile() {
                 {followState?.isFollowing && followState?.isFollowedBy && (
                   <Link
                     to={`/messages/${profile.id}`}
-                    className="rounded-xl border border-neutral-200 dark:border-neutral-800 px-6 py-2 text-sm font-semibold text-neutral-900 dark:text-white active:opacity-80"
+                    className="rounded-xl border border-neutral-200 dark:border-neutral-800 px-6 py-2 text-sm font-semibold text-neutral-900 dark:text-white pressable"
                   >
                     Message
                   </Link>

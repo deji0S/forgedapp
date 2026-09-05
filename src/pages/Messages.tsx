@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/auth-context'
 import { listConversations } from '../lib/messages'
+import { staggerDelay } from '../lib/motion'
 import type { ConversationPreview } from '../types/social'
 
 function ConversationAvatar({ preview }: { preview: ConversationPreview }) {
@@ -63,11 +64,11 @@ function Messages() {
 
       {!loading && conversations.length > 0 && (
         <ul className="space-y-2">
-          {conversations.map((preview) => (
-            <li key={preview.profile.id}>
+          {conversations.map((preview, index) => (
+            <li key={preview.profile.id} style={staggerDelay(index)} className="stagger-item">
               <Link
                 to={`/messages/${preview.profile.id}`}
-                className="flex items-center gap-3 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-3 active:opacity-80"
+                className="flex items-center gap-3 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-3 pressable"
               >
                 <ConversationAvatar preview={preview} />
                 <div className="min-w-0 flex-1">

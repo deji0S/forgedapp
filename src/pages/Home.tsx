@@ -4,15 +4,18 @@ import { useAuth } from '../lib/auth-context'
 import { usePremium } from '../lib/premium-context'
 import { PremiumGate } from '../components/PremiumGate'
 import DailyReminderCard from '../components/DailyReminderCard'
+import { FlameIcon } from '../components/FlameIcon'
 import { checkInToday, getStreak, getTodayCheckin, listWorkoutPlans } from '../lib/tracking'
 import { recoverStreak, recoveryEligibility } from '../lib/streak'
+import { staggerDelay } from '../lib/motion'
 import type { Streak, WorkoutPlan } from '../types/tracking'
 
 function UpgradeBanner() {
   return (
     <Link
       to="/premium"
-      className="flex items-center justify-between rounded-2xl border border-blue-500/40 bg-blue-500/10 p-4 active:opacity-80"
+      style={staggerDelay(1, 50)}
+      className="stagger-item flex items-center justify-between rounded-2xl border border-blue-500/40 bg-blue-500/10 p-4 pressable"
     >
       <span>
         <span className="block text-sm font-semibold text-neutral-900 dark:text-white">Upgrade to Premium</span>
@@ -51,7 +54,10 @@ function StreakRecoveryCard({
   }
 
   return (
-    <section className="space-y-3 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4">
+    <section
+      style={staggerDelay(2, 50)}
+      className="stagger-item space-y-3 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4"
+    >
       <div>
         <p className="text-sm font-semibold text-neutral-900 dark:text-white">Streak at risk</p>
         <p className="mt-1 text-xs text-neutral-700 dark:text-neutral-300">
@@ -67,7 +73,7 @@ function StreakRecoveryCard({
           type="button"
           onClick={handleRecover}
           disabled={recovering}
-          className="w-full rounded-xl bg-blue-500 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+          className="w-full rounded-xl bg-blue-500 py-3 text-sm font-semibold text-white pressable disabled:opacity-60"
         >
           {recovering ? 'Recovering…' : 'Recover my streak'}
         </button>
@@ -133,7 +139,7 @@ function Home() {
             <p className="mt-1 text-sm text-neutral-400 dark:text-neutral-600">{plan.exercises.length} exercises</p>
             <Link
               to={`/workouts/${plan.id}`}
-              className="mt-4 block w-full rounded-xl bg-white py-3 text-center text-sm font-semibold text-black active:opacity-80 dark:bg-black dark:text-white"
+              className="mt-4 block w-full rounded-xl bg-white py-3 text-center text-sm font-semibold text-black pressable dark:bg-black dark:text-white"
             >
               Start workout
             </Link>
@@ -144,7 +150,7 @@ function Home() {
             <p className="mt-1 text-sm text-neutral-400 dark:text-neutral-600">Create a workout to get started.</p>
             <Link
               to="/workouts"
-              className="mt-4 block w-full rounded-xl bg-white py-3 text-center text-sm font-semibold text-black active:opacity-80 dark:bg-black dark:text-white"
+              className="mt-4 block w-full rounded-xl bg-white py-3 text-center text-sm font-semibold text-black pressable dark:bg-black dark:text-white"
             >
               Create workout
             </Link>
@@ -157,13 +163,22 @@ function Home() {
       {streak && <StreakRecoveryCard streak={streak} onRecovered={setStreak} />}
 
       <section className="grid grid-cols-2 gap-3">
-        <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4">
-          <p className="text-xs text-neutral-600 dark:text-neutral-400">Current streak</p>
+        <div
+          style={staggerDelay(3, 50)}
+          className="stagger-item rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4"
+        >
+          <div className="flex items-center gap-1.5 text-neutral-600 dark:text-neutral-400">
+            <FlameIcon className="h-3.5 w-3.5" />
+            <p className="text-xs">Current streak</p>
+          </div>
           <p className="mt-1 text-lg font-semibold text-neutral-900 dark:text-white">
             {currentStreak} {currentStreak === 1 ? 'day' : 'days'}
           </p>
         </div>
-        <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4">
+        <div
+          style={staggerDelay(4, 50)}
+          className="stagger-item rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4"
+        >
           <p className="text-xs text-neutral-600 dark:text-neutral-400">Longest streak</p>
           <p className="mt-1 text-lg font-semibold text-neutral-900 dark:text-white">
             {longestStreak} {longestStreak === 1 ? 'day' : 'days'}
@@ -171,13 +186,16 @@ function Home() {
         </div>
       </section>
 
-      <DailyReminderCard />
+      <div style={staggerDelay(5, 50)} className="stagger-item">
+        <DailyReminderCard />
+      </div>
 
       <button
         type="button"
         onClick={handleCheckIn}
         disabled={checkedIn || checkingIn}
-        className={`w-full rounded-xl py-3 text-sm font-semibold active:opacity-80 disabled:active:opacity-100 ${
+        style={staggerDelay(6, 50)}
+        className={`stagger-item pressable w-full rounded-xl py-3 text-sm font-semibold ${
           checkedIn ? 'bg-green-500/20 text-green-700 dark:text-green-400' : 'bg-black text-white dark:bg-white dark:text-black'
         }`}
       >
@@ -186,7 +204,8 @@ function Home() {
 
       <Link
         to="/coach"
-        className="flex items-center justify-between rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 active:opacity-80"
+        style={staggerDelay(7, 50)}
+        className="stagger-item flex items-center justify-between rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 pressable"
       >
         <span>
           <span className="block text-sm font-semibold text-neutral-900 dark:text-white">Your coach</span>

@@ -49,11 +49,11 @@ function FollowCounts({ userId }: { userId: string }) {
 
   return (
     <div className="flex divide-x divide-neutral-200 dark:divide-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-800 text-sm">
-      <Link to="/profile/followers" className="flex-1 space-y-1 p-4 text-center active:opacity-80">
+      <Link to="/profile/followers" className="flex-1 space-y-1 p-4 text-center pressable">
         <p className="text-lg font-semibold text-neutral-900 dark:text-white">{counts?.followers ?? '—'}</p>
         <p className="text-neutral-600 dark:text-neutral-400">Followers</p>
       </Link>
-      <Link to="/profile/following" className="flex-1 space-y-1 p-4 text-center active:opacity-80">
+      <Link to="/profile/following" className="flex-1 space-y-1 p-4 text-center pressable">
         <p className="text-lg font-semibold text-neutral-900 dark:text-white">{counts?.following ?? '—'}</p>
         <p className="text-neutral-600 dark:text-neutral-400">Following</p>
       </Link>
@@ -148,7 +148,7 @@ function AvatarUpload() {
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading || removing}
-          className="text-sm font-medium text-neutral-900 dark:text-white active:opacity-80 disabled:opacity-60"
+          className="text-sm font-medium text-neutral-900 dark:text-white pressable disabled:opacity-60"
         >
           Change photo
         </button>
@@ -157,7 +157,7 @@ function AvatarUpload() {
             type="button"
             onClick={() => setConfirmingRemove(true)}
             disabled={uploading || removing}
-            className="text-sm font-medium text-red-700 dark:text-red-400 active:opacity-80 disabled:opacity-60"
+            className="text-sm font-medium text-red-700 dark:text-red-400 pressable disabled:opacity-60"
           >
             Remove photo
           </button>
@@ -196,7 +196,7 @@ function AvatarUpload() {
                 type="button"
                 onClick={() => setConfirmingRemove(false)}
                 disabled={removing}
-                className="flex-1 rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white active:opacity-80 disabled:opacity-60"
+                className="flex-1 rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white pressable disabled:opacity-60"
               >
                 Cancel
               </button>
@@ -204,7 +204,7 @@ function AvatarUpload() {
                 type="button"
                 onClick={handleRemoveConfirm}
                 disabled={removing}
-                className="flex-1 rounded-xl bg-red-600 py-3 text-sm font-semibold text-white active:opacity-80 disabled:opacity-60"
+                className="flex-1 rounded-xl bg-red-600 py-3 text-sm font-semibold text-white pressable disabled:opacity-60"
               >
                 {removing ? 'Removing…' : 'Remove'}
               </button>
@@ -294,14 +294,14 @@ function HandleCard() {
             type="button"
             onClick={() => setEditing(false)}
             disabled={saving}
-            className="flex-1 rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white active:opacity-80 disabled:opacity-60"
+            className="flex-1 rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white pressable disabled:opacity-60"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="flex-1 rounded-xl bg-black dark:bg-white py-3 text-sm font-semibold text-white dark:text-black active:opacity-80 disabled:opacity-60"
+            className="flex-1 rounded-xl bg-black dark:bg-white py-3 text-sm font-semibold text-white dark:text-black pressable disabled:opacity-60"
           >
             {saving ? 'Saving…' : 'Save'}
           </button>
@@ -319,7 +319,7 @@ function HandleCard() {
       <button
         type="button"
         onClick={startEditing}
-        className="rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-1.5 text-sm font-medium text-neutral-900 dark:text-white active:opacity-80"
+        className="rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-1.5 text-sm font-medium text-neutral-900 dark:text-white pressable"
       >
         Edit
       </button>
@@ -401,14 +401,14 @@ function TrainingPrefsCard({ profile }: { profile: Profile }) {
             type="button"
             onClick={() => setEditing(false)}
             disabled={saving}
-            className="flex-1 rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white active:opacity-80 disabled:opacity-60"
+            className="flex-1 rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white pressable disabled:opacity-60"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="flex-1 rounded-xl bg-black dark:bg-white py-3 text-sm font-semibold text-white dark:text-black active:opacity-80 disabled:opacity-60"
+            className="flex-1 rounded-xl bg-black dark:bg-white py-3 text-sm font-semibold text-white dark:text-black pressable disabled:opacity-60"
           >
             {saving ? 'Saving…' : 'Save'}
           </button>
@@ -424,7 +424,7 @@ function TrainingPrefsCard({ profile }: { profile: Profile }) {
         <button
           type="button"
           onClick={startEditing}
-          className="rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-1.5 text-sm font-medium text-neutral-900 dark:text-white active:opacity-80"
+          className="rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-1.5 text-sm font-medium text-neutral-900 dark:text-white pressable"
         >
           Edit
         </button>
@@ -471,7 +471,7 @@ function ProfilePage() {
 
       <Link
         to="/premium"
-        className="flex items-center justify-between rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 active:opacity-80"
+        className="flex items-center justify-between rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 pressable"
       >
         <span>
           <span className="block text-sm font-medium text-neutral-900 dark:text-white">Membership</span>
@@ -488,7 +488,7 @@ function ProfilePage() {
 
       <Link
         to="/settings"
-        className="flex items-center justify-between rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 active:opacity-80"
+        className="flex items-center justify-between rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 pressable"
       >
         <span>
           <span className="block text-sm font-medium text-neutral-900 dark:text-white">Settings</span>
@@ -500,7 +500,7 @@ function ProfilePage() {
       <button
         type="button"
         onClick={() => setConfirmingSignOut(true)}
-        className="w-full rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white active:opacity-80"
+        className="w-full rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white pressable"
       >
         Sign out
       </button>
@@ -524,14 +524,14 @@ function ProfilePage() {
               <button
                 type="button"
                 onClick={() => setConfirmingSignOut(false)}
-                className="flex-1 rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white active:opacity-80"
+                className="flex-1 rounded-xl bg-neutral-200 dark:bg-neutral-800 py-3 text-sm font-semibold text-neutral-900 dark:text-white pressable"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={() => signOut()}
-                className="flex-1 rounded-xl bg-red-600 py-3 text-sm font-semibold text-white active:opacity-80"
+                className="flex-1 rounded-xl bg-red-600 py-3 text-sm font-semibold text-white pressable"
               >
                 Sign out
               </button>

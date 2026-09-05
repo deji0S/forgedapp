@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/auth-context'
 import { searchProfiles } from '../lib/social'
+import { staggerDelay } from '../lib/motion'
 import type { PublicProfile } from '../types/profile'
 
 function ResultAvatar({ profile }: { profile: PublicProfile }) {
@@ -71,11 +72,11 @@ function Connect() {
 
       {!loading && results.length > 0 && (
         <ul className="space-y-2">
-          {results.map((profile) => (
-            <li key={profile.id}>
+          {results.map((profile, index) => (
+            <li key={profile.id} style={staggerDelay(index)} className="stagger-item">
               <Link
                 to={`/connect/${profile.id}`}
-                className="flex items-center gap-3 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-3 active:opacity-80"
+                className="flex items-center gap-3 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-3 pressable"
               >
                 <ResultAvatar profile={profile} />
                 <div className="min-w-0">

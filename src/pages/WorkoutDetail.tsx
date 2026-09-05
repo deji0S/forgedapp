@@ -152,7 +152,7 @@ function WorkoutDetail() {
 
           <Link
             to="/"
-            className="block w-full rounded-xl bg-green-500 py-3 text-center text-sm font-semibold text-white active:opacity-80"
+            className="block w-full rounded-xl bg-green-500 py-3 text-center text-sm font-semibold text-white pressable"
           >
             Back to home
           </Link>
@@ -162,7 +162,7 @@ function WorkoutDetail() {
           type="button"
           onClick={handleComplete}
           disabled={completing}
-          className="w-full rounded-xl bg-black dark:bg-white py-3 text-sm font-semibold text-white dark:text-black active:opacity-80 disabled:opacity-60"
+          className="w-full rounded-xl bg-black dark:bg-white py-3 text-sm font-semibold text-white dark:text-black pressable disabled:opacity-60"
         >
           {completing ? 'Logging…' : 'Complete workout'}
         </button>
