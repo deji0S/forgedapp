@@ -26,6 +26,7 @@ export interface WorkoutLog {
   logged_date: string
   exercises: PlanExercise[]
   feedback: string | null
+  duration_ms: number | null
   created_at: string
 }
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { cn } from '../lib/utils'
+import { cn, formatDuration } from '../lib/utils'
 import { useAuth } from '../lib/auth-context'
 import { createWorkoutCheckin } from '../lib/checkin'
 import { getWorkoutPlan, logWorkout, setWorkoutFeedback } from '../lib/tracking'
@@ -19,16 +19,6 @@ interface ExerciseTimer {
 
 function elapsedMs(timer: ExerciseTimer, now: number) {
   return timer.accumulatedMs + (timer.runningSince !== null ? now - timer.runningSince : 0)
-}
-
-function formatDuration(ms: number) {
-  const totalSeconds = Math.floor(ms / 1000)
-  const hours = Math.floor(totalSeconds / 3600)
-  const minutes = Math.floor((totalSeconds % 3600) / 60)
-  const seconds = totalSeconds % 60
-  const mm = String(minutes).padStart(2, '0')
-  const ss = String(seconds).padStart(2, '0')
-  return hours > 0 ? `${hours}:${mm}:${ss}` : `${mm}:${ss}`
 }
 
 // Same as formatDuration but with centiseconds, for the per-exercise
@@ -113,10 +103,12 @@ function WorkoutDetail() {
     if (!user || !plan) return
     setCompleting(true)
     setError(null)
+    const totalMs = timers.reduce((sum, t) => sum + elapsedMs(t, Date.now()), 0)
     const { data, error: logError } = await logWorkout(user.id, {
       name: plan.name,
       plan_id: plan.id,
       exercises: plan.exercises,
+      duration_ms: totalMs > 0 ? totalMs : undefined,
     })
     setCompleting(false)
 
@@ -126,7 +118,7 @@ function WorkoutDetail() {
     }
 
     setLoggedWorkoutId(data.id)
-    setLoggedTotalMs(timers.reduce((sum, t) => sum + elapsedMs(t, Date.now()), 0))
+    setLoggedTotalMs(totalMs)
 
     setInsightLoading(true)
     const { data: insightData } = await createWorkoutCheckin(user.id, data.id, plan.name)

@@ -79,7 +79,13 @@ export async function listWorkoutLogs(userId: string, limit = 30) {
 // then recomputed by the workout_logs_streak trigger in the database.
 export async function logWorkout(
   userId: string,
-  input: { name: string; plan_id?: string | null; exercises: PlanExercise[]; logged_date?: string },
+  input: {
+    name: string
+    plan_id?: string | null
+    exercises: PlanExercise[]
+    logged_date?: string
+    duration_ms?: number
+  },
 ) {
   return supabase
     .from('workout_logs')
