@@ -46,6 +46,7 @@ function WorkoutDetail() {
   const [loading, setLoading] = useState(true)
   const [completing, setCompleting] = useState(false)
   const [loggedWorkoutId, setLoggedWorkoutId] = useState<string | null>(null)
+  const [loggedTotalMs, setLoggedTotalMs] = useState<number | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const [insight, setInsight] = useState<WorkoutInsight | null>(null)
@@ -125,6 +126,7 @@ function WorkoutDetail() {
     }
 
     setLoggedWorkoutId(data.id)
+    setLoggedTotalMs(timers.reduce((sum, t) => sum + elapsedMs(t, Date.now()), 0))
 
     setInsightLoading(true)
     const { data: insightData } = await createWorkoutCheckin(user.id, data.id, plan.name)
@@ -252,6 +254,11 @@ function WorkoutDetail() {
       {loggedWorkoutId ? (
         <div className="space-y-4 rounded-2xl border border-green-500 bg-green-500/10 p-4">
           <p className="text-center text-sm font-semibold text-green-700 dark:text-green-400">Workout logged 🎉</p>
+          {loggedTotalMs !== null && loggedTotalMs > 0 && (
+            <p className="text-center text-xs font-medium tabular-nums text-green-700 dark:text-green-300">
+              Total time: {formatDuration(loggedTotalMs)}
+            </p>
+          )}
 
           {insightLoading ? (
             <div className="space-y-2">
