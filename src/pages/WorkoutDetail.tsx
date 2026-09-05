@@ -12,6 +12,25 @@ const FEEDBACK_OPTIONS: { value: WorkoutFeedback; label: string }[] = [
   { value: 'too_hard', label: 'Too hard' },
 ]
 
+interface ExerciseTimer {
+  accumulatedMs: number
+  runningSince: number | null
+}
+
+function elapsedMs(timer: ExerciseTimer, now: number) {
+  return timer.accumulatedMs + (timer.runningSince !== null ? now - timer.runningSince : 0)
+}
+
+function formatDuration(ms: number) {
+  const totalSeconds = Math.floor(ms / 1000)
+  const hours = Math.floor(totalSeconds / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  const seconds = totalSeconds % 60
+  const mm = String(minutes).padStart(2, '0')
+  const ss = String(seconds).padStart(2, '0')
+  return hours > 0 ? `${hours}:${mm}:${ss}` : `${mm}:${ss}`
+}
+
 function WorkoutDetail() {
   const { id } = useParams<{ id: string }>()
   const { user } = useAuth()
@@ -31,14 +50,32 @@ function WorkoutDetail() {
   // the workout, and resets whenever a different plan is loaded.
   const [completed, setCompleted] = useState<Set<number>>(new Set())
 
+  // Per-exercise stopwatches, same local/session-only scope as `completed`.
+  // Time-based (accumulatedMs + a runningSince timestamp) rather than a
+  // ticking counter, so the displayed time stays correct even if the tab
+  // was backgrounded and timers throttled while a stopwatch was running.
+  const [timers, setTimers] = useState<ExerciseTimer[]>([])
+  const [, setTick] = useState(0)
+
   useEffect(() => {
     if (!id) return
     setCompleted(new Set())
+    setTimers([])
     getWorkoutPlan(id).then(({ data }) => {
       setPlan(data)
+      setTimers((data?.exercises ?? []).map(() => ({ accumulatedMs: 0, runningSince: null })))
       setLoading(false)
     })
   }, [id])
+
+  // Re-render once a second, but only while at least one stopwatch is
+  // running -- otherwise the displayed times would freeze until some other
+  // state change happened to re-render the page.
+  useEffect(() => {
+    if (!timers.some((t) => t.runningSince !== null)) return
+    const interval = setInterval(() => setTick((t) => t + 1), 1000)
+    return () => clearInterval(interval)
+  }, [timers])
 
   function toggleExerciseDone(index: number) {
     setCompleted((prev) => {
@@ -47,6 +84,19 @@ function WorkoutDetail() {
       else next.add(index)
       return next
     })
+  }
+
+  function startExerciseTimer(index: number) {
+    setTimers((prev) => prev.map((t, i) => (i === index ? { ...t, runningSince: Date.now() } : t)))
+  }
+
+  function stopExerciseTimer(index: number) {
+    setTimers((prev) =>
+      prev.map((t, i) => {
+        if (i !== index || t.runningSince === null) return t
+        return { accumulatedMs: t.accumulatedMs + (Date.now() - t.runningSince), runningSince: null }
+      }),
+    )
   }
 
   async function handleComplete() {
@@ -109,48 +159,77 @@ function WorkoutDetail() {
           {plan.exercises.length} exercises
           {completed.size > 0 ? ` · ${completed.size} of ${plan.exercises.length} done` : ''}
         </p>
+        <p className="mt-1 text-sm font-semibold tabular-nums text-neutral-900 dark:text-white">
+          Total time: {formatDuration(timers.reduce((sum, t) => sum + elapsedMs(t, Date.now()), 0))}
+        </p>
       </div>
 
       <ul className="space-y-3">
         {plan.exercises.map((exercise, index) => {
           const done = completed.has(index)
+          const timer = timers[index]
+          const running = timer ? timer.runningSince !== null : false
           return (
             <li
               key={index}
               className={cn(
-                'flex items-center gap-3 rounded-2xl border p-4 transition-colors',
+                'space-y-3 rounded-2xl border p-4 transition-colors',
                 done
                   ? 'border-neutral-200 bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-950'
                   : 'border-neutral-200 dark:border-neutral-800',
               )}
             >
-              <input
-                type="checkbox"
-                checked={done}
-                onChange={() => toggleExerciseDone(index)}
-                aria-label={`Mark ${exercise.name} complete`}
-                className="h-5 w-5 shrink-0 accent-black dark:accent-white"
-              />
-              <div className="flex flex-1 items-center justify-between gap-3">
-                <span
-                  className={cn(
-                    'font-medium',
-                    done
-                      ? 'text-neutral-500 line-through dark:text-neutral-500'
-                      : 'text-neutral-900 dark:text-white',
-                  )}
-                >
-                  {exercise.name}
-                </span>
-                <span
-                  className={cn(
-                    'text-sm',
-                    done ? 'text-neutral-400 dark:text-neutral-600' : 'text-neutral-600 dark:text-neutral-400',
-                  )}
-                >
-                  {exercise.sets} × {exercise.reps}
-                  {exercise.weight_kg ? ` @ ${exercise.weight_kg}kg` : ''}
-                </span>
+              {/* The stopwatch is the prominent, easy-to-tap part of this
+                  card -- large digits, a full-height Start/Stop button --
+                  sitting above the more compact exercise details below. */}
+              {timer && (
+                <div className="flex items-center justify-between gap-3 rounded-xl bg-neutral-100 p-3 dark:bg-neutral-900">
+                  <span className="text-3xl font-bold tabular-nums leading-none text-neutral-900 dark:text-white">
+                    {formatDuration(elapsedMs(timer, Date.now()))}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => (running ? stopExerciseTimer(index) : startExerciseTimer(index))}
+                    aria-label={`${running ? 'Stop' : 'Start'} timer for ${exercise.name}`}
+                    className={cn(
+                      'pressable rounded-xl px-6 py-3 text-base font-semibold text-white',
+                      running ? 'bg-red-600' : 'bg-green-500',
+                    )}
+                  >
+                    {running ? 'Stop' : 'Start'}
+                  </button>
+                </div>
+              )}
+
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={done}
+                  onChange={() => toggleExerciseDone(index)}
+                  aria-label={`Mark ${exercise.name} complete`}
+                  className="h-5 w-5 shrink-0 accent-black dark:accent-white"
+                />
+                <div className="flex flex-1 items-center justify-between gap-3">
+                  <span
+                    className={cn(
+                      'font-medium',
+                      done
+                        ? 'text-neutral-500 line-through dark:text-neutral-500'
+                        : 'text-neutral-900 dark:text-white',
+                    )}
+                  >
+                    {exercise.name}
+                  </span>
+                  <span
+                    className={cn(
+                      'text-sm',
+                      done ? 'text-neutral-400 dark:text-neutral-600' : 'text-neutral-600 dark:text-neutral-400',
+                    )}
+                  >
+                    {exercise.sets} × {exercise.reps}
+                    {exercise.weight_kg ? ` @ ${exercise.weight_kg}kg` : ''}
+                  </span>
+                </div>
               </div>
             </li>
           )
