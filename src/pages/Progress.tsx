@@ -29,19 +29,13 @@ function RecentWorkouts({ logs }: { logs: WorkoutLog[] }) {
         <li
           key={log.id}
           style={staggerDelay(index, 50)}
-          className="stagger-item flex items-center justify-between gap-3 rounded-2xl border border-neutral-200 p-3 dark:border-neutral-800"
+          className="stagger-item rounded-2xl border border-neutral-200 p-3 dark:border-neutral-800"
         >
-          <div>
-            <p className="text-sm font-medium text-neutral-900 dark:text-white">{log.name}</p>
-            <p className="text-xs text-neutral-600 dark:text-neutral-400">
-              {formatLoggedDate(log.logged_date)} · {log.exercises.length} exercises
-            </p>
-          </div>
-          {log.duration_ms ? (
-            <span className="shrink-0 text-sm font-semibold tabular-nums text-neutral-700 dark:text-neutral-300">
-              {formatDuration(log.duration_ms)}
-            </span>
-          ) : null}
+          <p className="text-sm font-medium text-neutral-900 dark:text-white">{log.name}</p>
+          <p className="text-xs text-neutral-600 dark:text-neutral-400">
+            {formatLoggedDate(log.logged_date)} · {log.exercises.length} exercises
+            {log.duration_ms ? ` · ${formatDuration(log.duration_ms)}` : ''}
+          </p>
         </li>
       ))}
     </ul>
