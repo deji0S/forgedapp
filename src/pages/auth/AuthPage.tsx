@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import { ForgedLogo } from '../../components/AppHeader'
 import { AuthBackground } from '../../components/AuthBackground'
 import { useAuth } from '../../lib/auth-context'
@@ -121,6 +121,15 @@ function AuthPage() {
             >
               {submitting ? 'Please wait…' : mode === 'sign-in' ? 'Sign in' : 'Sign up'}
             </button>
+            {mode === 'sign-up' && (
+              <p className="text-center text-xs text-neutral-500">
+                By signing up, you agree to our{' '}
+                <Link to="/privacy" className="font-medium text-neutral-700 underline dark:text-neutral-300">
+                  Privacy Policy
+                </Link>
+                .
+              </p>
+            )}
           </form>
         )}
 

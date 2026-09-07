@@ -17,6 +17,7 @@ import PublicProfile from './pages/PublicProfile'
 import FollowList from './pages/FollowList'
 import Messages from './pages/Messages'
 import Conversation from './pages/Conversation'
+import PrivacyPolicy from './pages/PrivacyPolicy'
 
 function AppShell() {
   // Keying by pathname forces a fresh mount of this wrapper on every route
@@ -56,6 +57,7 @@ function App() {
     <div className="mx-auto flex min-h-svh max-w-md flex-col bg-white dark:bg-black">
       <Routes>
         <Route path="/auth" element={<AuthPage />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route
           path="/*"

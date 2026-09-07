@@ -281,6 +281,13 @@ function Settings() {
       <ChangePasswordCard />
       <ChangeEmailCard />
       <DeleteAccountCard />
+
+      <Link
+        to="/privacy"
+        className="block rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 text-sm font-medium text-neutral-900 dark:text-white"
+      >
+        Privacy Policy
+      </Link>
     </div>
   )
 }
