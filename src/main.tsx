@@ -4,19 +4,22 @@ import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
 import { AuthProvider } from './lib/auth-context.tsx'
+import { CookieConsentProvider } from './lib/cookie-consent-context.tsx'
 import { PremiumProvider } from './lib/premium-context.tsx'
 import { ThemeProvider } from './lib/theme-context.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider>
-      <BrowserRouter>
-        <AuthProvider>
-          <PremiumProvider>
-            <App />
-          </PremiumProvider>
-        </AuthProvider>
-      </BrowserRouter>
+      <CookieConsentProvider>
+        <BrowserRouter>
+          <AuthProvider>
+            <PremiumProvider>
+              <App />
+            </PremiumProvider>
+          </AuthProvider>
+        </BrowserRouter>
+      </CookieConsentProvider>
     </ThemeProvider>
   </StrictMode>,
 )

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../lib/auth-context'
+import { hasNonEssentialConsent } from '../lib/cookie-consent'
 import { requestPushPermission } from '../lib/onesignal'
 import { getNotificationPreferences, saveNotificationPreferences } from '../lib/notifications'
 import type { NotificationPreferences } from '../types/notifications'
@@ -36,6 +37,10 @@ export default function DailyReminderCard() {
     setError(null)
 
     if (nextEnabled) {
+      if (!hasNonEssentialConsent()) {
+        setError('Accept non-essential cookies (Settings → Cookie preferences) to enable notifications.')
+        return
+      }
       setEnabling(true)
       const permission = await requestPushPermission()
       setEnabling(false)

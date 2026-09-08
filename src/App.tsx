@@ -1,6 +1,7 @@
 import { Route, Routes, useLocation } from 'react-router-dom'
 import AppHeader from './components/AppHeader'
 import BottomNav from './components/BottomNav'
+import CookieConsentBanner from './components/CookieConsentBanner'
 import { RequireOnboarding } from './components/RouteGuards'
 import AuthPage from './pages/auth/AuthPage'
 import Onboarding from './pages/Onboarding'
@@ -70,6 +71,7 @@ function App() {
           }
         />
       </Routes>
+      <CookieConsentBanner />
     </div>
   )
 }

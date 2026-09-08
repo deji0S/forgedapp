@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/auth-context'
+import { useCookieConsent } from '../lib/cookie-consent-context'
 import { useTheme } from '../lib/theme-context'
 import type { ThemePreference } from '../lib/theme-context'
 import OptionGroup from '../components/OptionGroup'
@@ -268,6 +269,32 @@ function DeleteAccountCard() {
   )
 }
 
+function CookiePreferencesCard() {
+  const { consent, reconsider } = useCookieConsent()
+
+  return (
+    <div className="space-y-3 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4">
+      <div>
+        <p className="text-sm font-medium text-neutral-900 dark:text-white">Cookie preferences</p>
+        <p className="text-xs text-neutral-600 dark:text-neutral-400">
+          {consent === 'accepted'
+            ? "You've accepted non-essential cookies (used for push notification reminders)."
+            : consent === 'declined'
+              ? "You've declined non-essential cookies. Essential cookies for signing in still work."
+              : "You haven't made a choice yet."}
+        </p>
+      </div>
+      <button
+        type="button"
+        onClick={reconsider}
+        className="w-full rounded-xl border border-neutral-200 dark:border-neutral-800 py-2.5 text-sm font-semibold text-neutral-900 dark:text-white pressable"
+      >
+        Change cookie choice
+      </button>
+    </div>
+  )
+}
+
 function Settings() {
   return (
     <div className="space-y-4 p-4">
@@ -281,6 +308,7 @@ function Settings() {
       <ChangePasswordCard />
       <ChangeEmailCard />
       <DeleteAccountCard />
+      <CookiePreferencesCard />
 
       <Link
         to="/terms"

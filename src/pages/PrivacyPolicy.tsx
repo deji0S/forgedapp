@@ -82,6 +82,31 @@ function PrivacyPolicy() {
       </section>
 
       <section className={sectionClass}>
+        <h2 className={headingClass}>Cookies and local storage</h2>
+        <p className={bodyClass}>
+          We use a small amount of browser storage (cookies and/or local storage). We split this
+          into two categories:
+        </p>
+        <ul className={listClass}>
+          <li>
+            <span className="font-medium text-neutral-900 dark:text-white">Essential</span>
+            {' — '}used to keep you signed in and remember your session. These are required for
+            Forged to work and don't need your consent.
+          </li>
+          <li>
+            <span className="font-medium text-neutral-900 dark:text-white">Non-essential</span>
+            {' — '}used by OneSignal to identify your device so it can deliver push notification
+            reminders. We only set these if you accept them in the cookie banner shown on your
+            first visit, and you can change your choice anytime in{' '}
+            <span className="font-medium text-neutral-900 dark:text-white">
+              Settings → Cookie preferences
+            </span>
+            .
+          </li>
+        </ul>
+      </section>
+
+      <section className={sectionClass}>
         <h2 className={headingClass}>Why we use your data</h2>
         <p className={bodyClass}>We rely on the following legal bases under UK GDPR:</p>
         <ul className={listClass}>
