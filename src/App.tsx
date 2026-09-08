@@ -18,6 +18,7 @@ import FollowList from './pages/FollowList'
 import Messages from './pages/Messages'
 import Conversation from './pages/Conversation'
 import PrivacyPolicy from './pages/PrivacyPolicy'
+import TermsOfService from './pages/TermsOfService'
 
 function AppShell() {
   // Keying by pathname forces a fresh mount of this wrapper on every route
@@ -58,6 +59,7 @@ function App() {
       <Routes>
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route
           path="/*"

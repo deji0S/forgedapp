@@ -14,11 +14,13 @@ function AuthPage() {
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [checkEmail, setCheckEmail] = useState(false)
+  const [agreedToTerms, setAgreedToTerms] = useState(false)
 
   if (session) return <Navigate to={profile?.onboarded ? '/' : '/onboarding'} replace />
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
+    if (mode === 'sign-up' && !agreedToTerms) return
     setError(null)
     setSubmitting(true)
     const message =
@@ -114,22 +116,35 @@ function AuthPage() {
               className="w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:border-black dark:focus:border-white focus:outline-none"
             />
             {error && <p className="text-sm text-red-700 dark:text-red-400">{error}</p>}
+            {mode === 'sign-up' && (
+              <label className="flex items-start gap-2 text-xs text-neutral-600 dark:text-neutral-400">
+                <input
+                  type="checkbox"
+                  required
+                  checked={agreedToTerms}
+                  onChange={(event) => setAgreedToTerms(event.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 rounded border-neutral-300 dark:border-neutral-700"
+                />
+                <span>
+                  I'm at least 16 years old and I agree to the{' '}
+                  <Link to="/terms" className="font-medium text-neutral-700 underline dark:text-neutral-300">
+                    Terms of Service
+                  </Link>{' '}
+                  and{' '}
+                  <Link to="/privacy" className="font-medium text-neutral-700 underline dark:text-neutral-300">
+                    Privacy Policy
+                  </Link>
+                  .
+                </span>
+              </label>
+            )}
             <button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || (mode === 'sign-up' && !agreedToTerms)}
               className="w-full rounded-xl bg-black dark:bg-white py-3 text-sm font-semibold text-white dark:text-black pressable disabled:opacity-60"
             >
               {submitting ? 'Please wait…' : mode === 'sign-in' ? 'Sign in' : 'Sign up'}
             </button>
-            {mode === 'sign-up' && (
-              <p className="text-center text-xs text-neutral-500">
-                By signing up, you agree to our{' '}
-                <Link to="/privacy" className="font-medium text-neutral-700 underline dark:text-neutral-300">
-                  Privacy Policy
-                </Link>
-                .
-              </p>
-            )}
           </form>
         )}
 
