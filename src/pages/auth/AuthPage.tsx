@@ -78,7 +78,7 @@ function AuthPage() {
                   onChange={(event) => setUsername(event.target.value.toLowerCase())}
                   className="w-full rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-black px-3 py-2 text-sm text-neutral-900 dark:text-white focus:border-black dark:focus:border-white focus:outline-none"
                 />
-                <p className="text-xs text-neutral-500">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">
                   3–20 characters: lowercase letters, numbers, underscores. This is how others find you.
                 </p>
               </div>
@@ -90,6 +90,7 @@ function AuthPage() {
                 autoComplete="username"
                 autoCapitalize="none"
                 placeholder="Email or Username"
+                aria-label="Email or Username"
                 value={identifier}
                 onChange={(event) => setIdentifier(event.target.value)}
                 className="w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:border-black dark:focus:border-white focus:outline-none"
@@ -100,6 +101,7 @@ function AuthPage() {
                 required
                 autoComplete="email"
                 placeholder="Email"
+                aria-label="Email"
                 value={identifier}
                 onChange={(event) => setIdentifier(event.target.value)}
                 className="w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:border-black dark:focus:border-white focus:outline-none"
@@ -111,6 +113,7 @@ function AuthPage() {
               minLength={6}
               autoComplete={mode === 'sign-in' ? 'current-password' : 'new-password'}
               placeholder="Password"
+              aria-label="Password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               className="w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:border-black dark:focus:border-white focus:outline-none"

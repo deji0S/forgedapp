@@ -105,12 +105,12 @@ function PublicProfile() {
             {profile.avatar_url ? (
               <img
                 src={profile.avatar_url}
-                alt="Profile picture"
+                alt={`${profile.display_name || profile.username || 'This user'}'s profile picture`}
                 className="h-24 w-24 rounded-full border border-neutral-200 dark:border-neutral-800 object-cover"
               />
             ) : (
               <div className="flex h-24 w-24 items-center justify-center rounded-full border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 text-neutral-500">
-                <svg viewBox="0 0 24 24" fill="currentColor" className="h-12 w-12">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="h-12 w-12">
                   <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2c0-2.76-3.58-5-8-5Z" />
                 </svg>
               </div>

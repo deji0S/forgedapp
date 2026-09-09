@@ -29,7 +29,7 @@ function priceBlock() {
         £4.99
         <span className="text-base font-normal text-neutral-600 dark:text-neutral-400">/month</span>
       </p>
-      <p className="mt-1 text-xs text-neutral-500">Cancel anytime.</p>
+      <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">Cancel anytime.</p>
     </div>
   )
 }
@@ -115,7 +115,7 @@ function Premium() {
           type="button"
           onClick={() => handle('checkout')}
           disabled={busy}
-          className="w-full rounded-xl bg-blue-500 py-3 text-sm font-semibold text-white pressable disabled:opacity-60"
+          className="w-full rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white pressable disabled:opacity-60"
         >
           {busy ? 'Redirecting…' : 'Upgrade to Premium'}
         </button>

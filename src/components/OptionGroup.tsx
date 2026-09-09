@@ -16,6 +16,7 @@ export default function OptionGroup<T extends string>({
           key={option.value}
           type="button"
           onClick={() => onChange(option.value)}
+          aria-pressed={value === option.value}
           className={cn(
             'rounded-xl border px-4 py-2 text-sm font-medium',
             value === option.value

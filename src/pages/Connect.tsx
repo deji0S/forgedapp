@@ -17,7 +17,7 @@ function ResultAvatar({ profile }: { profile: PublicProfile }) {
   }
   return (
     <div className="flex h-12 w-12 items-center justify-center rounded-full border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 text-neutral-500">
-      <svg viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="h-6 w-6">
         <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2c0-2.76-3.58-5-8-5Z" />
       </svg>
     </div>
@@ -60,8 +60,9 @@ function Connect() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search by username or name"
+        aria-label="Search by username or name"
         autoComplete="off"
-        className="w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder:text-neutral-500 focus:border-black dark:focus:border-white focus:outline-none"
+        className="w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder:text-neutral-600 dark:placeholder:text-neutral-400 focus:border-black dark:focus:border-white focus:outline-none"
       />
 
       {loading && <p className="text-sm text-neutral-600 dark:text-neutral-400">Searching…</p>}

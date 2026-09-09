@@ -64,6 +64,7 @@ function WorkoutForm({
       <input
         type="text"
         placeholder="Workout name"
+        aria-label="Workout name"
         value={name}
         onChange={(e) => setName(e.target.value)}
         className="w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:border-black dark:focus:border-white focus:outline-none"
@@ -75,6 +76,7 @@ function WorkoutForm({
             <input
               type="text"
               placeholder="Exercise"
+              aria-label={`Exercise ${index + 1} name`}
               value={exercise.name}
               onChange={(e) => updateExercise(index, { name: e.target.value })}
               className="min-w-0 flex-1 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 px-3 py-2 text-sm text-neutral-900 dark:text-white focus:border-black dark:focus:border-white focus:outline-none"

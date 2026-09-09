@@ -20,7 +20,7 @@ function TermsOfService() {
 
       <div>
         <h1 className="text-2xl font-semibold text-neutral-900 dark:text-white">Terms of Service</h1>
-        <p className="mt-1 text-xs text-neutral-500">Last updated 8 September 2026</p>
+        <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">Last updated 8 September 2026</p>
       </div>
 
       <p className={bodyClass}>

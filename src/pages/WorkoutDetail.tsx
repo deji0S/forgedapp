@@ -195,7 +195,7 @@ function WorkoutDetail() {
                     className={cn(
                       'font-medium',
                       done
-                        ? 'text-neutral-500 line-through dark:text-neutral-500'
+                        ? 'text-neutral-500 line-through dark:text-neutral-400'
                         : 'text-neutral-900 dark:text-white',
                     )}
                   >
@@ -275,10 +275,11 @@ function WorkoutDetail() {
                   key={option.value}
                   type="button"
                   onClick={() => handleFeedback(option.value)}
+                  aria-pressed={feedback === option.value}
                   className={cn(
                     'flex-1 rounded-lg border px-2 py-2 text-xs font-medium',
                     feedback === option.value
-                      ? 'border-green-400 bg-green-500 text-white'
+                      ? 'border-green-400 bg-green-500 text-black'
                       : 'border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300',
                   )}
                 >
@@ -290,7 +291,7 @@ function WorkoutDetail() {
 
           <Link
             to="/"
-            className="block w-full rounded-xl bg-green-500 py-3 text-center text-sm font-semibold text-white pressable"
+            className="block w-full rounded-xl bg-green-500 py-3 text-center text-sm font-semibold text-black pressable"
           >
             Back to home
           </Link>

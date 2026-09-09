@@ -7,7 +7,11 @@ export default function CookieConsentBanner() {
   if (consent !== null) return null
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 mx-auto max-w-md border-t border-neutral-200 bg-white p-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] shadow-[0_-4px_16px_rgba(0,0,0,0.08)] dark:border-neutral-800 dark:bg-black">
+    <div
+      role="region"
+      aria-label="Cookie consent"
+      className="fixed inset-x-0 bottom-0 z-50 mx-auto max-w-md border-t border-neutral-200 bg-white p-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] shadow-[0_-4px_16px_rgba(0,0,0,0.08)] dark:border-neutral-800 dark:bg-black"
+    >
       <p className="text-xs leading-relaxed text-neutral-700 dark:text-neutral-300">
         We use essential cookies/local storage to keep you signed in, which don't require consent
         to work. With your permission, we'd also like to use non-essential cookies for push

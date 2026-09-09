@@ -81,12 +81,18 @@ function AdvancedAnalytics({ logs }: { logs: WorkoutLog[] }) {
         <h3 className="text-sm font-semibold text-neutral-900 dark:text-white">Weekly volume (reps)</h3>
         <div className="flex items-end gap-2">
           {weeks.map((week) => (
-            <div key={week.weekStart} className="flex flex-1 flex-col items-center gap-1">
+            <div
+              key={week.weekStart}
+              role="img"
+              aria-label={`Week of ${week.label}: ${week.reps} reps across ${week.workouts} workout${week.workouts === 1 ? '' : 's'}`}
+              className="flex flex-1 flex-col items-center gap-1"
+            >
               <div
+                aria-hidden="true"
                 className="w-full rounded-t bg-blue-500 transition-[height] duration-500 ease-out"
                 style={{ height: grown ? `${Math.round((week.reps / maxWeekReps) * 96) + 4}px` : 0 }}
               />
-              <span className="text-[10px] text-neutral-500">{week.label}</span>
+              <span aria-hidden="true" className="text-[10px] text-neutral-500 dark:text-neutral-400">{week.label}</span>
             </div>
           ))}
         </div>
@@ -101,7 +107,7 @@ function AdvancedAnalytics({ logs }: { logs: WorkoutLog[] }) {
             {top.map((ex) => (
               <li key={ex.name} className="flex justify-between">
                 <span className="text-neutral-700 dark:text-neutral-300">{ex.name}</span>
-                <span className="text-neutral-500">
+                <span className="text-neutral-500 dark:text-neutral-400">
                   {ex.sets} sets · {ex.reps} reps
                 </span>
               </li>
@@ -119,7 +125,7 @@ function AdvancedAnalytics({ logs }: { logs: WorkoutLog[] }) {
             {records.map((pr) => (
               <li key={pr.name} className="flex justify-between">
                 <span className="text-neutral-700 dark:text-neutral-300">{pr.name}</span>
-                <span className="text-neutral-500">{pr.weightKg} kg</span>
+                <span className="text-neutral-500 dark:text-neutral-400">{pr.weightKg} kg</span>
               </li>
             ))}
           </ul>
@@ -134,26 +140,32 @@ function AdvancedAnalytics({ logs }: { logs: WorkoutLog[] }) {
           <div className="flex overflow-hidden rounded-lg text-center text-[10px] font-medium text-white">
             {feedback.too_easy > 0 && (
               <div
+                role="img"
+                aria-label={`Too easy: ${feedback.too_easy} of ${feedbackTotal} sessions`}
                 className="bg-blue-700 py-1 transition-[width] duration-500 ease-out"
                 style={{ width: grown ? `${(feedback.too_easy / feedbackTotal) * 100}%` : 0 }}
               >
-                Easy
+                <span aria-hidden="true">Easy</span>
               </div>
             )}
             {feedback.just_right > 0 && (
               <div
-                className="bg-blue-500 py-1 transition-[width] duration-500 ease-out"
+                role="img"
+                aria-label={`Just right: ${feedback.just_right} of ${feedbackTotal} sessions`}
+                className="bg-blue-600 py-1 transition-[width] duration-500 ease-out"
                 style={{ width: grown ? `${(feedback.just_right / feedbackTotal) * 100}%` : 0 }}
               >
-                Right
+                <span aria-hidden="true">Right</span>
               </div>
             )}
             {feedback.too_hard > 0 && (
               <div
+                role="img"
+                aria-label={`Too hard: ${feedback.too_hard} of ${feedbackTotal} sessions`}
                 className="bg-neutral-600 py-1 transition-[width] duration-500 ease-out"
                 style={{ width: grown ? `${(feedback.too_hard / feedbackTotal) * 100}%` : 0 }}
               >
-                Hard
+                <span aria-hidden="true">Hard</span>
               </div>
             )}
           </div>

@@ -78,6 +78,7 @@ function ChangePasswordCard() {
         required
         autoComplete="current-password"
         placeholder="Current password"
+        aria-label="Current password"
         value={currentPassword}
         onChange={(event) => setCurrentPassword(event.target.value)}
         className={inputClass}
@@ -88,6 +89,7 @@ function ChangePasswordCard() {
         minLength={6}
         autoComplete="new-password"
         placeholder="New password"
+        aria-label="New password"
         value={newPassword}
         onChange={(event) => setNewPassword(event.target.value)}
         className={inputClass}
@@ -98,6 +100,7 @@ function ChangePasswordCard() {
         minLength={6}
         autoComplete="new-password"
         placeholder="Confirm new password"
+        aria-label="Confirm new password"
         value={confirmPassword}
         onChange={(event) => setConfirmPassword(event.target.value)}
         className={inputClass}
@@ -161,6 +164,7 @@ function ChangeEmailCard() {
         required
         autoComplete="email"
         placeholder="New email address"
+        aria-label="New email address"
         value={email}
         onChange={(event) => setEmail(event.target.value)}
         className={inputClass}
@@ -231,6 +235,7 @@ function DeleteAccountCard() {
             required
             autoComplete="off"
             placeholder="Email or password"
+            aria-label="Email or password, to confirm account deletion"
             value={confirmation}
             onChange={(event) => setConfirmation(event.target.value)}
             className={inputClass}

@@ -126,12 +126,12 @@ function AvatarUpload() {
         {profile?.avatar_url ? (
           <img
             src={profile.avatar_url}
-            alt="Profile picture"
+            alt="Your profile picture"
             className="h-24 w-24 rounded-full border border-neutral-200 dark:border-neutral-800 object-cover"
           />
         ) : (
           <div className="flex h-24 w-24 items-center justify-center rounded-full border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 text-neutral-500">
-            <svg viewBox="0 0 24 24" fill="currentColor" className="h-12 w-12">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="h-12 w-12">
               <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2c0-2.76-3.58-5-8-5Z" />
             </svg>
           </div>
@@ -282,7 +282,7 @@ function HandleCard() {
             required
             className="w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:border-black dark:focus:border-white focus:outline-none"
           />
-          <p className="text-xs text-neutral-500">
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">
             3-20 characters: lowercase letters, numbers, underscores.
           </p>
         </div>
@@ -483,7 +483,7 @@ function ProfilePage() {
                 : 'Free — upgrade for £4.99/mo'}
           </span>
         </span>
-        <span className="text-neutral-500">→</span>
+        <span aria-hidden="true" className="text-neutral-500">→</span>
       </Link>
 
       <Link
@@ -494,7 +494,7 @@ function ProfilePage() {
           <span className="block text-sm font-medium text-neutral-900 dark:text-white">Settings</span>
           <span className="block text-xs text-neutral-600 dark:text-neutral-400">Password and email</span>
         </span>
-        <span className="text-neutral-500">→</span>
+        <span aria-hidden="true" className="text-neutral-500">→</span>
       </Link>
 
       <button

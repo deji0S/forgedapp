@@ -34,7 +34,7 @@ function CoachReportView({ logs, loading }: { logs: WorkoutLog[]; loading: boole
         ))}
       </ul>
       {report.generatedFrom > 0 && (
-        <p className="text-xs text-neutral-500">
+        <p className="text-xs text-neutral-500 dark:text-neutral-400">
           Based on your last {report.generatedFrom} logged workout
           {report.generatedFrom === 1 ? '' : 's'}.
         </p>

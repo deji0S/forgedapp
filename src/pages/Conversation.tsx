@@ -73,7 +73,7 @@ function JointRestoralCard({
           type="button"
           onClick={handleRestore}
           disabled={restoring}
-          className="w-full rounded-xl bg-blue-500 py-3 text-sm font-semibold text-white pressable disabled:opacity-60"
+          className="w-full rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white pressable disabled:opacity-60"
         >
           {restoring ? 'Restoring…' : 'Restore joint streak'}
         </button>
@@ -89,7 +89,7 @@ function TinyAvatar({ url }: { url: string | null }) {
   }
   return (
     <div className="flex h-6 w-6 items-center justify-center rounded-full border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 text-neutral-500">
-      <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="h-3.5 w-3.5">
         <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2c0-2.76-3.58-5-8-5Z" />
       </svg>
     </div>
@@ -182,7 +182,7 @@ function MessageMedia({ message }: { message: Message }) {
   if (message.media_type === 'video') {
     return <video src={signedUrl} controls className="max-h-72 w-full rounded-xl" />
   }
-  return <img src={signedUrl} alt="" className="max-h-72 w-full rounded-xl object-cover" />
+  return <img src={signedUrl} alt="Photo shared in conversation" className="max-h-72 w-full rounded-xl object-cover" />
 }
 
 function Conversation() {
@@ -305,8 +305,8 @@ function Conversation() {
       {/* Docks just below the global AppHeader (h-6 logo + py-3 + 1px border = 49px). */}
       <div className="sticky top-[49px] z-10 border-b border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-black/95 p-4 backdrop-blur">
         <div className="flex items-center gap-3">
-          <Link to="/messages" className="text-neutral-900 dark:text-white pressable">
-            ←
+          <Link to="/messages" aria-label="Back to messages" className="text-neutral-900 dark:text-white pressable">
+            <span aria-hidden="true">←</span>
           </Link>
           <Link
             to={id ? `/connect/${id}` : '/connect'}
@@ -322,7 +322,7 @@ function Conversation() {
           )}
         </div>
         {canMessage && restoralStatus && (
-          <p className="mt-1 pl-7 text-xs text-neutral-500">
+          <p className="mt-1 pl-7 text-xs text-neutral-500 dark:text-neutral-400">
             Joint restoral:{' '}
             {restoralStatus.remaining > 0 ? 'available' : `resets ${formatDate(restoralStatus.nextAvailable!)}`}
           </p>
@@ -412,9 +412,10 @@ function Conversation() {
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
               placeholder="Message…"
+              aria-label="Message"
               maxLength={2000}
               autoComplete="off"
-              className="flex-1 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder:text-neutral-500 focus:border-black dark:focus:border-white focus:outline-none"
+              className="flex-1 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder:text-neutral-600 dark:placeholder:text-neutral-400 focus:border-black dark:focus:border-white focus:outline-none"
             />
             <button
               type="submit"

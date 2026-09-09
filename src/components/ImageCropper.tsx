@@ -99,7 +99,12 @@ function ImageCropper({ src, onCancel, onConfirm }: ImageCropperProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-black/90 p-6">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Crop photo"
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-black/90 p-6"
+    >
       <div
         className="relative touch-none overflow-hidden rounded-2xl border-2 border-white/80"
         style={{ width: VIEWPORT, height: VIEWPORT }}

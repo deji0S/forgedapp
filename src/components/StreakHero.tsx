@@ -20,7 +20,7 @@ export function StreakHero({ streak }: { streak: Streak | null }) {
       </div>
       <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400">Day streak</p>
       {longest > current && (
-        <p className="mt-1 text-xs text-neutral-500">
+        <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
           Best: {longest} {longest === 1 ? 'day' : 'days'}
         </p>
       )}

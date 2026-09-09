@@ -29,7 +29,7 @@ function UpgradeBanner() {
           AI coach, advanced analytics, and streak recovery — £4.99/mo
         </span>
       </span>
-      <span className="text-neutral-500">→</span>
+      <span aria-hidden="true" className="text-neutral-500">→</span>
     </Link>
   )
 }
@@ -99,7 +99,7 @@ function StreakRecoveryCard({
           type="button"
           onClick={handlePurchase}
           disabled={purchasing}
-          className="w-full rounded-xl bg-blue-500 py-3 text-sm font-semibold text-white pressable disabled:opacity-60"
+          className="w-full rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white pressable disabled:opacity-60"
         >
           {purchasing ? 'Redirecting…' : 'Restore for £1'}
         </button>
@@ -112,7 +112,7 @@ function StreakRecoveryCard({
             type="button"
             onClick={handleRecover}
             disabled={recovering}
-            className="w-full rounded-xl bg-blue-500 py-3 text-sm font-semibold text-white pressable disabled:opacity-60"
+            className="w-full rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white pressable disabled:opacity-60"
           >
             {recovering ? 'Recovering…' : 'Recover my streak'}
           </button>
@@ -281,7 +281,7 @@ function Home() {
           <span className="block text-sm font-semibold text-neutral-900 dark:text-white">Your coach</span>
           <span className="block text-xs text-neutral-600 dark:text-neutral-400">Personalized guidance from your training</span>
         </span>
-        <span className="text-neutral-500">→</span>
+        <span aria-hidden="true" className="text-neutral-500">→</span>
       </Link>
     </div>
   )

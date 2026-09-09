@@ -17,7 +17,7 @@ function ConversationAvatar({ preview }: { preview: ConversationPreview }) {
   }
   return (
     <div className="flex h-12 w-12 items-center justify-center rounded-full border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 text-neutral-500">
-      <svg viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="h-6 w-6">
         <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2c0-2.76-3.58-5-8-5Z" />
       </svg>
     </div>
@@ -76,7 +76,7 @@ function Messages() {
                     {preview.profile.display_name || preview.profile.username || 'Forged user'}
                   </p>
                   {preview.profile.username && (
-                    <p className="truncate text-xs text-neutral-500">@{preview.profile.username}</p>
+                    <p className="truncate text-xs text-neutral-500 dark:text-neutral-400">@{preview.profile.username}</p>
                   )}
                   <p className="mt-0.5 truncate text-sm text-neutral-600 dark:text-neutral-400">{previewText(preview)}</p>
                 </div>
