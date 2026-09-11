@@ -6,6 +6,9 @@ import { useCookieConsent } from '../lib/cookie-consent-context'
 import { useTheme } from '../lib/theme-context'
 import type { ThemePreference } from '../lib/theme-context'
 import OptionGroup from '../components/OptionGroup'
+import { TurnstileWidget } from '../components/TurnstileWidget'
+
+const turnstileEnabled = Boolean(import.meta.env.VITE_TURNSTILE_SITE_KEY)
 
 const inputClass =
   'w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:border-black dark:focus:border-white focus:outline-none'
@@ -40,6 +43,8 @@ function ChangePasswordCard() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [done, setDone] = useState(false)
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
+  const [turnstileKey, setTurnstileKey] = useState(0)
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
@@ -51,9 +56,18 @@ function ChangePasswordCard() {
       return
     }
 
+    if (turnstileEnabled && !captchaToken) {
+      setError('Please complete the verification check.')
+      return
+    }
+
     setSaving(true)
-    const message = await changePassword(currentPassword, newPassword)
+    const message = await changePassword(currentPassword, newPassword, captchaToken ?? undefined)
     setSaving(false)
+
+    // Turnstile tokens are single-use — reset the widget for the next attempt.
+    setCaptchaToken(null)
+    setTurnstileKey((key) => key + 1)
 
     if (message) {
       setError(message)
@@ -106,12 +120,20 @@ function ChangePasswordCard() {
         className={inputClass}
       />
 
+      {turnstileEnabled && (
+        <TurnstileWidget
+          key={turnstileKey}
+          onVerify={setCaptchaToken}
+          onExpire={() => setCaptchaToken(null)}
+        />
+      )}
+
       {error && <p className="text-sm text-red-700 dark:text-red-400">{error}</p>}
       {done && <p className="text-sm text-green-700 dark:text-green-400">Password updated.</p>}
 
       <button
         type="submit"
-        disabled={saving}
+        disabled={saving || (turnstileEnabled && !captchaToken)}
         className="w-full rounded-xl bg-black dark:bg-white py-3 text-sm font-semibold text-white dark:text-black pressable disabled:opacity-60"
       >
         {saving ? 'Saving…' : 'Update password'}

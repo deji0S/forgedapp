@@ -16,9 +16,13 @@ interface AuthContextValue {
     username: string,
     captchaToken?: string,
   ) => Promise<string | null>
-  signIn: (identifier: string, password: string) => Promise<string | null>
+  signIn: (identifier: string, password: string, captchaToken?: string) => Promise<string | null>
   signOut: () => Promise<void>
-  changePassword: (currentPassword: string, newPassword: string) => Promise<string | null>
+  changePassword: (
+    currentPassword: string,
+    newPassword: string,
+    captchaToken?: string,
+  ) => Promise<string | null>
   changeEmail: (newEmail: string) => Promise<string | null>
   deleteAccount: (confirmation: string) => Promise<string | null>
   completeOnboarding: (input: OnboardingInput) => Promise<string | null>
@@ -123,7 +127,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // `identifier` is an email (contains '@') or a username. Usernames are
   // resolved to an email by the resolve-username edge function (service role);
   // accounts that predate usernames just sign in with their email.
-  async function signIn(identifier: string, password: string) {
+  async function signIn(identifier: string, password: string, captchaToken?: string) {
     const trimmed = identifier.trim()
     let email = trimmed
 
@@ -138,7 +142,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email = data.email
     }
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+      options: { captchaToken },
+    })
     return error?.message ?? null
   }
 
@@ -146,15 +154,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut()
   }
 
-  async function changePassword(currentPassword: string, newPassword: string) {
+  async function changePassword(currentPassword: string, newPassword: string, captchaToken?: string) {
     const email = session?.user.email
     if (!email) return 'You must be signed in.'
 
     // Supabase does not verify the current password on updateUser, so
-    // re-authenticate first to prove the user knows it.
+    // re-authenticate first to prove the user knows it. This hits the same
+    // token endpoint as sign-in, so it needs a captcha token too.
     const { error: reauthError } = await supabase.auth.signInWithPassword({
       email,
       password: currentPassword,
+      options: { captchaToken },
     })
     if (reauthError) return 'Current password is incorrect.'
 
