@@ -10,7 +10,12 @@ interface AuthContextValue {
   user: User | null
   profile: Profile | null
   loading: boolean
-  signUp: (email: string, password: string, username: string) => Promise<string | null>
+  signUp: (
+    email: string,
+    password: string,
+    username: string,
+    captchaToken?: string,
+  ) => Promise<string | null>
   signIn: (identifier: string, password: string) => Promise<string | null>
   signOut: () => Promise<void>
   changePassword: (currentPassword: string, newPassword: string) => Promise<string | null>
@@ -64,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  async function signUp(email: string, password: string, username: string) {
+  async function signUp(email: string, password: string, username: string, captchaToken?: string) {
     const handle = username.trim().toLowerCase()
     if (!/^[a-z0-9_]{3,20}$/.test(handle)) {
       return 'Username must be 3–20 characters: lowercase letters, numbers, or underscores.'
@@ -95,7 +100,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { username: handle } },
+      options: { data: { username: handle }, captchaToken },
     })
     if (error) {
       // Belt and braces: signUp does surface this when "Confirm email" is off.

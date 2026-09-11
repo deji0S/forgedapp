@@ -3,7 +3,10 @@ import type { FormEvent } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { ForgedLogo } from '../../components/AppHeader'
 import { AuthBackground } from '../../components/AuthBackground'
+import { TurnstileWidget } from '../../components/TurnstileWidget'
 import { useAuth } from '../../lib/auth-context'
+
+const turnstileEnabled = Boolean(import.meta.env.VITE_TURNSTILE_SITE_KEY)
 
 function AuthPage() {
   const { session, profile, signIn, signUp } = useAuth()
@@ -15,19 +18,31 @@ function AuthPage() {
   const [submitting, setSubmitting] = useState(false)
   const [checkEmail, setCheckEmail] = useState(false)
   const [agreedToTerms, setAgreedToTerms] = useState(false)
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
+  const [turnstileKey, setTurnstileKey] = useState(0)
 
   if (session) return <Navigate to={profile?.onboarded ? '/' : '/onboarding'} replace />
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     if (mode === 'sign-up' && !agreedToTerms) return
+    if (mode === 'sign-up' && turnstileEnabled && !captchaToken) {
+      setError('Please complete the verification check.')
+      return
+    }
     setError(null)
     setSubmitting(true)
     const message =
       mode === 'sign-in'
         ? await signIn(identifier, password)
-        : await signUp(identifier, password, username)
+        : await signUp(identifier, password, username, captchaToken ?? undefined)
     setSubmitting(false)
+
+    if (mode === 'sign-up') {
+      // Turnstile tokens are single-use — reset the widget for the next attempt.
+      setCaptchaToken(null)
+      setTurnstileKey((key) => key + 1)
+    }
 
     if (message) {
       setError(message)
@@ -118,6 +133,13 @@ function AuthPage() {
               onChange={(event) => setPassword(event.target.value)}
               className="w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:border-black dark:focus:border-white focus:outline-none"
             />
+            {mode === 'sign-up' && turnstileEnabled && (
+              <TurnstileWidget
+                key={turnstileKey}
+                onVerify={setCaptchaToken}
+                onExpire={() => setCaptchaToken(null)}
+              />
+            )}
             {error && <p className="text-sm text-red-700 dark:text-red-400">{error}</p>}
             {mode === 'sign-up' && (
               <label className="flex items-start gap-2 text-xs text-neutral-600 dark:text-neutral-400">
@@ -143,7 +165,11 @@ function AuthPage() {
             )}
             <button
               type="submit"
-              disabled={submitting || (mode === 'sign-up' && !agreedToTerms)}
+              disabled={
+                submitting ||
+                (mode === 'sign-up' && !agreedToTerms) ||
+                (mode === 'sign-up' && turnstileEnabled && !captchaToken)
+              }
               className="w-full rounded-xl bg-black dark:bg-white py-3 text-sm font-semibold text-white dark:text-black pressable disabled:opacity-60"
             >
               {submitting ? 'Please wait…' : mode === 'sign-in' ? 'Sign in' : 'Sign up'}
