@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/auth-context'
@@ -7,6 +7,8 @@ import { useTheme } from '../lib/theme-context'
 import type { ThemePreference } from '../lib/theme-context'
 import OptionGroup from '../components/OptionGroup'
 import { TurnstileWidget } from '../components/TurnstileWidget'
+import { getBlockedUsers, unblockUser } from '../lib/moderation'
+import type { BlockedUser } from '../types/social'
 
 const turnstileEnabled = Boolean(import.meta.env.VITE_TURNSTILE_SITE_KEY)
 
@@ -211,6 +213,64 @@ function ChangeEmailCard() {
   )
 }
 
+function BlockedAccountsCard() {
+  const { user } = useAuth()
+  const [blocked, setBlocked] = useState<BlockedUser[]>([])
+  const [loading, setLoading] = useState(true)
+  const [unblockingId, setUnblockingId] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!user) return
+    let active = true
+    getBlockedUsers(user.id).then(({ data }) => {
+      if (!active) return
+      setBlocked(data)
+      setLoading(false)
+    })
+    return () => {
+      active = false
+    }
+  }, [user])
+
+  async function handleUnblock(targetId: string) {
+    if (!user) return
+    setUnblockingId(targetId)
+    const { error } = await unblockUser(user.id, targetId)
+    setUnblockingId(null)
+    if (!error) setBlocked((prev) => prev.filter((entry) => entry.blockedId !== targetId))
+  }
+
+  if (loading || blocked.length === 0) return null
+
+  return (
+    <div className="space-y-3 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4">
+      <div>
+        <p className="text-sm font-medium text-neutral-900 dark:text-white">Blocked accounts</p>
+        <p className="text-xs text-neutral-600 dark:text-neutral-400">
+          They can't message you or find you in search, and you won't see them either.
+        </p>
+      </div>
+      <ul className="space-y-2">
+        {blocked.map((entry) => (
+          <li key={entry.blockedId} className="flex items-center justify-between gap-3">
+            <span className="truncate text-sm text-neutral-900 dark:text-white">
+              {entry.displayName || (entry.username ? `@${entry.username}` : 'Forged user')}
+            </span>
+            <button
+              type="button"
+              onClick={() => handleUnblock(entry.blockedId)}
+              disabled={unblockingId === entry.blockedId}
+              className="shrink-0 rounded-lg border border-neutral-200 dark:border-neutral-800 px-3 py-1.5 text-xs font-semibold text-neutral-900 dark:text-white pressable disabled:opacity-60"
+            >
+              {unblockingId === entry.blockedId ? '…' : 'Unblock'}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 function DeleteAccountCard() {
   const { deleteAccount } = useAuth()
   const [expanded, setExpanded] = useState(false)
@@ -334,6 +394,7 @@ function Settings() {
       <AppearanceCard />
       <ChangePasswordCard />
       <ChangeEmailCard />
+      <BlockedAccountsCard />
       <DeleteAccountCard />
       <CookiePreferencesCard />
 

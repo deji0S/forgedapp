@@ -29,3 +29,13 @@ export interface ChatStreak {
   longest_streak: number
   last_joint_date: string | null
 }
+
+export type ReportReason = 'abuse' | 'harassment' | 'illegal_content' | 'other'
+
+export interface BlockedUser {
+  blockedId: string
+  username: string | null
+  displayName: string | null
+  avatarUrl: string | null
+  createdAt: string
+}

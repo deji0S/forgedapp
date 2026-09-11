@@ -3,8 +3,12 @@ import { Link, useParams } from 'react-router-dom'
 import { useAuth } from '../lib/auth-context'
 import { profileDetails } from '../lib/profile-options'
 import { followUser, getFollowState, getPublicProfile, unfollowUser } from '../lib/social'
+import { blockUser } from '../lib/moderation'
 import { getStreak } from '../lib/tracking'
 import { StreakHero } from '../components/StreakHero'
+import { ActionMenu } from '../components/ActionMenu'
+import { BlockConfirmDialog } from '../components/BlockConfirmDialog'
+import { ReportModal } from '../components/ReportModal'
 import type { PublicProfile as PublicProfileType } from '../types/profile'
 import type { FollowState } from '../types/social'
 import type { Streak } from '../types/tracking'
@@ -63,6 +67,10 @@ function PublicProfile() {
   const [streak, setStreak] = useState<Streak | null>(null)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
+  const [reporting, setReporting] = useState(false)
+  const [confirmingBlock, setConfirmingBlock] = useState(false)
+  const [blocking, setBlocking] = useState(false)
+  const [blocked, setBlocked] = useState(false)
 
   useEffect(() => {
     if (!id || !user) return
@@ -89,6 +97,20 @@ function PublicProfile() {
     }
   }, [id, user])
 
+  async function handleBlock() {
+    if (!profile) return
+    setBlocking(true)
+    const { error } = await blockUser({
+      id: profile.id,
+      username: profile.username,
+      displayName: profile.display_name,
+      avatarUrl: profile.avatar_url,
+    })
+    setBlocking(false)
+    setConfirmingBlock(false)
+    if (!error) setBlocked(true)
+  }
+
   return (
     <div className="space-y-4 p-4">
       <Link to="/connect" className="text-sm font-medium text-neutral-900 dark:text-white pressable">
@@ -99,7 +121,25 @@ function PublicProfile() {
 
       {!loading && notFound && <p className="text-sm text-neutral-600 dark:text-neutral-400">This user couldn't be found.</p>}
 
-      {!loading && profile && (
+      {!loading && profile && blocked && (
+        <div className="space-y-3 py-8 text-center">
+          <p className="text-lg font-semibold text-neutral-900 dark:text-white">
+            You've blocked {profile.display_name || profile.username || 'this user'}.
+          </p>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">
+            They can no longer message you or find you in search. Manage blocked accounts in
+            Settings.
+          </p>
+          <Link
+            to="/connect"
+            className="inline-block rounded-xl border border-neutral-200 dark:border-neutral-800 px-6 py-2 text-sm font-semibold text-neutral-900 dark:text-white pressable"
+          >
+            Back to Connect
+          </Link>
+        </div>
+      )}
+
+      {!loading && profile && !blocked && (
         <>
           <div className="flex flex-col items-center gap-3">
             {profile.avatar_url ? (
@@ -137,6 +177,13 @@ function PublicProfile() {
                     Message
                   </Link>
                 )}
+                <ActionMenu
+                  ariaLabel="More options"
+                  items={[
+                    { label: 'Report user', onClick: () => setReporting(true) },
+                    { label: 'Block user', onClick: () => setConfirmingBlock(true), destructive: true },
+                  ]}
+                />
               </div>
             )}
           </div>
@@ -153,6 +200,23 @@ function PublicProfile() {
             ))}
           </div>
         </>
+      )}
+
+      {confirmingBlock && profile && (
+        <BlockConfirmDialog
+          label={profile.display_name || profile.username || 'this user'}
+          blocking={blocking}
+          onCancel={() => setConfirmingBlock(false)}
+          onConfirm={handleBlock}
+        />
+      )}
+
+      {reporting && profile && (
+        <ReportModal
+          reportedUserId={profile.id}
+          reportedUserLabel={profile.display_name || profile.username || 'this user'}
+          onClose={() => setReporting(false)}
+        />
       )}
     </div>
   )

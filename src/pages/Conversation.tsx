@@ -3,6 +3,7 @@ import type { ChangeEvent, FormEvent } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useAuth } from '../lib/auth-context'
 import { getFollowState, getPublicProfile } from '../lib/social'
+import { blockUser } from '../lib/moderation'
 import {
   getConversation,
   markConversationRead,
@@ -22,6 +23,9 @@ import {
 } from '../lib/chat-streak'
 import type { RestoralStatus } from '../lib/streak'
 import { PremiumGate } from '../components/PremiumGate'
+import { ActionMenu } from '../components/ActionMenu'
+import { BlockConfirmDialog } from '../components/BlockConfirmDialog'
+import { ReportModal } from '../components/ReportModal'
 import type { PublicProfile } from '../types/profile'
 import type { ChatStreak, Message } from '../types/social'
 
@@ -126,11 +130,13 @@ function MessageGroup({
   senderId,
   messages,
   mine,
+  onReportMessage,
 }: {
   sender: SenderInfo
   senderId: string
   messages: Message[]
   mine: boolean
+  onReportMessage: (messageId: string) => void
 }) {
   return (
     <div className={`flex flex-col gap-1 ${mine ? 'items-end' : 'items-start'}`}>
@@ -155,6 +161,16 @@ function MessageGroup({
           <p className={`flex items-center gap-1 px-1 text-[10px] ${mine ? 'text-white/60 dark:text-black/60' : 'text-neutral-600 dark:text-neutral-400'}`}>
             {formatMessageTime(message.created_at)}
             {mine && message.read_at && <span aria-label="Read">✓</span>}
+            {!mine && (
+              <button
+                type="button"
+                onClick={() => onReportMessage(message.id)}
+                aria-label="Report this message"
+                className="ml-1 pressable"
+              >
+                ⚑
+              </button>
+            )}
           </p>
         </div>
       ))}
@@ -199,6 +215,11 @@ function Conversation() {
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [reportingUser, setReportingUser] = useState(false)
+  const [reportingMessageId, setReportingMessageId] = useState<string | null>(null)
+  const [confirmingBlock, setConfirmingBlock] = useState(false)
+  const [blocking, setBlocking] = useState(false)
+  const [justBlocked, setJustBlocked] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -300,6 +321,23 @@ function Conversation() {
     setAttachment(null)
   }
 
+  async function handleBlock() {
+    if (!id) return
+    setBlocking(true)
+    const { error: blockError } = await blockUser({
+      id,
+      username: profile?.username,
+      displayName: profile?.display_name,
+      avatarUrl: profile?.avatar_url,
+    })
+    setBlocking(false)
+    setConfirmingBlock(false)
+    if (!blockError) {
+      setCanMessage(false)
+      setJustBlocked(true)
+    }
+  }
+
   return (
     <div className="flex flex-col">
       {/* Docks just below the global AppHeader (h-6 logo + py-3 + 1px border = 49px). */}
@@ -319,6 +357,15 @@ function Conversation() {
             <span className="rounded-full bg-neutral-200 dark:bg-neutral-800 px-3 py-1 text-xs font-semibold text-neutral-900 dark:text-white">
               🔥 {streak.current_streak}-day streak
             </span>
+          )}
+          {id && (
+            <ActionMenu
+              ariaLabel="Conversation options"
+              items={[
+                { label: 'Report user', onClick: () => setReportingUser(true) },
+                { label: 'Block user', onClick: () => setConfirmingBlock(true), destructive: true },
+              ]}
+            />
           )}
         </div>
         {canMessage && restoralStatus && (
@@ -364,6 +411,7 @@ function Conversation() {
                 senderId={group.senderId}
                 messages={group.messages}
                 mine={mine}
+                onReportMessage={setReportingMessageId}
               />
             )
           })}
@@ -429,12 +477,40 @@ function Conversation() {
       ) : (
         !loading && (
           <p className="sticky bottom-20 border-t border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-black/95 p-4 text-center text-sm text-neutral-600 dark:text-neutral-400 backdrop-blur">
-            You can message each other once you both follow each other.
+            {justBlocked
+              ? "You've blocked this user."
+              : 'You can message each other once you both follow each other.'}
           </p>
         )
       )}
 
       {error && <p className="px-4 pb-4 text-sm text-red-700 dark:text-red-400">{error}</p>}
+
+      {confirmingBlock && (
+        <BlockConfirmDialog
+          label={profile?.display_name || profile?.username || 'this user'}
+          blocking={blocking}
+          onCancel={() => setConfirmingBlock(false)}
+          onConfirm={handleBlock}
+        />
+      )}
+
+      {reportingUser && id && (
+        <ReportModal
+          reportedUserId={id}
+          reportedUserLabel={profile?.display_name || profile?.username || 'this user'}
+          onClose={() => setReportingUser(false)}
+        />
+      )}
+
+      {reportingMessageId && id && (
+        <ReportModal
+          reportedUserId={id}
+          reportedUserLabel={profile?.display_name || profile?.username || 'this user'}
+          messageId={reportingMessageId}
+          onClose={() => setReportingMessageId(null)}
+        />
+      )}
     </div>
   )
 }
