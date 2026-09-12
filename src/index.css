@@ -206,12 +206,31 @@ body {
   animation: enter-fade-up 260ms ease-out backwards;
 }
 
+/* Logo breathing effect on BrandedSplash (see components/BrandedSplash.tsx),
+   shown while the auth/session check is in flight. */
+@keyframes splash-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.splash-pulse {
+  animation: splash-pulse 1.4s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .pressable {
     transition: none;
   }
   .page-enter,
   .stagger-item {
+    animation: none;
+  }
+  .splash-pulse {
     animation: none;
   }
 }

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth-context'
+import { BrandedSplash } from '../components/BrandedSplash'
 import { ForgedLogo } from '../components/AppHeader'
 import OptionGroup from '../components/OptionGroup'
 import { DAYS_PER_WEEK, FITNESS_LEVELS, GOALS, WORKOUT_TYPES } from '../lib/profile-options'
@@ -16,7 +17,7 @@ function Onboarding() {
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
-  if (loading) return null
+  if (loading) return <BrandedSplash />
   if (!session) return <Navigate to="/auth" replace />
   if (profile?.onboarded) return <Navigate to="/" replace />
 

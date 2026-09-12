@@ -59,8 +59,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data: listener } = supabase.auth.onAuthStateChange(async (_event, nextSession) => {
       setSession(nextSession)
       if (nextSession) {
+        // Keep `loading` true until the profile is in hand — otherwise a
+        // render lands with `session` set but `profile` still null/stale
+        // from before, and callers that branch on `profile?.onboarded`
+        // (AuthPage's post-sign-in redirect) act on that empty state.
+        setLoading(true)
         await loadProfile(nextSession.user.id)
         linkOneSignalUser(nextSession.user.id)
+        setLoading(false)
       } else {
         setProfile(null)
         unlinkOneSignalUser()

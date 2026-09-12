@@ -3,13 +3,14 @@ import type { FormEvent } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { ForgedLogo } from '../../components/AppHeader'
 import { AuthBackground } from '../../components/AuthBackground'
+import { BrandedSplash } from '../../components/BrandedSplash'
 import { TurnstileWidget } from '../../components/TurnstileWidget'
 import { useAuth } from '../../lib/auth-context'
 
 const turnstileEnabled = Boolean(import.meta.env.VITE_TURNSTILE_SITE_KEY)
 
 function AuthPage() {
-  const { session, profile, signIn, signUp } = useAuth()
+  const { session, profile, loading, signIn, signUp } = useAuth()
   const [mode, setMode] = useState<'sign-in' | 'sign-up'>('sign-in')
   const [username, setUsername] = useState('')
   const [identifier, setIdentifier] = useState('')
@@ -21,6 +22,10 @@ function AuthPage() {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null)
   const [turnstileKey, setTurnstileKey] = useState(0)
 
+  // While `loading`, a session may already be set but its profile hasn't
+  // been fetched yet — deciding the redirect target on that in-between
+  // state would send already-onboarded users back through onboarding.
+  if (loading) return <BrandedSplash />
   if (session) return <Navigate to={profile?.onboarded ? '/' : '/onboarding'} replace />
 
   async function handleSubmit(event: FormEvent) {
