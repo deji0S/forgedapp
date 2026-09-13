@@ -27,7 +27,7 @@ import { ActionMenu } from '../components/ActionMenu'
 import { BlockConfirmDialog } from '../components/BlockConfirmDialog'
 import { ReportModal } from '../components/ReportModal'
 import type { PublicProfile } from '../types/profile'
-import type { ChatStreak, Message } from '../types/social'
+import type { ChatStreak, Message, SharedWorkout } from '../types/social'
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
@@ -156,6 +156,7 @@ function MessageGroup({
             mine ? 'bg-black dark:bg-white text-white dark:text-black' : 'bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-white'
           }`}
         >
+          {message.shared_workout && <MessageSharedWorkout workout={message.shared_workout} mine={mine} />}
           {message.media_path && <MessageMedia message={message} />}
           {message.body && <p className="whitespace-pre-wrap break-words px-1">{message.body}</p>}
           <p className={`flex items-center gap-1 px-1 text-[10px] ${mine ? 'text-white/60 dark:text-black/60' : 'text-neutral-600 dark:text-neutral-400'}`}>
@@ -174,6 +175,32 @@ function MessageGroup({
           </p>
         </div>
       ))}
+    </div>
+  )
+}
+
+function MessageSharedWorkout({ workout, mine }: { workout: SharedWorkout; mine: boolean }) {
+  return (
+    <div
+      className={`w-64 max-w-full space-y-1 rounded-xl border p-3 ${
+        mine
+          ? 'border-white/20 bg-white/10 dark:border-black/20 dark:bg-black/10'
+          : 'border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/5'
+      }`}
+    >
+      <p className="px-1 text-sm font-semibold">🏋️ {workout.name}</p>
+      {workout.exercises.length > 0 ? (
+        <ul className="list-disc space-y-0.5 pl-5 text-xs opacity-80">
+          {workout.exercises.map((ex, i) => (
+            <li key={i}>
+              {ex.name} — {ex.sets}×{ex.reps}
+              {ex.weight_kg ? ` @ ${ex.weight_kg}kg` : ''}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="px-1 text-xs opacity-80">No exercises</p>
+      )}
     </div>
   )
 }

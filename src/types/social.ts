@@ -1,4 +1,5 @@
 import type { PublicProfile } from './profile'
+import type { PlanExercise } from './tracking'
 
 export interface FollowState {
   isFollowing: boolean
@@ -6,6 +7,11 @@ export interface FollowState {
 }
 
 export type MessageMediaType = 'image' | 'video'
+
+export interface SharedWorkout {
+  name: string
+  exercises: PlanExercise[]
+}
 
 export interface Message {
   id: string
@@ -15,6 +21,7 @@ export interface Message {
   media_path: string | null
   media_type: MessageMediaType | null
   media_mime: string | null
+  shared_workout: SharedWorkout | null
   read_at: string | null
   created_at: string
 }

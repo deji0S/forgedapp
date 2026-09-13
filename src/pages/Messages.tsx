@@ -26,6 +26,7 @@ function ConversationAvatar({ preview }: { preview: ConversationPreview }) {
 
 function previewText(preview: ConversationPreview) {
   const { lastMessage } = preview
+  if (lastMessage.shared_workout) return `🏋️ Shared "${lastMessage.shared_workout.name}"`
   if (lastMessage.body) return lastMessage.body
   if (lastMessage.media_type === 'video') return '🎥 Video'
   if (lastMessage.media_type === 'image') return '📷 Photo'

@@ -2,9 +2,10 @@ import { supabase } from './supabase'
 import type { ChatAttachment } from './chat-media'
 import { getProfilesByIds } from './social'
 import type { ConversationPreview, Message } from '../types/social'
+import type { WorkoutPlan } from '../types/tracking'
 
 const MESSAGE_COLUMNS =
-  'id, sender_id, recipient_id, body, media_path, media_type, media_mime, read_at, created_at'
+  'id, sender_id, recipient_id, body, media_path, media_type, media_mime, shared_workout, read_at, created_at'
 
 // A conversation is just the set of distinct people a user has exchanged
 // messages with -- there's no separate conversations table (see the
@@ -66,6 +67,28 @@ export async function sendMessage(
       media_path: attachment?.path ?? null,
       media_type: attachment?.type ?? null,
       media_mime: attachment?.mime ?? null,
+    })
+    .select(MESSAGE_COLUMNS)
+    .single()
+  return { data: data as Message | null, error }
+}
+
+// Shares a workout into a chat as a distinct message type: a snapshot of
+// the workout's name/exercises at share time (see migration
+// "shared-workout-messages"), not a live reference -- so it keeps rendering
+// correctly even if the sender later edits or deletes that workout. Subject
+// to the same mutual-follow/not-blocked insert policy as any other message.
+export async function shareWorkoutToChat(
+  senderId: string,
+  recipientId: string,
+  workout: Pick<WorkoutPlan, 'name' | 'exercises'>,
+) {
+  const { data, error } = await supabase
+    .from('messages')
+    .insert({
+      sender_id: senderId,
+      recipient_id: recipientId,
+      shared_workout: { name: workout.name, exercises: workout.exercises },
     })
     .select(MESSAGE_COLUMNS)
     .single()

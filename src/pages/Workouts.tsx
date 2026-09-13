@@ -10,6 +10,7 @@ import {
 } from '../lib/tracking'
 import WorkoutForm from '../components/WorkoutForm'
 import type { WorkoutFormValues } from '../components/WorkoutForm'
+import { ShareWorkoutModal } from '../components/ShareWorkoutModal'
 import { staggerDelay } from '../lib/motion'
 import type { WorkoutPlan } from '../types/tracking'
 
@@ -23,6 +24,7 @@ function Workouts() {
   const [deleteBusy, setDeleteBusy] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const [reordering, setReordering] = useState(false)
+  const [sharingPlan, setSharingPlan] = useState<WorkoutPlan | null>(null)
 
   useEffect(() => {
     if (!user) return
@@ -204,6 +206,22 @@ function Workouts() {
                 </button>
                 <button
                   type="button"
+                  onClick={() => setSharingPlan(p)}
+                  aria-label={`Share ${p.name}`}
+                  className="flex w-12 shrink-0 items-center justify-center rounded-2xl border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 pressable"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
+                    <path
+                      d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M16 6l-4-4-4 4M12 2v14"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+                <button
+                  type="button"
                   onClick={() => {
                     setDeleteError(null)
                     setDeletingId(p.id)
@@ -264,6 +282,8 @@ function Workouts() {
           </div>
         </div>
       )}
+
+      {sharingPlan && <ShareWorkoutModal workout={sharingPlan} onClose={() => setSharingPlan(null)} />}
     </div>
   )
 }

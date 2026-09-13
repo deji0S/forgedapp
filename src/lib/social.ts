@@ -93,6 +93,25 @@ export async function getFollowing(userId: string) {
   return getProfilesByIds(data.map((row) => row.following_id))
 }
 
+// People the current user can message: the same mutual-follow criterion
+// used to gate a single conversation (see Conversation.tsx and the messages
+// insert RLS policy), just computed for every connection at once instead of
+// one profile at a time. A user blocked in either direction is excluded for
+// free -- block_user() tears down the follow rows between the pair.
+export async function getMutualFollows(userId: string) {
+  const [followers, following] = await Promise.all([
+    supabase.from('follows').select('follower_id').eq('following_id', userId),
+    supabase.from('follows').select('following_id').eq('follower_id', userId),
+  ])
+  if (followers.error || following.error) {
+    return { data: [] as PublicProfile[], error: followers.error ?? following.error }
+  }
+
+  const followingIds = new Set(following.data.map((row) => row.following_id))
+  const mutualIds = followers.data.map((row) => row.follower_id).filter((id) => followingIds.has(id))
+  return getProfilesByIds(mutualIds)
+}
+
 export async function followUser(currentUserId: string, targetId: string) {
   const { error } = await supabase
     .from('follows')
