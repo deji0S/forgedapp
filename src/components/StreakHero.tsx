@@ -1,4 +1,5 @@
 import { FlameIcon } from './FlameIcon'
+import { liveCurrentStreak } from '../lib/streak'
 import type { Streak } from '../types/tracking'
 
 /**
@@ -7,7 +8,7 @@ import type { Streak } from '../types/tracking'
  * users' public profiles, so streaks read identically everywhere.
  */
 export function StreakHero({ streak }: { streak: Streak | null }) {
-  const current = streak?.current_streak ?? 0
+  const current = liveCurrentStreak(streak)
   const longest = streak?.longest_streak ?? 0
 
   return (

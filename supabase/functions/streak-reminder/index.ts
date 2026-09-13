@@ -84,12 +84,20 @@ Deno.serve(async (_req) => {
   // and streaks.last_activity_date already use (see migration 0002) — kept
   // consistent with the streak trigger rather than converted to local time.
   const today = now.toISOString().slice(0, 10)
+  const yesterday = new Date(now)
+  yesterday.setUTCDate(yesterday.getUTCDate() - 1)
+  const yesterdayIso = yesterday.toISOString().slice(0, 10)
 
+  // Filtering on last_activity_date (not current_streak) here matters:
+  // current_streak is only recomputed by the workout_logs write trigger, so
+  // a streak that already died a few days ago can still show a stale
+  // nonzero current_streak until the user's next log. Requiring the last
+  // activity to be today-or-yesterday is what actually means "still alive".
   const { data: streaks, error: streaksError } = await supabase
     .from('streaks')
     .select('user_id, last_activity_date')
     .in('user_id', dueUserIds)
-    .gt('current_streak', 0)
+    .gte('last_activity_date', yesterdayIso)
 
   if (streaksError) {
     return new Response(JSON.stringify({ error: streaksError.message }), { status: 500 })

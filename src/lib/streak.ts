@@ -21,6 +21,20 @@ export function isoDaysAgo(n: number): string {
 }
 
 /**
+ * The streak's current length as of *now*, not as of the last time a
+ * workout was logged. `streaks.current_streak` (migration 0002) is only
+ * recomputed by the workout_logs write trigger, so once a day is missed it
+ * stays at its old value — showing an already-dead streak as alive — until
+ * the user's next log recomputes it. Deriving the displayed value from
+ * `last_activity_date` here instead means every read reflects reality
+ * immediately, with no dependency on the next log or a scheduled job.
+ */
+export function liveCurrentStreak(streak: Streak | null): number {
+  if (!streak || !streak.last_activity_date) return 0
+  return streak.last_activity_date >= isoDaysAgo(1) ? streak.current_streak : 0
+}
+
+/**
  * Client-side mirror of the eligibility checks in public.recover_streak
  * (migration 0007) — used only to decide whether to surface the recovery UI.
  * The database function is the real gate.

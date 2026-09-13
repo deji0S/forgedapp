@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '../lib/auth-context'
 import { PremiumGate } from '../components/PremiumGate'
 import { getStreak, listWorkoutLogs } from '../lib/tracking'
+import { liveCurrentStreak } from '../lib/streak'
 import {
   feedbackBreakdown,
   personalRecords,
@@ -219,7 +220,7 @@ function Progress() {
           <StatCard index={0} label="Total workouts" value={stats.totalWorkouts} />
           <StatCard index={1} label="Last 7 days" value={stats.last7} />
           <StatCard index={2} label="Last 30 days" value={stats.last30} />
-          <StatCard index={3} label="Current streak" value={`${streak?.current_streak ?? 0} days`} />
+          <StatCard index={3} label="Current streak" value={`${liveCurrentStreak(streak)} days`} />
         </section>
       )}
 

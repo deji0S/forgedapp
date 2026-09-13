@@ -8,6 +8,7 @@ import { FlameIcon } from '../components/FlameIcon'
 import { checkInToday, getStreak, getTodayCheckin, listWorkoutPlans } from '../lib/tracking'
 import {
   getStreakRecoveryStatus,
+  liveCurrentStreak,
   recoverStreak,
   recoveryEligibility,
   startStreakRestoralCheckout,
@@ -176,7 +177,7 @@ function Home() {
     if (!error) setCheckedIn(true)
   }
 
-  const currentStreak = streak?.current_streak ?? 0
+  const currentStreak = liveCurrentStreak(streak)
   const longestStreak = streak?.longest_streak ?? 0
 
   return (
