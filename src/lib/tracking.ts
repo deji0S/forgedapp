@@ -35,6 +35,17 @@ export async function createWorkoutPlan(
     .single<WorkoutPlan>()
 }
 
+// Saves a copy of a shared workout (see the messages "shared_workout"
+// column) into the recipient's own Workouts list, appended at the end --
+// same position rule createWorkoutPlan's callers use elsewhere (max + 1, or
+// 0 if the list is empty).
+export async function saveSharedWorkout(userId: string, workout: Pick<WorkoutPlan, 'name' | 'exercises'>) {
+  const { data: existing, error: listError } = await listWorkoutPlans(userId)
+  if (listError) return { data: null as WorkoutPlan | null, error: listError }
+  const position = existing && existing.length ? Math.max(...existing.map((p) => p.position)) + 1 : 0
+  return createWorkoutPlan(userId, { name: workout.name, exercises: workout.exercises, position })
+}
+
 export async function setWorkoutPlanPosition(planId: string, position: number) {
   return supabase
     .from('workout_plans')

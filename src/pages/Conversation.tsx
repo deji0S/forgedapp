@@ -26,6 +26,7 @@ import { PremiumGate } from '../components/PremiumGate'
 import { ActionMenu } from '../components/ActionMenu'
 import { BlockConfirmDialog } from '../components/BlockConfirmDialog'
 import { ReportModal } from '../components/ReportModal'
+import { SharedWorkoutDetailModal } from '../components/SharedWorkoutDetailModal'
 import type { PublicProfile } from '../types/profile'
 import type { ChatStreak, Message, SharedWorkout } from '../types/social'
 
@@ -131,12 +132,14 @@ function MessageGroup({
   messages,
   mine,
   onReportMessage,
+  onOpenSharedWorkout,
 }: {
   sender: SenderInfo
   senderId: string
   messages: Message[]
   mine: boolean
   onReportMessage: (messageId: string) => void
+  onOpenSharedWorkout: (workout: SharedWorkout, canSave: boolean) => void
 }) {
   return (
     <div className={`flex flex-col gap-1 ${mine ? 'items-end' : 'items-start'}`}>
@@ -156,7 +159,13 @@ function MessageGroup({
             mine ? 'bg-black dark:bg-white text-white dark:text-black' : 'bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-white'
           }`}
         >
-          {message.shared_workout && <MessageSharedWorkout workout={message.shared_workout} mine={mine} />}
+          {message.shared_workout && (
+            <MessageSharedWorkout
+              workout={message.shared_workout}
+              mine={mine}
+              onOpen={() => onOpenSharedWorkout(message.shared_workout!, !mine)}
+            />
+          )}
           {message.media_path && <MessageMedia message={message} />}
           {message.body && <p className="whitespace-pre-wrap break-words px-1">{message.body}</p>}
           <p className={`flex items-center gap-1 px-1 text-[10px] ${mine ? 'text-white/60 dark:text-black/60' : 'text-neutral-600 dark:text-neutral-400'}`}>
@@ -179,29 +188,43 @@ function MessageGroup({
   )
 }
 
-function MessageSharedWorkout({ workout, mine }: { workout: SharedWorkout; mine: boolean }) {
+function MessageSharedWorkout({
+  workout,
+  mine,
+  onOpen,
+}: {
+  workout: SharedWorkout
+  mine: boolean
+  onOpen: () => void
+}) {
   return (
-    <div
-      className={`w-64 max-w-full space-y-1 rounded-xl border p-3 ${
+    <button
+      type="button"
+      onClick={onOpen}
+      className={`flex w-64 max-w-full items-center gap-3 rounded-xl border p-3 text-left pressable ${
         mine
           ? 'border-white/20 bg-white/10 dark:border-black/20 dark:bg-black/10'
           : 'border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/5'
       }`}
     >
-      <p className="px-1 text-sm font-semibold">🏋️ {workout.name}</p>
-      {workout.exercises.length > 0 ? (
-        <ul className="list-disc space-y-0.5 pl-5 text-xs opacity-80">
-          {workout.exercises.map((ex, i) => (
-            <li key={i}>
-              {ex.name} — {ex.sets}×{ex.reps}
-              {ex.weight_kg ? ` @ ${ex.weight_kg}kg` : ''}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="px-1 text-xs opacity-80">No exercises</p>
-      )}
-    </div>
+      <span
+        aria-hidden="true"
+        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-lg ${
+          mine ? 'bg-white/15 dark:bg-black/15' : 'bg-black/10 dark:bg-white/10'
+        }`}
+      >
+        🏋️
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-sm font-semibold">{workout.name}</span>
+        <span className="block text-xs opacity-70">
+          {workout.exercises.length} exercise{workout.exercises.length === 1 ? '' : 's'} · Tap to view
+        </span>
+      </span>
+      <span aria-hidden="true" className="shrink-0 text-lg opacity-50">
+        ›
+      </span>
+    </button>
   )
 }
 
@@ -247,6 +270,7 @@ function Conversation() {
   const [confirmingBlock, setConfirmingBlock] = useState(false)
   const [blocking, setBlocking] = useState(false)
   const [justBlocked, setJustBlocked] = useState(false)
+  const [viewingWorkout, setViewingWorkout] = useState<{ workout: SharedWorkout; canSave: boolean } | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -439,6 +463,7 @@ function Conversation() {
                 messages={group.messages}
                 mine={mine}
                 onReportMessage={setReportingMessageId}
+                onOpenSharedWorkout={(workout, canSave) => setViewingWorkout({ workout, canSave })}
               />
             )
           })}
@@ -536,6 +561,15 @@ function Conversation() {
           reportedUserLabel={profile?.display_name || profile?.username || 'this user'}
           messageId={reportingMessageId}
           onClose={() => setReportingMessageId(null)}
+        />
+      )}
+
+      {viewingWorkout && user && (
+        <SharedWorkoutDetailModal
+          workout={viewingWorkout.workout}
+          currentUserId={user.id}
+          canSave={viewingWorkout.canSave}
+          onClose={() => setViewingWorkout(null)}
         />
       )}
     </div>
